@@ -1,0 +1,7 @@
+{
+  "fixture_id": "releaseproof-fixture-v1",
+  "license_spdx": "MIT",
+  "provenance": "authored in-repository for ReleaseProof tests",
+  "synthetic": true,
+  "usage": "deterministic local tests and fictional demo only"
+}

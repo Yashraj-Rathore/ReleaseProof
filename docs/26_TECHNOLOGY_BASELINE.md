@@ -1,0 +1,92 @@
+# 26 — Technology Baseline — verified 2026-08-27
+
+This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
+
+## Runtime decision
+
+Use CPython **3.13.15**. It is the conservative intersection of Django 6.1 (Python 3.12–3.14), Celery 5.6 (through Python 3.13), the selected ML stack and the optional vLLM path (Python 3.10–3.13). Python 3.14 is deliberately not selected for the foundation.
+
+Evidence: [Python 3.13.15](https://www.python.org/downloads/release/python-31315/), [Django 6.1 compatibility](https://docs.djangoproject.com/en/6.1/faq/install/), [Celery 5.6 compatibility](https://docs.celeryq.dev/en/main/history/whatsnew-5.6.html), [vLLM requirements](https://docs.vllm.ai/en/latest/getting_started/quickstart/).
+
+## Prompt 1 pins
+
+| Technology | Exact pin | Rationale / official evidence |
+|---|---:|---|
+| CPython | `3.13.15` | Conservative full-stack intersection; see runtime decision. |
+| uv | `0.12.6` | One lock/install workflow. [Changelog](https://github.com/astral-sh/uv/blob/main/CHANGELOG.md?plain=1) |
+| Django | `6.1` | Current supported stable, compatible with Python 3.13 and PostgreSQL 18. [Release notes](https://docs.djangoproject.com/en/6.1/releases/6.1/) |
+| Django REST Framework | `3.18.0` | Adds Django 6.1 support. [Release notes](https://www.django-rest-framework.org/community/release-notes/) |
+| psycopg | `3.3.4` | PostgreSQL driver required by Django. [Release history](https://pypi.org/project/psycopg/) |
+| Celery | `5.6.3` | Current stable 5.6 patch, compatible with Python 3.13. [Changelog](https://docs.celeryq.dev/en/stable/changelog.html) |
+| Boto3 | `1.43.81` | AWS-maintained Python SDK used only in the S3 adapter for ADR-016's bounded object-store contract; supports Python 3.13. [PyPI release](https://pypi.org/project/boto3/1.43.81/) |
+| HTMX | `2.0.10` | Vendor the exact minified asset and checksum; do not require Node or a CDN. [Changelog](https://github.com/bigskysoftware/htmx/blob/master/CHANGELOG.md) |
+| PostgreSQL | `18.6` | Current patched PostgreSQL 18 line. [Documentation](https://www.postgresql.org/docs/18/) |
+| pgvector | `0.8.6` | Compatible with PostgreSQL 18. Use `pgvector/pgvector:0.8.6-pg18-trixie` plus resolved manifest digest. [Changelog](https://github.com/pgvector/pgvector/blob/master/CHANGELOG.md?plain=1) |
+| Redis | `8.10.1` | Current security-fixed 8.10 patch. Use an exact image tag plus digest. [Release notes](https://redis.io/docs/latest/operate/oss_and_stack/stack-with-enterprise/release-notes/redisce/redisos-8.10-release-notes/) |
+| SeaweedFS | `4.44` | Maintained Apache-2.0 S3-compatible local store selected by ADR-016. Use `chrislusf/seaweedfs:4.44` plus resolved manifest digest. [Release](https://github.com/seaweedfs/seaweedfs/releases/tag/4.44) |
+| Docker Engine | `29.7.2` | Verified host/container baseline. [Release notes](https://docs.docker.com/engine/release-notes/29/) |
+| Docker Compose | `5.4.0` | Verified Compose plugin baseline. [Releases](https://github.com/docker/compose/releases/tag/v5.4.0) |
+
+MinIO is explicitly excluded: its open-source repository was archived on 2026-04-25 and is not a supported security baseline. Do not silently reintroduce it. SeaweedFS compatibility is limited to the ReleaseProof contract tests in ADR-016; no complete-S3-equivalence claim is made.
+
+## Prompt 1 development/test pins
+
+| Technology | Exact pin | Activation |
+|---|---:|---|
+| pytest | `9.1.1` | M1 |
+| pytest-django | `4.14.0` | M1 |
+| Ruff | `0.16.4` | M1 |
+| mypy | `2.3.0` | M1 |
+| django-stubs | `6.1.0` | M1 |
+| pre-commit | `4.6.2` | M1 |
+| Testcontainers Python | `4.15.0` | M1 where it adds isolation beyond Compose tests |
+| Playwright Python | `1.62.0` | Package may be locked in M1; browser download and E2E activation start in M2 |
+| pytest-playwright | `0.9.0` | M2 |
+
+Evidence: [pytest](https://docs.pytest.org/en/stable/changelog.html), [pytest-django](https://pytest-django.readthedocs.io/en/stable/), [Ruff](https://github.com/astral-sh/ruff/releases), [mypy](https://mypy-lang.org/news.html), [django-stubs](https://pypi.org/project/django-stubs/), [pre-commit](https://pypi.org/project/pre-commit/), [Playwright](https://playwright.dev/python/docs/release-notes), [Testcontainers](https://github.com/testcontainers/testcontainers-python/releases).
+
+Python `unittest`, HTML5, CSS, minimal browser JavaScript, PostgreSQL JSONB and PostgreSQL FTS do not have independent package pins. The first FTS configuration is specified in docs/10. No Node package manager is introduced.
+
+## Later milestone compatibility snapshot
+
+Do not add these to the Prompt 1 lock solely because they appear here.
+
+| Technology | Verified snapshot | Owning gate |
+|---|---:|---|
+| NumPy | `2.5.2` | M4/M5 reverify |
+| pandas | `3.0.5` | M4/M5 reverify |
+| scikit-learn | `1.9.0` | M5 reverify |
+| XGBoost | `3.4.1` | M5 reverify |
+| PyTorch | `2.13.0`, CPU build first | M11 reverify against hardware/runtime |
+| Transformers | `5.15.1` | M11 reverify with PyTorch |
+| sentence-transformers | `6.0.0` | M6/M11 reverify |
+| LangChain core | `1.6.0` | M7 only if the adapter needs it |
+| LangChain OpenAI | `1.6.0` | M7 only if it reduces contract code |
+| LangGraph | `1.2.11` | M12 |
+| MLflow | `3.15.1` | M13 |
+| OpenTelemetry API/SDK | `1.44.0` | M14 |
+| OpenTelemetry instrumentation | `0.65b0` | M14; beta versioning is explicit |
+| FastAPI | `0.141.1` | M15 only if RP-1402 returns `EXTRACT_FASTAPI` |
+| Ollama | `0.32.11` | Optional M15 adapter |
+| vLLM | `0.26.0` | Optional M15 Linux/GPU path |
+
+Official compatibility/release evidence: [NumPy](https://numpy.org/news/), [pandas](https://pandas.pydata.org/docs/whatsnew/), [scikit-learn](https://scikit-learn.org/stable/whats_new.html), [XGBoost](https://xgboost.readthedocs.io/en/stable/changes/index.html), [PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md), [Transformers](https://huggingface.co/docs/transformers/installation), [sentence-transformers](https://sbert.net/docs/installation.html), [LangChain](https://docs.langchain.com/oss/python/versioning), [MLflow](https://mlflow.org/releases/), [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-python/releases), [FastAPI](https://fastapi.tiangolo.com/deployment/versions/), [Ollama](https://github.com/ollama/ollama/releases), [vLLM](https://github.com/vllm-project/vllm/releases).
+
+The OpenAI Python SDK is milestone-resolved rather than assigned an invented pin. Official OpenAI documentation establishes the `openai` package and Responses API pattern but does not publish the package's current exact version. RP-0602 must reverify, lock and record the exact SDK version with the adapter/model configuration. [Official SDK documentation](https://developers.openai.com/api/docs/libraries).
+
+## Dependency and image management
+
+- Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.
+- Set `.python-version` to `3.13.15` and configure uv's required version as `0.12.6`.
+- Direct runtime/development requirements use exact pins; `uv.lock` records the complete transitive resolution.
+- Separate later `ml`, `semantic`, `ai`, `e2e` and `observability` groups and create them only in the owning milestone.
+- Release and Compose images use exact tags plus OCI manifest digests. Resolve digests on the actual target architecture during M1; do not invent them in documentation.
+- Model artifacts use exact registry identifiers/checksums; prompts, FTS, features and schemas use semantic version plus content hash.
+- Upgrade intentionally with unit/integration/security tests and relevant frozen ML/RAG/LLM evaluation; never float production dependencies.
+
+## License and deployment notes
+
+- SeaweedFS is Apache-2.0; MinIO OSS is excluded because it is archived/unmaintained, not merely because of license preference.
+- Redis distribution/deployment licensing must be reviewed for the chosen deployment form before commercial distribution.
+- Public repository data and model artifacts retain their own license/usage metadata; a permissive library license does not grant rights to model data or customer code.
+- Optional model/provider packages are not product requirements until their milestone accepts their license, privacy, hardware and operational cost.

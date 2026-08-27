@@ -1,0 +1,6 @@
+# ADR-017 — Tenant Isolation Is Enforced in Services and Constraints First
+**Status:** Accepted
+
+ReleaseProof derives organization and repository scope from the authenticated session or verified GitHub installation, never from an untrusted object identifier alone. M2 requires organization-scoped application services/querysets, object-level authorization, organization-consistent unique keys and composite foreign keys such as `(organization_id, parent_id)`, and cross-tenant tests across HTTP, Celery, admin and management-command entry points. A schema-level exception requires a documented migration rationale plus fail-closed service and security tests. Raw unscoped ORM access is restricted to audited adapters and maintenance code with explicit scope.
+
+PostgreSQL row-level security is not required for the MVP and must not be claimed as an existing boundary. Django web requests, Celery tasks, connection pooling, migrations and privileged maintenance each need a proven transaction-scoped tenant-context strategy before RLS provides dependable defense-in-depth. A future RLS change requires an ADR, fail-closed connection-context tests and evidence that owner/superuser/bypass behavior cannot defeat the intended policy. Application authorization and database constraints remain required even if RLS is later added.

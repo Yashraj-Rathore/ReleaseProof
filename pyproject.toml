@@ -1,0 +1,65 @@
+[project]
+name = "releaseproof"
+version = "0.1.0"
+description = "Execution-grounded advisory evidence for software changes"
+readme = "README.md"
+requires-python = "==3.13.*"
+dependencies = [
+  "boto3==1.43.81",
+  "celery[redis]==5.6.3",
+  "django==6.1",
+  "djangorestframework==3.18.0",
+  "psycopg[binary]==3.3.4",
+]
+
+[dependency-groups]
+dev = [
+  "django-stubs==6.1.0",
+  "mypy==2.3.0",
+  "pre-commit==4.6.2",
+  "pytest==9.1.1",
+  "pytest-django==4.14.0",
+  "ruff==0.16.4",
+]
+
+[tool.uv]
+package = false
+required-version = "==0.12.6"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "apps.web.releaseproof.settings.test"
+addopts = "--strict-config --strict-markers -ra -p no:cacheprovider"
+markers = [
+  "integration: requires local infrastructure",
+]
+testpaths = ["tests"]
+
+[tool.ruff]
+extend-exclude = [".bootstrap-uv", ".uv-cache", ".uv-python"]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "DTZ", "PIE", "PT", "RET", "RUF", "S", "SIM", "T20"]
+ignore = ["S101"]
+
+[tool.ruff.lint.per-file-ignores]
+"eng/*.py" = ["T201"]
+"tests/**/*.py" = ["S101"]
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.13"
+plugins = ["mypy_django_plugin.main"]
+strict = true
+files = ["adapters", "apps", "eng", "packages", "workers"]
+exclude = ["tests/fixtures/"]
+
+[tool.django-stubs]
+django_settings_module = "apps.web.releaseproof.settings.test"
+
+[[tool.mypy.overrides]]
+module = ["boto3", "botocore.*", "celery"]
+ignore_missing_imports = true
