@@ -50,7 +50,8 @@
 - Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
   opaque author familiarity input without exposing identity as a predictor.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
-  tenant and immutability controls cannot be inferred only from SQLite tests.
+  tenant and immutability controls cannot be inferred only from SQLite tests; the step uses an
+  explicit public test-only webhook signing value while `.env.example` remains secret-free.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,

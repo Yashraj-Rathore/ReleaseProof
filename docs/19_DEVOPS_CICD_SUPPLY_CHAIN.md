@@ -9,7 +9,9 @@ Formatting/lint, static typing, unit tests, Django checks/migration drift, Postg
 The implemented workflow runs the deterministic suite first on the fast SQLite test backend, then
 starts digest-pinned Compose services and reruns it against authoritative PostgreSQL before the live
 SeaweedFS contract. This PostgreSQL pass is required for tenant composite-key and append-only-trigger
-evidence; SQLite triggers remain a fast mirror, not a substitute.
+evidence; SQLite triggers remain a fast mirror, not a substitute. That step supplies an explicit
+public test-only webhook signing value because `.env.example` correctly leaves the production
+secret blank.
 
 ## Planned images
 web, worker, migration job, optional model-service, separate runner. Non-root/multi-stage/minimal where feasible; releases use immutable digests.

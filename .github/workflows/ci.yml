@@ -50,6 +50,8 @@ jobs:
         run: docker compose up -d --wait
 
       - name: Validate authoritative PostgreSQL contracts
+        env:
+          GITHUB_WEBHOOK_SECRET: releaseproof-ci-test-webhook-secret
         run: >-
           uv run --env-file .env.example pytest -m "not integration"
           --ds=apps.web.releaseproof.settings.base

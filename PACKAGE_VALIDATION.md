@@ -12,7 +12,7 @@ Generated for the ReleaseProof implementation package on 2026-08-28.
 - Canonical Django apps: **10**, with no standalone policy app
 - Master-spec synchronization: **PASS**
 - `CODEX_MASTER_IMPLEMENTATION_SPEC.md` SHA-256:
-  `90cc545deafa745f9d11bb3398509750a7e74b2600236119030fce919fc97fae`
+  `1f152dddb63b316bf8db49c5453ff2e16ad6bdd4e7993526a92ff9c438747bc2`
 
 ## M1 implementation evidence
 

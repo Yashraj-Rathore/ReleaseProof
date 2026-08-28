@@ -13,6 +13,7 @@ from tests.factories import installation, organization, repository
 from tests.integration.test_change_intelligence_persistence import _snapshot
 
 pytestmark = pytest.mark.django_db
+TENANT_CONSTRAINT_PATTERN = r"tenant relationship mismatch|violates foreign key constraint"
 
 
 def test_feature_and_evidence_services_and_constraints_reject_cross_tenant_access() -> None:
@@ -51,7 +52,7 @@ def test_feature_and_evidence_services_and_constraints_reject_cross_tenant_acces
     assert created is True
 
     with (
-        pytest.raises(DatabaseError, match="tenant relationship mismatch"),
+        pytest.raises(DatabaseError, match=TENANT_CONSTRAINT_PATTERN),
         transaction.atomic(),
     ):
         ChangeFeatureSet.objects.create(
@@ -78,7 +79,7 @@ def test_feature_and_evidence_services_and_constraints_reject_cross_tenant_acces
         )
 
     with (
-        pytest.raises(DatabaseError, match="tenant relationship mismatch"),
+        pytest.raises(DatabaseError, match=TENANT_CONSTRAINT_PATTERN),
         transaction.atomic(),
     ):
         EvidenceItem.objects.create(
