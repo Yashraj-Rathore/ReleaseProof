@@ -42,6 +42,8 @@ jobs:
       - name: Validate Compose configuration
         run: |
           uv run --env-file .env.example python -m eng.configure_local
+          # CI uses public example credentials; allow the image's non-root UID to read this file.
+          chmod 0644 deploy/seaweedfs/s3.local.json
           docker compose config --quiet
 
       - name: Start pinned local infrastructure

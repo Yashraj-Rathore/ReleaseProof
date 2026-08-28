@@ -570,6 +570,8 @@ before M3 deterministic features and blast-radius evidence pass.
 
 The generated inventory now normalizes UTF-8 line endings before hashing, allowing the same
 committed manifest to be checked from Windows and Linux GitHub-hosted runners.
+Local S3 credential files remain owner-only; CI relaxes permissions only on its ephemeral file
+generated from public `.env.example` values so the pinned non-root SeaweedFS image can read it.
 
 The local Docker host was Engine 24.0.6 / Compose 2.23.0 rather than the documented
 29.7.2 / 5.4.0 baseline. The digest-pinned services passed on this older host, but that does not
@@ -645,6 +647,8 @@ and its remote M2 result is tracked in GitHub Actions.
 - Made SeaweedFS readiness wait for a registered writable volume before authenticated S3 bootstrap.
 - Made the generated file inventory normalize UTF-8 line endings before hashing so Windows and
   Linux checkouts validate the same committed source bytes.
+- Kept generated local S3 credentials owner-only while making only CI's ephemeral, public-example
+  credential file readable by the pinned SeaweedFS container's non-root user.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,

@@ -41,6 +41,8 @@
 - Made SeaweedFS readiness wait for a registered writable volume before authenticated S3 bootstrap.
 - Made the generated file inventory normalize UTF-8 line endings before hashing so Windows and
   Linux checkouts validate the same committed source bytes.
+- Kept generated local S3 credentials owner-only while making only CI's ephemeral, public-example
+  credential file readable by the pinned SeaweedFS container's non-root user.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,

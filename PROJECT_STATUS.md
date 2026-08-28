@@ -46,6 +46,8 @@ before M3 deterministic features and blast-radius evidence pass.
 
 The generated inventory now normalizes UTF-8 line endings before hashing, allowing the same
 committed manifest to be checked from Windows and Linux GitHub-hosted runners.
+Local S3 credential files remain owner-only; CI relaxes permissions only on its ephemeral file
+generated from public `.env.example` values so the pinned non-root SeaweedFS image can read it.
 
 The local Docker host was Engine 24.0.6 / Compose 2.23.0 rather than the documented
 29.7.2 / 5.4.0 baseline. The digest-pinned services passed on this older host, but that does not

@@ -53,6 +53,9 @@ def test_local_seaweedfs_config_is_rendered_from_environment_template() -> None:
     assert environment["S3_ENDPOINT_URL"] == "http://localhost:8333"
     assert "deploy/seaweedfs/s3.local.json" in (ROOT / ".gitignore").read_text(encoding="utf-8")
     assert "deploy/seaweedfs/s3.local.json" in (ROOT / ".dockerignore").read_text(encoding="utf-8")
+    assert "SEAWEEDFS_CONFIG.chmod(0o600)" in (ROOT / "eng" / "configure_local.py").read_text(
+        encoding="utf-8"
+    )
 
 
 def test_ci_external_actions_are_pinned_to_full_commit_shas() -> None:
@@ -61,6 +64,13 @@ def test_ci_external_actions_are_pinned_to_full_commit_shas() -> None:
 
     assert action_references
     assert all(re.search(r"@[0-9a-f]{40}$", reference) for reference in action_references)
+    configure = "uv run --env-file .env.example python -m eng.configure_local"
+    public_ci_mode = "chmod 0644 deploy/seaweedfs/s3.local.json"
+    assert (
+        workflow.index(configure)
+        < workflow.index(public_ci_mode)
+        < workflow.index("docker compose config --quiet")
+    )
 
 
 def test_file_inventory_normalizes_text_line_endings() -> None:
