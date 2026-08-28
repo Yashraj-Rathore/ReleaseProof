@@ -6,6 +6,11 @@ Fresh clone must reach deterministic demo via documented commands and Docker Com
 ## CI
 Formatting/lint, static typing, unit tests, Django checks/migration drift, Postgres/pgvector integration, secret/dependency scan, template/static checks, contract/evaluation smoke, image build when present, master-spec sync. Expensive training/GPU/sandbox load runs scheduled/manual.
 
+The implemented workflow runs the deterministic suite first on the fast SQLite test backend, then
+starts digest-pinned Compose services and reruns it against authoritative PostgreSQL before the live
+SeaweedFS contract. This PostgreSQL pass is required for tenant composite-key and append-only-trigger
+evidence; SQLite triggers remain a fast mirror, not a substitute.
+
 ## Planned images
 web, worker, migration job, optional model-service, separate runner. Non-root/multi-stage/minimal where feasible; releases use immutable digests.
 

@@ -49,3 +49,10 @@ by LRU/expiry and accepts only an injected minter using the persisted credential
 token minter is selected in M2. The fake advisory publisher proves one neutral, versioned report and
 stale-head rejection without posting to GitHub; live check/status posting remains a later explicit
 adapter implementation, not an implied validation result.
+
+M3 extends provider snapshot schema `github-pr-snapshot-v2` with optional bounded commit count and
+an optional opaque author key. Providers must not send a display name/email as that key. The raw key
+never enters feature/evidence payloads; only an aggregate familiarity value can be produced when
+strictly pre-change matching history exists. The deterministic source-tree provider accepts an exact
+repository identity/base SHA and returns bounded inert text. No live contents/tree adapter is
+selected yet, so normal workers report graph evidence as unavailable rather than cloning or guessing.

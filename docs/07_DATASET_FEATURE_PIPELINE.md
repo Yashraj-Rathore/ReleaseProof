@@ -50,6 +50,14 @@ Automated checks:
 ## Train/serve consistency
 Raw immutable snapshot -> deterministic feature extractor -> normalized feature table. Training and inference import the same feature definitions/version.
 
+M3 implements `change-features-v1` as the shared prediction-time definition source. Each persisted
+row records extractor/schema versions, per-feature provenance, missingness and a content hash.
+Repository history is filtered strictly before the snapshot prediction timestamp; future rows are
+excluded in the pure extractor and cannot enter the tenant-scoped persistence query. Author keys,
+check outcomes and later labels are not predictors: only pre-change aggregate familiarity and
+explicit historical check-failure proxy counts are materialized. M4 still owns dataset labels,
+split assignment, materialization and evaluated baseline artifacts.
+
 ## Data quality report
 Missingness, class balance, duplicates, split counts, feature distributions, label ambiguity, drift vs previous compatible dataset, leakage checks.
 

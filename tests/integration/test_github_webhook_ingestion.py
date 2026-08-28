@@ -30,6 +30,8 @@ def _provider_snapshot(*, repository_id: int = 3001, head_sha: str = "b" * 40) -
     return ProviderSnapshot(
         repository="owner-2001/releaseproof",
         repository_id=repository_id,
+        author_key="fixture-author",
+        commit_count=2,
         number=7,
         title="Bounded fixture change",
         body="Synthetic fixture body.",
@@ -116,6 +118,9 @@ def test_signed_pull_request_webhook_atomically_persists_snapshot_job_outbox_and
     outbox = OutboxEvent.objects.get()
     assert snapshot.organization == tenant
     assert snapshot.changed_files[0]["patch"].endswith("+new")
+    assert snapshot.author_key == "fixture-author"
+    assert snapshot.commit_count == 2
+    assert snapshot.schema_version == "github-pr-snapshot-v2"
     assert snapshot.checks == [
         {"name": "fixture-tests", "status": "completed", "conclusion": "success"}
     ]

@@ -84,5 +84,19 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 - Installation records persist an approved credential reference only. Installation access tokens
   have a redacted, bounded process-memory cache contract and no model/cache/task serialization.
 
+### M3 implemented change evidence
+
+- `PullRequestSnapshot` schema `github-pr-snapshot-v2` may retain a bounded opaque provider author
+  key and commit count. The author key is used only to derive aggregate repository familiarity; it
+  is never emitted as a feature or evidence value.
+- `ChangeFeatureSet` is append-only and uniquely identifies snapshot + feature-schema + extractor
+  version. It persists normalized diff, feature values/missingness/provenance, inline bounded graph,
+  blast-radius and pre-change history artifacts plus their stable SHA-256 hashes.
+- `EvidenceItem` persists ordered, append-only deterministic risk factors with rule/schema/producer
+  versions and bounded source references. M3 records no score, threshold, band or recommendation.
+- Organization/snapshot/feature-set relationships have composite database foreign keys. A separate
+  `(feature_set_id, snapshot_id)` constraint prevents evidence from citing a different same-tenant
+  snapshot. SQLite test triggers mirror the PostgreSQL constraints and append-only triggers.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.

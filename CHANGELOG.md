@@ -28,6 +28,10 @@
   test backend, plus safe DRF error envelopes and scoped admin/management boundaries.
 - Stale-safe advisory report contract and deterministic GitHub/task publisher fakes that make no
   remote or paid-provider calls.
+- M3 versioned diff normalization, exact prediction-time feature schema, bounded static Python
+  import graph, deterministic blast radius, strictly pre-change history and cited risk factors.
+- Append-only tenant-bound feature/evidence persistence, durable-job integration and a richer MIT
+  synthetic golden fixture with explicit dynamic/unsupported-language behavior.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -43,10 +47,16 @@
   Linux checkouts validate the same committed source bytes.
 - Kept generated local S3 credentials owner-only while making only CI's ephemeral, public-example
   credential file readable by the pinned SeaweedFS container's non-root user.
+- Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
+  opaque author familiarity input without exposing identity as a predictor.
+- Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
+  tenant and immutability controls cannot be inferred only from SQLite tests.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
   customer outcome, production-readiness, or sandbox-security claim exists yet.
 - M2 evidence is recorded in `PROJECT_STATUS.md`: 44 deterministic tests passed on both SQLite and
-  PostgreSQL. Live GitHub token minting/API/check posting and remote CI remain unvalidated and are
-  not claimed.
+  PostgreSQL. Live GitHub token minting/API/check posting remains unvalidated and is not claimed.
+- M3 evidence is recorded in `PROJECT_STATUS.md`: 55 local deterministic tests cover the versioned
+  change-intelligence contracts and CI provides the authoritative PostgreSQL/S3 gate. No composite
+  baseline, learned-model result, customer outcome, or sandbox claim is made.

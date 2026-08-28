@@ -191,6 +191,28 @@ live GitHub REST installation-token minter and live check publisher are intentio
 pull-request webhooks return a safe 503 until a live provider is explicitly implemented and
 selected. No live repository is contacted and no check is posted by the M2 validation suite.
 
+## M3 deterministic change intelligence
+
+M3 implements `RP-0201..RP-0206` in the framework-light `packages/change_intel` package and
+tenant-scoped Django persistence. It normalizes bounded changed-file facts, materializes exact
+prediction-time feature schema `change-features-v1`, parses inert Python source with `ast`, computes
+bounded reverse-import reachability, derives only history strictly older than the snapshot
+prediction time, and persists human-readable deterministic factors.
+
+The fixture source-tree provider is deterministic and network-free. The default worker has no live
+repository-tree provider: it persists partial evidence with null graph features and explicit
+missingness instead of guessing. Unsupported languages, parse failures, dynamic imports, truncated
+coverage, absent history and absent opaque author coverage are visible. No M3 artifact contains a
+composite score, threshold, risk band or SHIP/REVIEW/HOLD recommendation; RP-0306 owns those.
+
+Run the focused evidence with:
+
+```text
+uv run pytest tests/unit/test_change_intel_pipeline.py
+uv run pytest tests/integration/test_change_intelligence_persistence.py
+uv run pytest tests/security/test_change_intelligence_tenancy.py
+```
+
 
 ---
 
@@ -484,7 +506,7 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 - [ ] Tenant/RBAC/CSRF/IDOR protection.
 - [ ] Signed idempotent GitHub ingestion.
 - [ ] Immutable PR snapshots.
-- [ ] Reproducible change features/blast radius.
+- [x] Reproducible change features/blast radius.
 - [ ] Deterministic risk baseline precedes learned models.
 
 ## ML/RAG
@@ -524,17 +546,41 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M2 tenancy and GitHub ingestion complete on 2026-08-28.**
+**Current state: M3 deterministic change intelligence complete on 2026-08-28.**
 
-The repository now has the M1 foundation plus tenant-scoped identity, signed durable webhook
-ingestion, immutable PR snapshots and deterministic advisory/task adapters. No change-intelligence
-features, risk engine, benchmark, model metric, customer result, live GitHub adapter validation,
-sandbox security claim, or production-readiness claim exists yet.
+The repository now has the M1 foundation and M2 tenant-scoped ingestion plus bounded, versioned
+diff normalization, static Python dependency/blast-radius analysis, strictly pre-change history,
+deterministic feature/risk-factor evidence and append-only tenant-bound persistence. No composite
+risk score, evaluated heuristic baseline, learned model, customer result, live GitHub/source-tree
+adapter validation, sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/03_CHANGE_INTELLIGENCE.md` for `RP-0201..RP-0206`. Do not begin dataset/ML work
-before M3 deterministic features and blast-radius evidence pass.
+Run `codex-prompts/04_DATASET_BASELINE.md` for `RP-0301..RP-0306`. Preserve immutable provenance,
+time/repository-aware splits and the distinction between proxy labels and production incidents.
+
+## M3 evidence
+
+- Diff, feature, graph, history and risk-factor contracts are versioned and checksummed; inputs,
+  file sizes, graph depth/edges and output counts are bounded with explicit truncation or missing
+  reasons.
+- The static analyzer uses Python AST without importing or executing repository code. Dynamic
+  imports, unsupported languages, parse errors and unavailable/partial source trees remain visible
+  findings rather than silently complete evidence.
+- Historical features enforce `observed_at < prediction_time`; absent history and incomplete graph
+  facts remain null with reasons rather than becoming misleading zeroes. Author familiarity is an
+  opaque aggregate, not a display identity.
+- Append-only `ChangeFeatureSet` and `EvidenceItem` rows are organization-, snapshot- and
+  feature-bound, with application validation plus PostgreSQL and SQLite tenant/immutability
+  controls.
+- Golden-fixture, unit, persistence, duplicate-delivery and cross-tenant tests passed in the local
+  deterministic suite: **55 tests passed**, with the separate live S3 contract deselected.
+- Ruff and strict mypy passed for 123 source files. Django checks and migration-drift checks passed.
+- The local Docker Desktop daemon was unavailable for a fresh authoritative-database run. CI now
+  starts the pinned services and runs the complete deterministic suite against PostgreSQL before
+  the S3 contract; the GitHub Actions result is the remote database evidence for this revision.
+- No model was downloaded or trained, no public/customer data was mined, no hosted provider was
+  called, and no untrusted fixture source was executed.
 
 ## M2 evidence
 
@@ -583,7 +629,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M0 assessment | Complete — 2026-08-27 assessment plus contradiction/ambiguity correction |
 | M1 foundation | Complete — RP-0001..RP-0005 |
 | M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
-| M3 change intelligence | Not started |
+| M3 change intelligence | Complete - RP-0201..RP-0206 |
 | M4 dataset/baseline | Not started |
 | M5 classical ML | Not started |
 | M6 RAG | Not started |
@@ -634,6 +680,10 @@ and its remote M2 result is tracked in GitHub Actions.
   test backend, plus safe DRF error envelopes and scoped admin/management boundaries.
 - Stale-safe advisory report contract and deterministic GitHub/task publisher fakes that make no
   remote or paid-provider calls.
+- M3 versioned diff normalization, exact prediction-time feature schema, bounded static Python
+  import graph, deterministic blast radius, strictly pre-change history and cited risk factors.
+- Append-only tenant-bound feature/evidence persistence, durable-job integration and a richer MIT
+  synthetic golden fixture with explicit dynamic/unsupported-language behavior.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -649,13 +699,19 @@ and its remote M2 result is tracked in GitHub Actions.
   Linux checkouts validate the same committed source bytes.
 - Kept generated local S3 credentials owner-only while making only CI's ephemeral, public-example
   credential file readable by the pinned SeaweedFS container's non-root user.
+- Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
+  opaque author familiarity input without exposing identity as a predictor.
+- Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
+  tenant and immutability controls cannot be inferred only from SQLite tests.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
   customer outcome, production-readiness, or sandbox-security claim exists yet.
 - M2 evidence is recorded in `PROJECT_STATUS.md`: 44 deterministic tests passed on both SQLite and
-  PostgreSQL. Live GitHub token minting/API/check posting and remote CI remain unvalidated and are
-  not claimed.
+  PostgreSQL. Live GitHub token minting/API/check posting remains unvalidated and is not claimed.
+- M3 evidence is recorded in `PROJECT_STATUS.md`: 55 local deterministic tests cover the versioned
+  change-intelligence contracts and CI provides the authoritative PostgreSQL/S3 gate. No composite
+  baseline, learned-model result, customer outcome, or sandbox claim is made.
 
 
 ---
@@ -1008,6 +1064,20 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 - Installation records persist an approved credential reference only. Installation access tokens
   have a redacted, bounded process-memory cache contract and no model/cache/task serialization.
 
+### M3 implemented change evidence
+
+- `PullRequestSnapshot` schema `github-pr-snapshot-v2` may retain a bounded opaque provider author
+  key and commit count. The author key is used only to derive aggregate repository familiarity; it
+  is never emitted as a feature or evidence value.
+- `ChangeFeatureSet` is append-only and uniquely identifies snapshot + feature-schema + extractor
+  version. It persists normalized diff, feature values/missingness/provenance, inline bounded graph,
+  blast-radius and pre-change history artifacts plus their stable SHA-256 hashes.
+- `EvidenceItem` persists ordered, append-only deterministic risk factors with rule/schema/producer
+  versions and bounded source references. M3 records no score, threshold, band or recommendation.
+- Organization/snapshot/feature-set relationships have composite database foreign keys. A separate
+  `(feature_set_id, snapshot_id)` constraint prevents evidence from citing a different same-tenant
+  snapshot. SQLite test triggers mirror the PostgreSQL constraints and append-only triggers.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
 
@@ -1060,6 +1130,17 @@ unavailable snapshot provider return stable safe errors without provider payload
 ## Analysis contracts
 `AnalysisRequestV1`: snapshot, requested components, policy snapshot/version, reason.
 `AnalysisResultV1`: run/snapshot/base/head, component outcomes, recommendation, evidence IDs, producer/schema versions.
+
+M3 persists, but does not yet expose as a public scoring API, the following deterministic contracts:
+- normalized diff `change-diff-v1`;
+- feature schema `change-features-v1` + extractor `releaseproof-change-intel-v1`;
+- Python import graph `python-import-graph-v1`;
+- pre-change statistics `repository-history-v1`;
+- risk factors `deterministic-risk-factor-v1`.
+
+Missing inputs are nullable with explicit reasons. Exact-schema mismatch is rejected. Risk factors
+contain values, reasons and source references only; score/threshold/recommendation fields are not
+part of the M3 contract.
 
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
@@ -1139,6 +1220,13 @@ token minter is selected in M2. The fake advisory publisher proves one neutral, 
 stale-head rejection without posting to GitHub; live check/status posting remains a later explicit
 adapter implementation, not an implied validation result.
 
+M3 extends provider snapshot schema `github-pr-snapshot-v2` with optional bounded commit count and
+an optional opaque author key. Providers must not send a display name/email as that key. The raw key
+never enters feature/evidence payloads; only an aggregate familiarity value can be produced when
+strictly pre-change matching history exists. The deterministic source-tree provider accepts an exact
+repository identity/base SHA and returns bounded inert text. No live contents/tree adapter is
+selected yet, so normal workers report graph evidence as unavailable rather than cloning or guessing.
+
 
 ---
 
@@ -1186,6 +1274,29 @@ Every deterministic flag includes rule ID, value, reason, bounded source referen
 
 ## Reproducibility
 Same snapshot + extractor + policy => same feature/graph hash. Golden fixture tests enforce it.
+
+## Implemented v1 contracts
+
+- Diff `change-diff-v1`: at most 1,000 unique repository-relative paths, 64 KiB UTF-8 per patch and
+  1 MiB combined patch text. Paths/newlines/order are normalized; truncation and missing patches are
+  explicit. Classification covers common source/config/dependency/test/migration/docs/binary,
+  generated and vendored facts plus bounded sensitive-area tags.
+- Feature `change-features-v1`: exact names, scalar types, nullable/default semantics and per-feature
+  provenance are source controlled. Unknown history/graph/commit inputs are null with a reason, not
+  measured zero. Author identity, labels and post-outcome facts are excluded.
+- Graph `python-import-graph-v1`: parses at most 5,000 inert files, 256 KiB per file, 5 MiB total and
+  25,000 internal edges. It never imports source. External, dynamic, parse-error, oversized and
+  unsupported-language findings are explicit. This is a static import graph, not a call graph.
+- Blast radius walks reverse imports to depth 5 and at most 1,000 affected nodes, preserving one
+  deterministic evidence path per node. Partial/missing/truncated changed-path coverage makes blast
+  features null rather than undercounted.
+- History `repository-history-v1` includes at most 10,000 repository snapshots in the 90-day window
+  whose recorded observation time is strictly earlier than prediction time. It reports file/module
+  touches, line churn, check-failure proxies, aggregate opaque-author familiarity, coverage and
+  truncation. A failure proxy is not called an incident.
+- Evidence `deterministic-risk-factor-v1` renders every feature, normalized file fact, graph path and
+  missing-data state with a rule ID, reason, bounded source references and producer version. It has
+  no composite score, threshold policy, band or recommendation.
 
 
 ---
@@ -1243,6 +1354,14 @@ Automated checks:
 
 ## Train/serve consistency
 Raw immutable snapshot -> deterministic feature extractor -> normalized feature table. Training and inference import the same feature definitions/version.
+
+M3 implements `change-features-v1` as the shared prediction-time definition source. Each persisted
+row records extractor/schema versions, per-feature provenance, missingness and a content hash.
+Repository history is filtered strictly before the snapshot prediction timestamp; future rows are
+excluded in the pure extractor and cannot enter the tenant-scoped persistence query. Author keys,
+check outcomes and later labels are not predictors: only pre-change aggregate familiarity and
+explicit historical check-failure proxy counts are materialized. M4 still owns dataset labels,
+split assignment, materialization and evaluated baseline artifacts.
 
 ## Data quality report
 Missingness, class balance, duplicates, split counts, feature distributions, label ambiguity, drift vs previous compatible dataset, leakage checks.
@@ -1617,6 +1736,15 @@ SQLite and PostgreSQL runs prove cross-organization repository/installation reje
 record triggers reject raw SQL mutation. This is tenant-boundary evidence, not a claim that the
 later live GitHub adapter, full production deployment or hostile-code sandbox is validated.
 
+## M3 static-analysis boundary
+
+Repository source is accepted only as bounded inert UTF-8 text at an exact base SHA. Python source
+is parsed with `ast` and is never imported or executed; dynamic imports are findings, not tool calls.
+The default worker has no live source-tree provider and safely persists missing graph coverage.
+Feature/evidence rows are organization scoped, have composite parent constraints and are append-only
+in application and database controls. Optional opaque author keys never leave the history
+aggregation path or become identity/employee-scoring features.
+
 
 ---
 
@@ -1653,6 +1781,15 @@ Base-pass/candidate-fail planted regression, identical-change no invented regres
 Correctness first. Raw artifacts + environment. Targets never become claims without executed evidence.
 
 Coverage percentage is secondary to explicit tests of critical tenancy/security/model/sandbox branches.
+
+## M3 deterministic evidence
+
+The synthetic MIT fixture has a frozen graph/feature golden contract. Tests cover path/newline/order
+normalization, language/file-type flags, dynamic/external/unsupported import findings, reverse paths,
+impacted tests, bounded depth, future-history exclusion, unknown-vs-zero behavior and absence of any
+M3 score/recommendation. Django integration tests cover durable-job idempotency, full/partial source
+coverage and exact artifact versions. Security tests cover service-level cross-tenant denial,
+database composite constraints and append-only application/raw-SQL behavior.
 
 
 ---
@@ -1724,6 +1861,11 @@ Fresh clone must reach deterministic demo via documented commands and Docker Com
 
 ## CI
 Formatting/lint, static typing, unit tests, Django checks/migration drift, Postgres/pgvector integration, secret/dependency scan, template/static checks, contract/evaluation smoke, image build when present, master-spec sync. Expensive training/GPU/sandbox load runs scheduled/manual.
+
+The implemented workflow runs the deterministic suite first on the fast SQLite test backend, then
+starts digest-pinned Compose services and reruns it against authoritative PostgreSQL before the live
+SeaweedFS contract. This PostgreSQL pass is required for tenant composite-key and append-only-trigger
+evidence; SQLite triggers remain a fast mirror, not a substitute.
 
 ## Planned images
 web, worker, migration job, optional model-service, separate runner. Non-root/multi-stage/minimal where feasible; releases use immutable digests.

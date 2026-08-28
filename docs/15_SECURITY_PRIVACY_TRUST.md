@@ -40,3 +40,12 @@ delivery dedupe/conflict, inactive-installation denial and identifier-only task 
 SQLite and PostgreSQL runs prove cross-organization repository/installation rejection; immutable
 record triggers reject raw SQL mutation. This is tenant-boundary evidence, not a claim that the
 later live GitHub adapter, full production deployment or hostile-code sandbox is validated.
+
+## M3 static-analysis boundary
+
+Repository source is accepted only as bounded inert UTF-8 text at an exact base SHA. Python source
+is parsed with `ast` and is never imported or executed; dynamic imports are findings, not tool calls.
+The default worker has no live source-tree provider and safely persists missing graph coverage.
+Feature/evidence rows are organization scoped, have composite parent constraints and are append-only
+in application and database controls. Optional opaque author keys never leave the history
+aggregation path or become identity/employee-scoring features.

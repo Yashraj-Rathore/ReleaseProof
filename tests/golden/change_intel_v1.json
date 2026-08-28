@@ -1,0 +1,53 @@
+{
+  "blast_radius": {
+    "changed_modules": [
+      "fixture_app.pricing"
+    ],
+    "direct_modules": [
+      "fixture_app.service",
+      "tests.pricing_check"
+    ],
+    "impacted_tests": [
+      "tests.pricing_check"
+    ],
+    "max_depth": 2,
+    "transitive_modules": [
+      "fixture_app.api"
+    ]
+  },
+  "feature_values": {
+    "blast_direct_modules": 2,
+    "blast_impacted_tests": 1,
+    "blast_max_depth": 2,
+    "blast_transitive_modules": 1,
+    "files_changed": 1,
+    "historical_file_touches_90d": 1,
+    "historical_line_churn_90d": 5,
+    "historical_module_touches_90d": 2,
+    "lines_added": 4,
+    "lines_deleted": 1,
+    "ownership_familiarity_90d": 0.5,
+    "prior_failure_proxy_count_90d": 1,
+    "python_files_changed": 1
+  },
+  "graph_edges": [
+    [
+      "fixture_app.api",
+      "fixture_app.service"
+    ],
+    [
+      "fixture_app.service",
+      "fixture_app.pricing"
+    ],
+    [
+      "tests.pricing_check",
+      "fixture_app.pricing"
+    ]
+  ],
+  "schema_versions": {
+    "diff": "change-diff-v1",
+    "feature": "change-features-v1",
+    "graph": "python-import-graph-v1",
+    "history": "repository-history-v1"
+  }
+}

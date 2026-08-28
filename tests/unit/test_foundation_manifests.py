@@ -71,6 +71,16 @@ def test_ci_external_actions_are_pinned_to_full_commit_shas() -> None:
         < workflow.index(public_ci_mode)
         < workflow.index("docker compose config --quiet")
     )
+    postgres_suite = 'uv run --env-file .env.example pytest -m "not integration"'
+    postgres_settings = "--ds=apps.web.releaseproof.settings.base"
+    assert (
+        workflow.index("docker compose up -d --wait")
+        < workflow.index(postgres_suite)
+        < workflow.index(postgres_settings)
+    )
+    assert workflow.index(postgres_settings) < workflow.index(
+        "uv run --env-file .env.example python -m eng.bootstrap_object_store"
+    )
 
 
 def test_file_inventory_normalizes_text_line_endings() -> None:

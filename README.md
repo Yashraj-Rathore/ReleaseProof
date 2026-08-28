@@ -178,3 +178,25 @@ The deterministic fake GitHub snapshot/report adapters are the validated M2 loca
 live GitHub REST installation-token minter and live check publisher are intentionally unconfigured;
 pull-request webhooks return a safe 503 until a live provider is explicitly implemented and
 selected. No live repository is contacted and no check is posted by the M2 validation suite.
+
+## M3 deterministic change intelligence
+
+M3 implements `RP-0201..RP-0206` in the framework-light `packages/change_intel` package and
+tenant-scoped Django persistence. It normalizes bounded changed-file facts, materializes exact
+prediction-time feature schema `change-features-v1`, parses inert Python source with `ast`, computes
+bounded reverse-import reachability, derives only history strictly older than the snapshot
+prediction time, and persists human-readable deterministic factors.
+
+The fixture source-tree provider is deterministic and network-free. The default worker has no live
+repository-tree provider: it persists partial evidence with null graph features and explicit
+missingness instead of guessing. Unsupported languages, parse failures, dynamic imports, truncated
+coverage, absent history and absent opaque author coverage are visible. No M3 artifact contains a
+composite score, threshold, risk band or SHIP/REVIEW/HOLD recommendation; RP-0306 owns those.
+
+Run the focused evidence with:
+
+```text
+uv run pytest tests/unit/test_change_intel_pipeline.py
+uv run pytest tests/integration/test_change_intelligence_persistence.py
+uv run pytest tests/security/test_change_intelligence_tenancy.py
+```

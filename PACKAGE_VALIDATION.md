@@ -12,7 +12,7 @@ Generated for the ReleaseProof implementation package on 2026-08-28.
 - Canonical Django apps: **10**, with no standalone policy app
 - Master-spec synchronization: **PASS**
 - `CODEX_MASTER_IMPLEMENTATION_SPEC.md` SHA-256:
-  `8f233ae4e69dfd0039e2a7b3dda9dc88ecd3a36b54d7fcc2ca4c974333037026`
+  `90cc545deafa745f9d11bb3398509750a7e74b2600236119030fce919fc97fae`
 
 ## M1 implementation evidence
 
@@ -44,8 +44,9 @@ versions and a remote GitHub Actions run remain unobserved environment evidence,
 
 ## Recommended next action
 
-Run `codex-prompts/03_CHANGE_INTELLIGENCE.md` for `RP-0201..RP-0206`. M0 through M2 are complete;
-do not start dataset or ML work before M3's deterministic change-intelligence evidence passes.
+Run `codex-prompts/04_DATASET_BASELINE.md` for `RP-0301..RP-0306`. M0 through M3 are complete;
+do not begin learned-model work before the frozen, leakage-resistant dataset and evaluated
+deterministic heuristic baseline pass.
 
 ## M2 implementation evidence
 
@@ -58,3 +59,17 @@ do not start dataset or ML work before M3's deterministic change-intelligence ev
   constraints, immutable records, broker recovery, bounded retry, duplicate worker delivery and
   stale advisory behavior: **PASS** in the repository deterministic tests
 - Live GitHub API/token minting/check posting: **not yet implemented or validated**
+
+## M3 implementation evidence
+
+- Ruff format/lint: **PASS**
+- Strict mypy: **PASS**, 123 source files
+- SQLite deterministic suite: **PASS**, 55 tests; live S3 test deselected
+- Django system checks and migration drift: **PASS**
+- Golden diff/graph/feature/risk-factor artifacts, prediction-time leakage exclusion, explicit
+  missing/partial facts, duplicate analysis delivery, append-only persistence and cross-tenant
+  denial: **PASS** in repository tests
+- Authoritative PostgreSQL deterministic suite and bounded S3 contract: enforced by the GitHub
+  Actions Compose gate for this revision
+- Composite risk score/evaluated heuristic, live source-tree provider, mined dataset, model and
+  hosted-provider behavior: **not implemented or claimed in M3**

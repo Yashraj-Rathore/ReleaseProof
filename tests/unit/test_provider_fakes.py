@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from dataclasses import replace
+
 import pytest
 
 from adapters.github import FakeGitHubProvider
@@ -18,6 +20,8 @@ def _snapshot() -> PullRequestSnapshot:
         repository="releaseproof/fixture",
         number=7,
         title="Fixture change",
+        author_key="fixture-author",
+        commit_count=2,
         base_sha="a" * 40,
         head_sha="b" * 40,
         changed_files=(ChangedFile("src/fixture_app/pricing.py", 2, 1),),
@@ -29,6 +33,11 @@ def test_github_fake_returns_exact_configured_snapshot() -> None:
     provider = FakeGitHubProvider([expected])
 
     assert provider.get_pull_request(expected.repository, expected.number) == expected
+    assert expected.author_key == "fixture-author"
+    assert expected.commit_count == 2
+
+    with pytest.raises(ValueError, match="author_key"):
+        replace(expected, author_key="raw user name")
 
 
 def test_github_fake_has_explicit_not_found_and_unavailable_errors() -> None:

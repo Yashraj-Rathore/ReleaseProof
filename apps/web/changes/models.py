@@ -11,12 +11,18 @@ from django.db import models
 
 from apps.web.organizations.models import Organization
 from apps.web.repositories.models import GitHubInstallation, Repository
+from packages.change_intel import (
+    EVIDENCE_SCHEMA_VERSION,
+    FEATURE_DEFINITIONS,
+    FEATURE_SCHEMA_VERSION,
+)
 from packages.github_contracts import ChangedFile, CheckRun
 
 _DELIVERY_PATTERN = re.compile(r"^[A-Za-z0-9-]{1,100}$")
 _EVENT_PATTERN = re.compile(r"^[a-z_]{1,64}$")
 _SHA_PATTERN = re.compile(r"^[0-9a-f]{40,64}$")
 _CHECKSUM_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+_AUTHOR_KEY_PATTERN = re.compile(r"^[A-Za-z0-9:_-]{1,64}$")
 
 
 def validate_delivery_id(value: str) -> None:
@@ -37,6 +43,11 @@ def validate_sha(value: str) -> None:
 def validate_checksum(value: str) -> None:
     if not _CHECKSUM_PATTERN.fullmatch(value):
         raise ValidationError("checksum must be lowercase SHA-256 hexadecimal")
+
+
+def validate_author_key(value: str) -> None:
+    if value and not _AUTHOR_KEY_PATTERN.fullmatch(value):
+        raise ValidationError("author key must be a bounded opaque provider key")
 
 
 def validate_changed_files(value: Any) -> None:
@@ -72,6 +83,48 @@ def validate_checks(value: Any) -> None:
             )
     except (KeyError, TypeError, ValueError) as error:
         raise ValidationError("check metadata violates the normalized schema") from error
+
+
+def validate_feature_values(value: Any) -> None:
+    if not isinstance(value, dict):
+        raise ValidationError("feature values must be an object")
+    definitions = {definition.name: definition for definition in FEATURE_DEFINITIONS}
+    if set(value) != set(definitions):
+        raise ValidationError("feature values do not match the exact schema")
+    for name, feature_value in value.items():
+        definition = definitions[name]
+        if feature_value is None:
+            if not definition.nullable:
+                raise ValidationError(f"feature {name} cannot be null")
+        elif definition.value_type == "integer" and (
+            isinstance(feature_value, bool) or not isinstance(feature_value, int)
+        ):
+            raise ValidationError(f"feature {name} must be an integer")
+        elif definition.value_type == "float" and (
+            isinstance(feature_value, bool) or not isinstance(feature_value, (int, float))
+        ):
+            raise ValidationError(f"feature {name} must be a float")
+
+
+def validate_feature_metadata(value: Any) -> None:
+    if not isinstance(value, dict) or not all(
+        isinstance(key, str) and isinstance(item, str) and len(item) <= 256
+        for key, item in value.items()
+    ):
+        raise ValidationError("feature metadata must be a bounded string mapping")
+    if not set(value).issubset({definition.name for definition in FEATURE_DEFINITIONS}):
+        raise ValidationError("feature metadata contains an unknown feature")
+
+
+def validate_feature_provenance(value: Any) -> None:
+    validate_feature_metadata(value)
+    if set(value) != {definition.name for definition in FEATURE_DEFINITIONS}:
+        raise ValidationError("feature provenance must cover the exact schema")
+
+
+def validate_versioned_object(value: Any) -> None:
+    if not isinstance(value, dict) or not ({"schema_version", "graph_schema_version"} & set(value)):
+        raise ValidationError("artifact must be a versioned object")
 
 
 class ImmutableQuerySet[ImmutableModel: models.Model](models.QuerySet[ImmutableModel]):
@@ -125,7 +178,7 @@ class WebhookReceipt(models.Model):
 
 
 class PullRequestSnapshot(models.Model):
-    SCHEMA_VERSION = "github-pr-snapshot-v1"
+    SCHEMA_VERSION = "github-pr-snapshot-v2"
 
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     organization = models.ForeignKey(
@@ -150,6 +203,13 @@ class PullRequestSnapshot(models.Model):
     head_ref = models.CharField(max_length=255)
     base_sha = models.CharField(max_length=64, validators=[validate_sha])
     head_sha = models.CharField(max_length=64, validators=[validate_sha])
+    author_key = models.CharField(
+        max_length=64,
+        null=True,
+        blank=True,
+        validators=[validate_author_key],
+    )
+    commit_count = models.PositiveIntegerField(null=True, blank=True)
     changed_files = models.JSONField(default=list, blank=True, validators=[validate_changed_files])
     checks = models.JSONField(default=list, blank=True, validators=[validate_checks])
     schema_version = models.CharField(max_length=64, default=SCHEMA_VERSION, editable=False)
@@ -189,3 +249,85 @@ class PullRequestSnapshot(models.Model):
     def delete(self, *args: object, **kwargs: object) -> NoReturn:
         del args, kwargs
         raise ValidationError("pull-request snapshots are immutable")
+
+
+class ChangeFeatureSetQuerySet(ImmutableQuerySet["ChangeFeatureSet"]):
+    def for_organization(self, organization: Organization | int) -> ChangeFeatureSetQuerySet:
+        organization_id = (
+            organization.pk if isinstance(organization, Organization) else organization
+        )
+        return self.filter(organization_id=organization_id)
+
+
+class ChangeFeatureSet(models.Model):
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    organization = models.ForeignKey(
+        Organization,
+        on_delete=models.PROTECT,
+        related_name="change_feature_sets",
+    )
+    snapshot = models.ForeignKey(
+        PullRequestSnapshot,
+        on_delete=models.PROTECT,
+        related_name="feature_sets",
+    )
+    prediction_time = models.DateTimeField()
+    diff_schema_version = models.CharField(max_length=64)
+    feature_schema_version = models.CharField(max_length=64, default=FEATURE_SCHEMA_VERSION)
+    extractor_version = models.CharField(max_length=64)
+    graph_schema_version = models.CharField(max_length=64)
+    history_schema_version = models.CharField(max_length=64)
+    evidence_schema_version = models.CharField(max_length=64, default=EVIDENCE_SCHEMA_VERSION)
+    normalized_diff = models.JSONField(validators=[validate_versioned_object])
+    diff_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    feature_values = models.JSONField(validators=[validate_feature_values])
+    feature_missing = models.JSONField(
+        default=dict,
+        blank=True,
+        validators=[validate_feature_metadata],
+    )
+    feature_provenance = models.JSONField(validators=[validate_feature_provenance])
+    feature_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    graph = models.JSONField(validators=[validate_versioned_object])
+    graph_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    blast_radius = models.JSONField(validators=[validate_versioned_object])
+    historical_statistics = models.JSONField(validators=[validate_versioned_object])
+    result_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = ChangeFeatureSetQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("organization", "id"),
+                name="changes_features_org_id_unique",
+            ),
+            models.UniqueConstraint(
+                fields=("snapshot", "feature_schema_version", "extractor_version"),
+                name="changes_features_snapshot_version_unique",
+            ),
+            models.UniqueConstraint(
+                fields=("id", "snapshot"),
+                name="changes_features_id_snapshot_unique",
+            ),
+        ]
+        ordering = ("-created_at", "-id")
+
+    def clean(self) -> None:
+        super().clean()
+        if (
+            self.organization_id is not None
+            and self.snapshot_id is not None
+            and self.snapshot.organization_id != self.organization_id
+        ):
+            raise ValidationError("feature set and snapshot must share an organization")
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        if self.pk is not None:
+            raise ValidationError("change feature sets are immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args: object, **kwargs: object) -> NoReturn:
+        del args, kwargs
+        raise ValidationError("change feature sets are immutable")

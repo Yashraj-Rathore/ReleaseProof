@@ -1,16 +1,40 @@
 # Project Status
 
-**Current state: M2 tenancy and GitHub ingestion complete on 2026-08-28.**
+**Current state: M3 deterministic change intelligence complete on 2026-08-28.**
 
-The repository now has the M1 foundation plus tenant-scoped identity, signed durable webhook
-ingestion, immutable PR snapshots and deterministic advisory/task adapters. No change-intelligence
-features, risk engine, benchmark, model metric, customer result, live GitHub adapter validation,
-sandbox security claim, or production-readiness claim exists yet.
+The repository now has the M1 foundation and M2 tenant-scoped ingestion plus bounded, versioned
+diff normalization, static Python dependency/blast-radius analysis, strictly pre-change history,
+deterministic feature/risk-factor evidence and append-only tenant-bound persistence. No composite
+risk score, evaluated heuristic baseline, learned model, customer result, live GitHub/source-tree
+adapter validation, sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/03_CHANGE_INTELLIGENCE.md` for `RP-0201..RP-0206`. Do not begin dataset/ML work
-before M3 deterministic features and blast-radius evidence pass.
+Run `codex-prompts/04_DATASET_BASELINE.md` for `RP-0301..RP-0306`. Preserve immutable provenance,
+time/repository-aware splits and the distinction between proxy labels and production incidents.
+
+## M3 evidence
+
+- Diff, feature, graph, history and risk-factor contracts are versioned and checksummed; inputs,
+  file sizes, graph depth/edges and output counts are bounded with explicit truncation or missing
+  reasons.
+- The static analyzer uses Python AST without importing or executing repository code. Dynamic
+  imports, unsupported languages, parse errors and unavailable/partial source trees remain visible
+  findings rather than silently complete evidence.
+- Historical features enforce `observed_at < prediction_time`; absent history and incomplete graph
+  facts remain null with reasons rather than becoming misleading zeroes. Author familiarity is an
+  opaque aggregate, not a display identity.
+- Append-only `ChangeFeatureSet` and `EvidenceItem` rows are organization-, snapshot- and
+  feature-bound, with application validation plus PostgreSQL and SQLite tenant/immutability
+  controls.
+- Golden-fixture, unit, persistence, duplicate-delivery and cross-tenant tests passed in the local
+  deterministic suite: **55 tests passed**, with the separate live S3 contract deselected.
+- Ruff and strict mypy passed for 123 source files. Django checks and migration-drift checks passed.
+- The local Docker Desktop daemon was unavailable for a fresh authoritative-database run. CI now
+  starts the pinned services and runs the complete deterministic suite against PostgreSQL before
+  the S3 contract; the GitHub Actions result is the remote database evidence for this revision.
+- No model was downloaded or trained, no public/customer data was mined, no hosted provider was
+  called, and no untrusted fixture source was executed.
 
 ## M2 evidence
 
@@ -59,7 +83,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M0 assessment | Complete — 2026-08-27 assessment plus contradiction/ambiguity correction |
 | M1 foundation | Complete — RP-0001..RP-0005 |
 | M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
-| M3 change intelligence | Not started |
+| M3 change intelligence | Complete - RP-0201..RP-0206 |
 | M4 dataset/baseline | Not started |
 | M5 classical ML | Not started |
 | M6 RAG | Not started |

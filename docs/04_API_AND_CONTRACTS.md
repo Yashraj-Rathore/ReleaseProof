@@ -43,6 +43,17 @@ unavailable snapshot provider return stable safe errors without provider payload
 `AnalysisRequestV1`: snapshot, requested components, policy snapshot/version, reason.
 `AnalysisResultV1`: run/snapshot/base/head, component outcomes, recommendation, evidence IDs, producer/schema versions.
 
+M3 persists, but does not yet expose as a public scoring API, the following deterministic contracts:
+- normalized diff `change-diff-v1`;
+- feature schema `change-features-v1` + extractor `releaseproof-change-intel-v1`;
+- Python import graph `python-import-graph-v1`;
+- pre-change statistics `repository-history-v1`;
+- risk factors `deterministic-risk-factor-v1`.
+
+Missing inputs are nullable with explicit reasons. Exact-schema mismatch is rejected. Risk factors
+contain values, reasons and source references only; score/threshold/recommendation fields are not
+part of the M3 contract.
+
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
 `RiskModelResponseV1`: exact model artifact/checksum, raw score, calibrated probability nullable, band, explanation, latency metadata.

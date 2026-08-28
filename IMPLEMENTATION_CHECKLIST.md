@@ -11,7 +11,7 @@
 - [ ] Tenant/RBAC/CSRF/IDOR protection.
 - [ ] Signed idempotent GitHub ingestion.
 - [ ] Immutable PR snapshots.
-- [ ] Reproducible change features/blast radius.
+- [x] Reproducible change features/blast radius.
 - [ ] Deterministic risk baseline precedes learned models.
 
 ## ML/RAG

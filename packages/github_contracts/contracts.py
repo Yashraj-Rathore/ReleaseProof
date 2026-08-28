@@ -14,6 +14,7 @@ _REPOSITORY_PATTERN = re.compile(r"^[A-Za-z0-9_.-]{1,100}/[A-Za-z0-9_.-]{1,100}$
 _REF_PATTERN = re.compile(r"^[A-Za-z0-9_./-]{1,255}$")
 _SHA_PATTERN = re.compile(r"^[0-9a-f]{40,64}$")
 _CHECK_NAME_PATTERN = re.compile(r"^[^\x00-\x1f\x7f]{1,128}$")
+_AUTHOR_KEY_PATTERN = re.compile(r"^[A-Za-z0-9:_-]{1,64}$")
 MAX_CHANGED_FILES = 1_000
 MAX_PATCH_BYTES = 65_536
 MAX_TOTAL_PATCH_BYTES = 1_048_576
@@ -103,6 +104,8 @@ class PullRequestSnapshot:
     head_sha: str
     changed_files: tuple[ChangedFile, ...]
     repository_id: int | None = None
+    author_key: str | None = None
+    commit_count: int | None = None
     body: str = ""
     base_ref: str = "unknown"
     head_ref: str = "unknown"
@@ -113,6 +116,10 @@ class PullRequestSnapshot:
             raise ValueError("repository must be an owner/name pair")
         if self.repository_id is not None and self.repository_id < 1:
             raise ValueError("repository_id must be positive when present")
+        if self.author_key is not None and not _AUTHOR_KEY_PATTERN.fullmatch(self.author_key):
+            raise ValueError("author_key must be a bounded opaque provider key")
+        if self.commit_count is not None and not 1 <= self.commit_count <= 10_000:
+            raise ValueError("commit_count must be between 1 and 10000 when present")
         if self.number < 1:
             raise ValueError("pull request number must be positive")
         _validate_single_line(self.title, field="title", maximum=256)

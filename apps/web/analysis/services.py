@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from django.db import models, transaction
 from django.utils import timezone
 
+from apps.web.analysis.change_intelligence import analyze_snapshot_for_organization
 from apps.web.analysis.models import (
     AnalysisJob,
     JobState,
@@ -17,6 +18,7 @@ from apps.web.analysis.models import (
 )
 from apps.web.changes.models import PullRequestSnapshot
 from apps.web.organizations.models import Organization
+from packages.change_intel import SourceTreeProvider
 from packages.domain import TaskMessage, TaskPublisher, TaskPublisherError
 
 
@@ -132,8 +134,13 @@ def relay_outbox_for_organization(
     return RelayResult(published=published, failed=failed)
 
 
-def process_ingestion_job(*, organization_public_id: str, job_public_id: str) -> str:
-    """Idempotently acknowledge M2 durable work without beginning M3 analysis."""
+def process_ingestion_job(
+    *,
+    organization_public_id: str,
+    job_public_id: str,
+    source_tree_provider: SourceTreeProvider | None = None,
+) -> str:
+    """Idempotently persist M3 evidence for snapshot jobs and acknowledge lifecycle work."""
 
     with transaction.atomic():
         job = (
@@ -156,12 +163,50 @@ def process_ingestion_job(*, organization_public_id: str, job_public_id: str) ->
         job.attempt_count += 1
         job.save(update_fields=("state", "started_at", "attempt_count", "updated_at"))
 
+        if job.job_type == JobType.PULL_REQUEST_SNAPSHOT:
+            snapshot = job.snapshot
+            if snapshot is None:
+                job.state = JobState.FAILED
+                job.finished_at = timezone.now()
+                job.last_error_code = "snapshot_missing"
+                job.save(
+                    update_fields=(
+                        "state",
+                        "finished_at",
+                        "last_error_code",
+                        "updated_at",
+                    )
+                )
+                return "failed"
+            try:
+                feature_set, _created = analyze_snapshot_for_organization(
+                    organization=job.organization,
+                    snapshot_public_id=snapshot.public_id,
+                    source_tree_provider=source_tree_provider,
+                )
+            except ValueError:
+                job.state = JobState.FAILED
+                job.finished_at = timezone.now()
+                job.last_error_code = "change_intelligence_invalid_input"
+                job.save(
+                    update_fields=(
+                        "state",
+                        "finished_at",
+                        "last_error_code",
+                        "updated_at",
+                    )
+                )
+                return "failed"
+            outcome_code = (
+                "change_intelligence_complete"
+                if feature_set.graph.get("available") is True
+                else "change_intelligence_partial"
+            )
+        else:
+            outcome_code = "lifecycle_recorded"
+
         job.state = JobState.COMPLETED
         job.finished_at = timezone.now()
-        job.outcome_code = (
-            "snapshot_ready"
-            if job.job_type == JobType.PULL_REQUEST_SNAPSHOT
-            else "lifecycle_recorded"
-        )
+        job.outcome_code = outcome_code
         job.save(update_fields=("state", "finished_at", "outcome_code", "updated_at"))
         return "completed"

@@ -29,3 +29,12 @@ Base-pass/candidate-fail planted regression, identical-change no invented regres
 Correctness first. Raw artifacts + environment. Targets never become claims without executed evidence.
 
 Coverage percentage is secondary to explicit tests of critical tenancy/security/model/sandbox branches.
+
+## M3 deterministic evidence
+
+The synthetic MIT fixture has a frozen graph/feature golden contract. Tests cover path/newline/order
+normalization, language/file-type flags, dynamic/external/unsupported import findings, reverse paths,
+impacted tests, bounded depth, future-history exclusion, unknown-vs-zero behavior and absence of any
+M3 score/recommendation. Django integration tests cover durable-job idempotency, full/partial source
+coverage and exact artifact versions. Security tests cover service-level cross-tenant denial,
+database composite constraints and append-only application/raw-SQL behavior.
