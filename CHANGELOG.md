@@ -39,6 +39,8 @@
 - Replaced vague M13/M14 dependencies with explicit milestone prerequisites.
 - Added Boto3 1.43.81 to the Prompt 1 runtime baseline for the ADR-016 S3 adapter.
 - Made SeaweedFS readiness wait for a registered writable volume before authenticated S3 bootstrap.
+- Made the generated file inventory normalize UTF-8 line endings before hashing so Windows and
+  Linux checkouts validate the same committed source bytes.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,

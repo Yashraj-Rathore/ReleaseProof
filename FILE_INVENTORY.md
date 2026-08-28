@@ -1,7 +1,8 @@
 # File Inventory
 
 This inventory excludes itself, Git metadata, environments, caches, secrets, logs, and
-runtime data so every listed hash is stable.
+runtime data. UTF-8 text is normalized to LF so every listed hash is
+checkout-independent.
 
 | Path | Bytes | SHA-256 |
 |---|---:|---|
@@ -13,14 +14,14 @@ runtime data so every listed hash is stable.
 | `.pre-commit-config.yaml` | 1044 | `c34ecf7f9680dc30e0dde0b178dda144231197554f42c4c6637ae7b48d40f805` |
 | `.python-version` | 8 | `861b3dd8083d28f336ef70f6755bc399538ddad627b1d095820ca34cb953cf14` |
 | `AGENTS.md` | 7313 | `0abf3b78b53895e7086b9f9851f7c4ca5cc8ce4e8c6d0c125079712fe6d02f6e` |
-| `CHANGELOG.md` | 3872 | `9e783344d92ae694d25bb113d9990515fb7ea53620cf1150256921bbaad94e65` |
-| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 186603 | `8f233ae4e69dfd0039e2a7b3dda9dc88ecd3a36b54d7fcc2ca4c974333037026` |
+| `CHANGELOG.md` | 4027 | `097ab1be7c3f852430cf0be7c927881923dde6755e4c07c944a4d44646ba0f06` |
+| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 183456 | `c015bf837c1b98a3bab81830f6df0a3d0e41138582fb49495807da3f0430e693` |
 | `CODEX_PROMPT_SEQUENCE.md` | 4186 | `01f5b7913c8d80546d92ce6d00ea16d2bd251fd0f4213eee32eac5ecf235ec35` |
 | `CODEX_START_HERE.md` | 2443 | `225d7bd9451e0c8f9911dbb88bdd7c806e79e24ddf1458f12b7cfa2cec5b4e7e` |
 | `IMPLEMENTATION_CHECKLIST.md` | 1601 | `76cdb24cd6d9a84717479e1534bb3724834e2fe7595ded713d887127a9ee8704` |
 | `PACKAGE_MANIFEST.md` | 2284 | `2685dce8b01eb8e2b2a95918ef903a2f0643cfae018883c13bf5030680f01691` |
 | `PACKAGE_VALIDATION.md` | 2928 | `8c049fdcb8b7deac93a78a3f0fda0d0a17fe023bb3c3b6481cac9d52b0b23053` |
-| `PROJECT_STATUS.md` | 3948 | `5fe5392b82df2f2c5c4aa332717da8ca244903f048a7d375266bfe6e5017d0e0` |
+| `PROJECT_STATUS.md` | 4120 | `1c08cd54a5b6554ff1e2e5ef39d23d3addce90ab2a3ac6f5d3431f8a48e138d0` |
 | `README.md` | 8630 | `4cc651b91f18ac9a5ba8bbc0dc66a0539e50e4ed60b4f24718a1a512b27d6f32` |
 | `adapters/__init__.py` | 56 | `05ffe9e489705476ef1d3ebbd55a4ddbccbe746f896cc416a239650d300d67c9` |
 | `adapters/github/__init__.py` | 179 | `f60d4216e94f58855a8d643396d10faf335f62328e55388670da09daa18ba7e8` |
@@ -185,7 +186,7 @@ runtime data so every listed hash is stable.
 | `eng/smoke_fakes.py` | 2279 | `1c2d92b46f06e97ed4f618f508c5e5f8a87ec95170a0984f9afcaeb53616cabf` |
 | `eng/smoke_object_store.py` | 1137 | `0175e58cdab9162f9d06c2cdae2ed57b791f13a8bcca1fa9bef0d734ddee53ea` |
 | `eng/sync_master_spec.py` | 2362 | `39961f3f4afdf9f2097b0b0686b50970d4806d944469eb8a3d4ff6e29e42058b` |
-| `eng/update_file_inventory.py` | 2418 | `4b7198640449ebe4675621b9e9adf5c087d590d31b3e9b1016618b23eb89ddbd` |
+| `eng/update_file_inventory.py` | 2771 | `4264055859d8f9593f6423478946a898c1d0445f31265dbbed4c4ae4f6ff97e3` |
 | `eng/validate.py` | 1150 | `aa8d3e61164064fd7cfbb18644fcf174beea4a8d6eff16ed49e1d0caee8b16a9` |
 | `manage.py` | 381 | `e069c72fcc8827847f159432a14a7344f955495f1ba5a5c9546e648fd2af4928` |
 | `notebooks/README.md` | 249 | `e225706f7b94e22e11b98186b219585d23c91d35e62d147f6e0adf8cd749181c` |
@@ -225,7 +226,7 @@ runtime data so every listed hash is stable.
 | `tests/integration/test_s3_contract.py` | 1644 | `5d34ba2c9d6bbd96e22f93a788d1223aebdb0f617aee14a0eb5eb0ca74ac42dd` |
 | `tests/security/test_tenant_constraints.py` | 1737 | `4a2dbf1d1b46acfb7bf8a38cc7793f348646a757b1cb23d929a2bf615f54430a` |
 | `tests/unit/test_architecture_boundaries.py` | 1849 | `c888736ba43c5fb67316a85a543afb19d4bd45c98cb2d2aecd07012eef6a17ed` |
-| `tests/unit/test_foundation_manifests.py` | 2923 | `4891a391035b0686838b25fddf4438912aa608c123816dac82f06fb8d74fa059` |
+| `tests/unit/test_foundation_manifests.py` | 3252 | `2c6d40a2a8a8a1ed238ed7f7b45c893ac82c5a4317d65899cad0ba78d26eaad8` |
 | `tests/unit/test_github_auth_contract.py` | 2167 | `dd621394f5b7e43b7824189f3437a936b3a1aa909ba8a7fa6d99b464e2ca9452` |
 | `tests/unit/test_object_storage_fake.py` | 1960 | `e0550763ac565ed687ce9af86de60c5776deed3bad8d7c0db3806d12fc2b4cce` |
 | `tests/unit/test_provider_fakes.py` | 2645 | `eb8f09d156584645cba5fd2a01975c8b7c022838b2eb5b0ca6738062d50c1256` |

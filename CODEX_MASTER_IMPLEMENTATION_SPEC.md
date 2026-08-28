@@ -568,10 +568,13 @@ before M3 deterministic features and blast-radius evidence pass.
   PostgreSQL; the automated failure-path test returns 503 without database details.
 - The exact HTMX 2.0.10 checksum test passed, and the network-free fake smoke was repeatable.
 
+The generated inventory now normalizes UTF-8 line endings before hashing, allowing the same
+committed manifest to be checked from Windows and Linux GitHub-hosted runners.
+
 The local Docker host was Engine 24.0.6 / Compose 2.23.0 rather than the documented
 29.7.2 / 5.4.0 baseline. The digest-pinned services passed on this older host, but that does not
-substitute for a later run on the documented host baseline. The GitHub-hosted workflow is defined;
-a remote M2 workflow result has not yet been observed.
+substitute for a later run on the documented host baseline. The GitHub-hosted workflow is defined,
+and its remote M2 result is tracked in GitHub Actions.
 
 | Milestone | Status |
 |---|---|
@@ -640,6 +643,8 @@ a remote M2 workflow result has not yet been observed.
 - Replaced vague M13/M14 dependencies with explicit milestone prerequisites.
 - Added Boto3 1.43.81 to the Prompt 1 runtime baseline for the ADR-016 S3 adapter.
 - Made SeaweedFS readiness wait for a registered writable volume before authenticated S3 bootstrap.
+- Made the generated file inventory normalize UTF-8 line endings before hashing so Windows and
+  Linux checkouts validate the same committed source bytes.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,

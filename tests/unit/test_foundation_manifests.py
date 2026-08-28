@@ -5,6 +5,7 @@ import re
 from pathlib import Path
 
 from eng.configure_local import render_seaweedfs_config
+from eng.update_file_inventory import _canonical_bytes
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPECTED_IMAGES = {
@@ -60,6 +61,12 @@ def test_ci_external_actions_are_pinned_to_full_commit_shas() -> None:
 
     assert action_references
     assert all(re.search(r"@[0-9a-f]{40}$", reference) for reference in action_references)
+
+
+def test_file_inventory_normalizes_text_line_endings() -> None:
+    assert _canonical_bytes(b"first\nsecond\n") == b"first\nsecond\n"
+    assert _canonical_bytes(b"first\r\nsecond\r\n") == b"first\nsecond\n"
+    assert _canonical_bytes(b"\xff\r\n\x00") == b"\xff\r\n\x00"
 
 
 def test_fixture_repository_records_synthetic_provenance_and_license() -> None:
