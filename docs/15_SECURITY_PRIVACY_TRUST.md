@@ -30,3 +30,13 @@ Evidence types are explicit. Confidence is not certainty. Disagreement is shown.
 
 ## Required tests
 IDOR, CSRF/session, webhook tamper, duplicate delivery, prompt injection, cross-tenant retrieval, model mismatch, runner sentinel secret, blocked exfiltration, archive traversal, log redaction.
+
+## M2 security evidence
+
+M2 tests session-only login/logout and CSRF rejection, fail-closed throttle-store outages, role
+denial, cross-organization direct-ID denial, non-superuser admin scope and explicit management/
+Celery tenant context. Signed fixture webhooks prove tamper rejection, size/event allowlists,
+delivery dedupe/conflict, inactive-installation denial and identifier-only task payloads. Both
+SQLite and PostgreSQL runs prove cross-organization repository/installation rejection; immutable
+record triggers reject raw SQL mutation. This is tenant-boundary evidence, not a claim that the
+later live GitHub adapter, full production deployment or hostile-code sandbox is validated.

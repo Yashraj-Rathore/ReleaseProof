@@ -152,3 +152,29 @@ destructive local reset and permanently deletes local PostgreSQL, Redis, and Sea
 The web process starts with `uv run python manage.py runserver`. Its liveness endpoint is
 `GET /health/live`; `GET /health/ready` fails closed when authoritative PostgreSQL is unavailable.
 Redis transport and optional providers do not replace PostgreSQL product state.
+
+## M2 tenancy and GitHub ingestion
+
+M2 implements `RP-0101..RP-0106`: organizations/memberships and role checks, same-origin session
+authentication with CSRF and fail-closed login throttling, tenant-bound GitHub installation and
+repository records, bounded HMAC-SHA256 webhook ingestion, immutable pull-request snapshots,
+PostgreSQL-authoritative jobs/outbox recovery, and stale-safe advisory-report adapters.
+
+Apply the forward migrations and run the deterministic path with:
+
+```text
+uv run python manage.py migrate
+uv run pytest -m "not integration"
+uv run python manage.py relay_outbox --organization <organization-public-uuid> --limit 100
+```
+
+Browser routes use Django sessions only. `POST /webhooks/github` is CSRF-exempt because it requires
+the bounded raw request plus a valid `X-Hub-Signature-256`; browser mutations remain CSRF
+protected. Direct repository access is resolved inside the active organization stored in the
+authenticated session. Composite database constraints independently reject organization/parent
+mismatches, and webhook receipts, pull-request snapshots and audit logs are database-append-only.
+
+The deterministic fake GitHub snapshot/report adapters are the validated M2 local/demo path. A
+live GitHub REST installation-token minter and live check publisher are intentionally unconfigured;
+pull-request webhooks return a safe 503 until a live provider is explicitly implemented and
+selected. No live repository is contacted and no check is posted by the M2 validation suite.

@@ -14,6 +14,20 @@
 - A boto3 S3 adapter, SeaweedFS contract test, idempotent bucket bootstrap, and licensed synthetic fixture repository.
 - Vendored HTMX 2.0.10 with a verified SHA-256 checksum.
 - Deterministic generation of the Git-ignored SeaweedFS credential config from an explicit local environment file.
+- M2 organizations, memberships/roles, tenant-scoped services, session organization context and
+  Owner/Admin repository lifecycle authorization.
+- CSRF-protected session login/logout with hashed-key throttling and fail-closed cache outage
+  behavior; no browser access-token storage.
+- Tenant-bound GitHub installations/repositories with least-privilege permission validation,
+  credential references and a redacted bounded in-memory installation-token cache contract.
+- Signed, size/schema/action-bounded GitHub webhook ingestion with immutable delivery receipts,
+  normalized checksummed PR snapshots and installation/repository lifecycle handling.
+- PostgreSQL-authoritative ingestion jobs, identifier-only transactional outbox rows, bounded relay
+  retries, recovery tooling and idempotent Celery worker behavior.
+- Database composite tenant foreign keys and append-only triggers for PostgreSQL and the SQLite
+  test backend, plus safe DRF error envelopes and scoped admin/management boundaries.
+- Stale-safe advisory report contract and deterministic GitHub/task publisher fakes that make no
+  remote or paid-provider calls.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -29,3 +43,6 @@
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
   customer outcome, production-readiness, or sandbox-security claim exists yet.
+- M2 evidence is recorded in `PROJECT_STATUS.md`: 44 deterministic tests passed on both SQLite and
+  PostgreSQL. Live GitHub token minting/API/check posting and remote CI remain unvalidated and are
+  not claimed.

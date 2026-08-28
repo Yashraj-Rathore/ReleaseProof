@@ -34,3 +34,18 @@ One concise check/status, not comment spam. Include recommendation, component av
 
 ## Demo
 Provide signed fixture webhook payloads and a deterministic fake GitHub adapter. Recruiter demo requires no live GitHub installation.
+
+## M2 implementation boundary
+
+M2 accepts `pull_request` opened/synchronize/reopened, known-installation lifecycle, and repository
+added/removed events. Every accepted event atomically creates an immutable receipt, authoritative
+bounded job and identifier-only outbox row; pull-request events additionally create or reuse the
+immutable normalized snapshot. The scoped `relay_outbox` management command and publisher port
+provide relay/recovery, while workers treat repeat task delivery as harmless.
+
+The provider-neutral snapshot call receives the verified installation ID but never a serialized
+access token. `InstallationTokenCache` is bounded process memory, redacts representations, evicts
+by LRU/expiry and accepts only an injected minter using the persisted credential reference. No live
+token minter is selected in M2. The fake advisory publisher proves one neutral, versioned report and
+stale-head rejection without posting to GitHub; live check/status posting remains a later explicit
+adapter implementation, not an implied validation result.

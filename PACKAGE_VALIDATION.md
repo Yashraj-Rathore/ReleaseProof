@@ -1,6 +1,6 @@
 # Package Validation
 
-Generated for the ReleaseProof implementation package on 2026-08-27.
+Generated for the ReleaseProof implementation package on 2026-08-28.
 
 ## Structural checks
 
@@ -12,7 +12,7 @@ Generated for the ReleaseProof implementation package on 2026-08-27.
 - Canonical Django apps: **10**, with no standalone policy app
 - Master-spec synchronization: **PASS**
 - `CODEX_MASTER_IMPLEMENTATION_SPEC.md` SHA-256:
-  `25d0cbd9b5f9c9cb6fee079e7f0988cf05bff589737338094bc5bf72359d059b`
+  `8f233ae4e69dfd0039e2a7b3dda9dc88ecd3a36b54d7fcc2ca4c974333037026`
 
 ## M1 implementation evidence
 
@@ -44,5 +44,17 @@ versions and a remote GitHub Actions run remain unobserved environment evidence,
 
 ## Recommended next action
 
-Run `codex-prompts/02_TENANCY_GITHUB_INGESTION.md` for `RP-0101..RP-0106`. M0 and M1 are complete;
-do not start M3 or ML work before M2's tenant and immutable-ingestion boundaries pass.
+Run `codex-prompts/03_CHANGE_INTELLIGENCE.md` for `RP-0201..RP-0206`. M0 through M2 are complete;
+do not start dataset or ML work before M3's deterministic change-intelligence evidence passes.
+
+## M2 implementation evidence
+
+- Ruff format/lint: **PASS**
+- Strict mypy: **PASS**, 107 source files
+- SQLite deterministic suite: **PASS**, 44 tests; live S3 test deselected
+- PostgreSQL 18.6 deterministic suite: **PASS**, 44 tests; live S3 test deselected
+- Django checks and migration drift: **PASS**
+- Signed webhook tamper/dedupe/conflict, CSRF/session/throttle, IDOR/role, composite tenant
+  constraints, immutable records, broker recovery, bounded retry, duplicate worker delivery and
+  stale advisory behavior: **PASS** in the repository deterministic tests
+- Live GitHub API/token minting/check posting: **not yet implemented or validated**

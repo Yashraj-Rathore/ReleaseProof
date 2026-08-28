@@ -23,8 +23,21 @@ Never return stack traces, secrets, raw provider payloads, or arbitrary source.
 - `GET /api/v1/evaluations/latest`
 Mutations require session + CSRF + role checks.
 
+Implemented M2 routes are `GET /api/v1/me`, `GET /api/v1/repositories/{public_id}`,
+`POST /api/v1/repositories/{public_id}/lifecycle`,
+`POST /app/organizations/{public_id}/select/`, session login/logout, and
+`POST /webhooks/github`. Repository lifecycle enable/disable requires Owner/Admin membership and
+is tenant scoped before the direct object lookup. DRF failures use the safe error envelope with a
+server-generated correlation ID.
+
 ## GitHub webhook
 `POST /webhooks/github`: bounded raw body -> signature verify -> event/action allowlist -> delivery dedupe -> server-resolved installation/org -> atomically commit durable receipt/job/outbox -> relay to Celery. A broker outage leaves committed work pending for recovery rather than returning a false accepted-without-work state.
+
+M2 bounds webhook bodies to 1 MiB, JSON depth to 20, JSON nodes to 10,000, changed files to 1,000,
+each patch to 64 KiB, combined patches to 1 MiB and check metadata to 250 entries. Accepted work
+returns 202; an identical delivery retry returns 200 without duplicate durable rows; reuse of a
+delivery ID with different signed content returns 409. Invalid signature/media/event/input and an
+unavailable snapshot provider return stable safe errors without provider payloads or source.
 
 ## Analysis contracts
 `AnalysisRequestV1`: snapshot, requested components, policy snapshot/version, reason.

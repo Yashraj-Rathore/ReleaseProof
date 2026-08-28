@@ -68,5 +68,21 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 - Embedding model/dimension changes create new index version.
 - Historical evidence never silently rewritten when model/prompt changes.
 
+### M2 implemented enforcement
+
+- Browser scope comes from an authenticated active membership stored in the server-side session;
+  verified GitHub installation IDs derive webhook scope. Payload organization IDs are ignored.
+- Scoped querysets/application services cover HTTP, Celery, admin and management-command entry
+  points. Non-superuser admin querysets are membership scoped; the outbox command requires one
+  explicit organization public UUID.
+- Database composite foreign keys enforce organization consistency for repository/installation,
+  receipt/installation, snapshot/repository, snapshot/receipt, job/snapshot and outbox/job pairs.
+  PostgreSQL constraints and SQLite test triggers both reject mismatches immediately.
+- Webhook receipts, pull-request snapshots and audit records reject update/delete in application
+  paths and through database triggers. Mutable job/outbox lifecycle state remains bounded and
+  separately versioned.
+- Installation records persist an approved credential reference only. Installation access tokens
+  have a redacted, bounded process-memory cache contract and no model/cache/task serialization.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.

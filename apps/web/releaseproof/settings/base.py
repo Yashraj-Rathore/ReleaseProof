@@ -32,6 +32,17 @@ def env_list(name: str, *, default: tuple[str, ...] = ()) -> list[str]:
     return [value.strip() for value in raw_value.split(",") if value.strip()]
 
 
+def env_int(name: str, *, default: int, minimum: int, maximum: int) -> int:
+    raw_value = os.getenv(name)
+    try:
+        value = default if raw_value is None else int(raw_value)
+    except ValueError as error:
+        raise ImproperlyConfigured(f"{name} must be an integer") from error
+    if value < minimum or value > maximum:
+        raise ImproperlyConfigured(f"{name} must be between {minimum} and {maximum}")
+    return value
+
+
 def postgres_database(url: str) -> dict[str, object]:
     parsed = urlparse(url)
     if parsed.scheme not in {"postgres", "postgresql"}:
@@ -111,6 +122,13 @@ DATABASES = {
     )
 }
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": os.getenv("REDIS_URL", "redis://:replace-local-password@localhost:6379/0"),
+    }
+}
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -135,6 +153,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "EXCEPTION_HANDLER": "apps.web.releaseproof.api.safe_exception_handler",
 }
 
 CELERY_BROKER_URL = os.getenv(
@@ -151,6 +170,22 @@ CELERY_TASK_TIME_LIMIT = 300
 CELERY_TASK_SOFT_TIME_LIMIT = 270
 
 SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_AGE = 43_200
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_SAMESITE = "Lax"
 X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
+LOGIN_URL = "/accounts/login/"
+DATA_UPLOAD_MAX_MEMORY_SIZE = env_int(
+    "GITHUB_WEBHOOK_MAX_BYTES",
+    default=1_048_576,
+    minimum=16_384,
+    maximum=5_242_880,
+)
+GITHUB_WEBHOOK_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET", "")
+GITHUB_APP_CREDENTIAL_REFERENCE = os.getenv(
+    "GITHUB_APP_CREDENTIAL_REFERENCE",
+    "env:GITHUB_APP_PRIVATE_KEY_PATH",
+)

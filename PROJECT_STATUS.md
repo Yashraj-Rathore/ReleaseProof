@@ -1,15 +1,34 @@
 # Project Status
 
-**Current state: M1 foundation complete on 2026-08-27; M2 has not started.**
+**Current state: M2 tenancy and GitHub ingestion complete on 2026-08-28.**
 
-The repository now has a runnable Django/Compose/tooling foundation and deterministic provider
-fakes. No risk engine, ingestion behavior, benchmark, model metric, customer result, sandbox
-security claim, or production-readiness claim exists yet.
+The repository now has the M1 foundation plus tenant-scoped identity, signed durable webhook
+ingestion, immutable PR snapshots and deterministic advisory/task adapters. No change-intelligence
+features, risk engine, benchmark, model metric, customer result, live GitHub adapter validation,
+sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/02_TENANCY_GITHUB_INGESTION.md` for `RP-0101..RP-0106`. Do not begin
-change-intelligence or ML work before the M2 tenant and immutable-ingestion boundaries pass.
+Run `codex-prompts/03_CHANGE_INTELLIGENCE.md` for `RP-0201..RP-0206`. Do not begin dataset/ML work
+before M3 deterministic features and blast-radius evidence pass.
+
+## M2 evidence
+
+- Organizations, memberships/roles, GitHub installations/repositories, webhook receipts,
+  immutable snapshots, authoritative jobs/outbox rows and append-only audit records have forward
+  migrations.
+- Composite organization/parent constraints and immutable-record triggers passed on SQLite and
+  PostgreSQL 18.6. The full deterministic suite passed **44 tests** on each backend; the separate
+  live S3 test was intentionally deselected in these M2 runs.
+- Tests cover session/CSRF behavior, login throttling and cache failure, role/IDOR denial, HTTP,
+  Celery, admin and management-command scope, signed/tampered/duplicate webhooks, bounded input,
+  lifecycle events, immutable checksummed snapshots, broker recovery, bounded retries, duplicate
+  task delivery and stale-safe fake advisory publication.
+- Strict mypy passed for 107 source files; Ruff, Django checks and migration-drift checks passed.
+- GitHub CLI authentication and remote `main` access were repaired, and the configured pre-commit
+  and pre-push hooks are installed locally.
+- No live GitHub API was called, no installation access token was persisted, and no real check was
+  posted. The live snapshot/token/check adapters remain not yet implemented or validated.
 
 ## M1 evidence
 
@@ -27,14 +46,14 @@ change-intelligence or ML work before the M2 tenant and immutable-ingestion boun
 
 The local Docker host was Engine 24.0.6 / Compose 2.23.0 rather than the documented
 29.7.2 / 5.4.0 baseline. The digest-pinned services passed on this older host, but that does not
-substitute for a later run on the documented host baseline. The GitHub-hosted workflow has been
-defined but has not yet produced a remote run in this newly initialized, uncommitted repository.
+substitute for a later run on the documented host baseline. The GitHub-hosted workflow is defined;
+a remote M2 workflow result has not yet been observed.
 
 | Milestone | Status |
 |---|---|
 | M0 assessment | Complete — 2026-08-27 assessment plus contradiction/ambiguity correction |
 | M1 foundation | Complete — RP-0001..RP-0005 |
-| M2 tenancy/GitHub | Not started |
+| M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
 | M3 change intelligence | Not started |
 | M4 dataset/baseline | Not started |
 | M5 classical ML | Not started |

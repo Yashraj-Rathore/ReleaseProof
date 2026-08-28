@@ -1,5 +1,5 @@
 """GitHub provider adapters."""
 
-from adapters.github.fake import FakeGitHubProvider
+from adapters.github.fake import FakeGitHubAdvisoryPublisher, FakeGitHubProvider
 
-__all__ = ("FakeGitHubProvider",)
+__all__ = ("FakeGitHubAdvisoryPublisher", "FakeGitHubProvider")

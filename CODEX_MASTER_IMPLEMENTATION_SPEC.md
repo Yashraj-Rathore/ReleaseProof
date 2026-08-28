@@ -165,6 +165,32 @@ The web process starts with `uv run python manage.py runserver`. Its liveness en
 `GET /health/live`; `GET /health/ready` fails closed when authoritative PostgreSQL is unavailable.
 Redis transport and optional providers do not replace PostgreSQL product state.
 
+## M2 tenancy and GitHub ingestion
+
+M2 implements `RP-0101..RP-0106`: organizations/memberships and role checks, same-origin session
+authentication with CSRF and fail-closed login throttling, tenant-bound GitHub installation and
+repository records, bounded HMAC-SHA256 webhook ingestion, immutable pull-request snapshots,
+PostgreSQL-authoritative jobs/outbox recovery, and stale-safe advisory-report adapters.
+
+Apply the forward migrations and run the deterministic path with:
+
+```text
+uv run python manage.py migrate
+uv run pytest -m "not integration"
+uv run python manage.py relay_outbox --organization <organization-public-uuid> --limit 100
+```
+
+Browser routes use Django sessions only. `POST /webhooks/github` is CSRF-exempt because it requires
+the bounded raw request plus a valid `X-Hub-Signature-256`; browser mutations remain CSRF
+protected. Direct repository access is resolved inside the active organization stored in the
+authenticated session. Composite database constraints independently reject organization/parent
+mismatches, and webhook receipts, pull-request snapshots and audit logs are database-append-only.
+
+The deterministic fake GitHub snapshot/report adapters are the validated M2 local/demo path. A
+live GitHub REST installation-token minter and live check publisher are intentionally unconfigured;
+pull-request webhooks return a safe 503 until a live provider is explicitly implemented and
+selected. No live repository is contacted and no check is posted by the M2 validation suite.
+
 
 ---
 
@@ -498,16 +524,35 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M1 foundation complete on 2026-08-27; M2 has not started.**
+**Current state: M2 tenancy and GitHub ingestion complete on 2026-08-28.**
 
-The repository now has a runnable Django/Compose/tooling foundation and deterministic provider
-fakes. No risk engine, ingestion behavior, benchmark, model metric, customer result, sandbox
-security claim, or production-readiness claim exists yet.
+The repository now has the M1 foundation plus tenant-scoped identity, signed durable webhook
+ingestion, immutable PR snapshots and deterministic advisory/task adapters. No change-intelligence
+features, risk engine, benchmark, model metric, customer result, live GitHub adapter validation,
+sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/02_TENANCY_GITHUB_INGESTION.md` for `RP-0101..RP-0106`. Do not begin
-change-intelligence or ML work before the M2 tenant and immutable-ingestion boundaries pass.
+Run `codex-prompts/03_CHANGE_INTELLIGENCE.md` for `RP-0201..RP-0206`. Do not begin dataset/ML work
+before M3 deterministic features and blast-radius evidence pass.
+
+## M2 evidence
+
+- Organizations, memberships/roles, GitHub installations/repositories, webhook receipts,
+  immutable snapshots, authoritative jobs/outbox rows and append-only audit records have forward
+  migrations.
+- Composite organization/parent constraints and immutable-record triggers passed on SQLite and
+  PostgreSQL 18.6. The full deterministic suite passed **44 tests** on each backend; the separate
+  live S3 test was intentionally deselected in these M2 runs.
+- Tests cover session/CSRF behavior, login throttling and cache failure, role/IDOR denial, HTTP,
+  Celery, admin and management-command scope, signed/tampered/duplicate webhooks, bounded input,
+  lifecycle events, immutable checksummed snapshots, broker recovery, bounded retries, duplicate
+  task delivery and stale-safe fake advisory publication.
+- Strict mypy passed for 107 source files; Ruff, Django checks and migration-drift checks passed.
+- GitHub CLI authentication and remote `main` access were repaired, and the configured pre-commit
+  and pre-push hooks are installed locally.
+- No live GitHub API was called, no installation access token was persisted, and no real check was
+  posted. The live snapshot/token/check adapters remain not yet implemented or validated.
 
 ## M1 evidence
 
@@ -525,14 +570,14 @@ change-intelligence or ML work before the M2 tenant and immutable-ingestion boun
 
 The local Docker host was Engine 24.0.6 / Compose 2.23.0 rather than the documented
 29.7.2 / 5.4.0 baseline. The digest-pinned services passed on this older host, but that does not
-substitute for a later run on the documented host baseline. The GitHub-hosted workflow has been
-defined but has not yet produced a remote run in this newly initialized, uncommitted repository.
+substitute for a later run on the documented host baseline. The GitHub-hosted workflow is defined;
+a remote M2 workflow result has not yet been observed.
 
 | Milestone | Status |
 |---|---|
 | M0 assessment | Complete — 2026-08-27 assessment plus contradiction/ambiguity correction |
 | M1 foundation | Complete — RP-0001..RP-0005 |
-| M2 tenancy/GitHub | Not started |
+| M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
 | M3 change intelligence | Not started |
 | M4 dataset/baseline | Not started |
 | M5 classical ML | Not started |
@@ -570,6 +615,20 @@ defined but has not yet produced a remote run in this newly initialized, uncommi
 - A boto3 S3 adapter, SeaweedFS contract test, idempotent bucket bootstrap, and licensed synthetic fixture repository.
 - Vendored HTMX 2.0.10 with a verified SHA-256 checksum.
 - Deterministic generation of the Git-ignored SeaweedFS credential config from an explicit local environment file.
+- M2 organizations, memberships/roles, tenant-scoped services, session organization context and
+  Owner/Admin repository lifecycle authorization.
+- CSRF-protected session login/logout with hashed-key throttling and fail-closed cache outage
+  behavior; no browser access-token storage.
+- Tenant-bound GitHub installations/repositories with least-privilege permission validation,
+  credential references and a redacted bounded in-memory installation-token cache contract.
+- Signed, size/schema/action-bounded GitHub webhook ingestion with immutable delivery receipts,
+  normalized checksummed PR snapshots and installation/repository lifecycle handling.
+- PostgreSQL-authoritative ingestion jobs, identifier-only transactional outbox rows, bounded relay
+  retries, recovery tooling and idempotent Celery worker behavior.
+- Database composite tenant foreign keys and append-only triggers for PostgreSQL and the SQLite
+  test backend, plus safe DRF error envelopes and scoped admin/management boundaries.
+- Stale-safe advisory report contract and deterministic GitHub/task publisher fakes that make no
+  remote or paid-provider calls.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -585,6 +644,9 @@ defined but has not yet produced a remote run in this newly initialized, uncommi
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
   customer outcome, production-readiness, or sandbox-security claim exists yet.
+- M2 evidence is recorded in `PROJECT_STATUS.md`: 44 deterministic tests passed on both SQLite and
+  PostgreSQL. Live GitHub token minting/API/check posting and remote CI remain unvalidated and are
+  not claimed.
 
 
 ---
@@ -921,6 +983,22 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 - Embedding model/dimension changes create new index version.
 - Historical evidence never silently rewritten when model/prompt changes.
 
+### M2 implemented enforcement
+
+- Browser scope comes from an authenticated active membership stored in the server-side session;
+  verified GitHub installation IDs derive webhook scope. Payload organization IDs are ignored.
+- Scoped querysets/application services cover HTTP, Celery, admin and management-command entry
+  points. Non-superuser admin querysets are membership scoped; the outbox command requires one
+  explicit organization public UUID.
+- Database composite foreign keys enforce organization consistency for repository/installation,
+  receipt/installation, snapshot/repository, snapshot/receipt, job/snapshot and outbox/job pairs.
+  PostgreSQL constraints and SQLite test triggers both reject mismatches immediately.
+- Webhook receipts, pull-request snapshots and audit records reject update/delete in application
+  paths and through database triggers. Mutable job/outbox lifecycle state remains bounded and
+  separately versioned.
+- Installation records persist an approved credential reference only. Installation access tokens
+  have a redacted, bounded process-memory cache contract and no model/cache/task serialization.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
 
@@ -954,8 +1032,21 @@ Never return stack traces, secrets, raw provider payloads, or arbitrary source.
 - `GET /api/v1/evaluations/latest`
 Mutations require session + CSRF + role checks.
 
+Implemented M2 routes are `GET /api/v1/me`, `GET /api/v1/repositories/{public_id}`,
+`POST /api/v1/repositories/{public_id}/lifecycle`,
+`POST /app/organizations/{public_id}/select/`, session login/logout, and
+`POST /webhooks/github`. Repository lifecycle enable/disable requires Owner/Admin membership and
+is tenant scoped before the direct object lookup. DRF failures use the safe error envelope with a
+server-generated correlation ID.
+
 ## GitHub webhook
 `POST /webhooks/github`: bounded raw body -> signature verify -> event/action allowlist -> delivery dedupe -> server-resolved installation/org -> atomically commit durable receipt/job/outbox -> relay to Celery. A broker outage leaves committed work pending for recovery rather than returning a false accepted-without-work state.
+
+M2 bounds webhook bodies to 1 MiB, JSON depth to 20, JSON nodes to 10,000, changed files to 1,000,
+each patch to 64 KiB, combined patches to 1 MiB and check metadata to 250 entries. Accepted work
+returns 202; an identical delivery retry returns 200 without duplicate durable rows; reuse of a
+delivery ID with different signed content returns 409. Invalid signature/media/event/input and an
+unavailable snapshot provider return stable safe errors without provider payloads or source.
 
 ## Analysis contracts
 `AnalysisRequestV1`: snapshot, requested components, policy snapshot/version, reason.
@@ -1023,6 +1114,21 @@ One concise check/status, not comment spam. Include recommendation, component av
 
 ## Demo
 Provide signed fixture webhook payloads and a deterministic fake GitHub adapter. Recruiter demo requires no live GitHub installation.
+
+## M2 implementation boundary
+
+M2 accepts `pull_request` opened/synchronize/reopened, known-installation lifecycle, and repository
+added/removed events. Every accepted event atomically creates an immutable receipt, authoritative
+bounded job and identifier-only outbox row; pull-request events additionally create or reuse the
+immutable normalized snapshot. The scoped `relay_outbox` management command and publisher port
+provide relay/recovery, while workers treat repeat task delivery as harmless.
+
+The provider-neutral snapshot call receives the verified installation ID but never a serialized
+access token. `InstallationTokenCache` is bounded process memory, redacts representations, evicts
+by LRU/expiry and accepts only an injected minter using the persisted credential reference. No live
+token minter is selected in M2. The fake advisory publisher proves one neutral, versioned report and
+stale-head rejection without posting to GitHub; live check/status posting remains a later explicit
+adapter implementation, not an implied validation result.
 
 
 ---
@@ -1491,6 +1597,16 @@ Evidence types are explicit. Confidence is not certainty. Disagreement is shown.
 
 ## Required tests
 IDOR, CSRF/session, webhook tamper, duplicate delivery, prompt injection, cross-tenant retrieval, model mismatch, runner sentinel secret, blocked exfiltration, archive traversal, log redaction.
+
+## M2 security evidence
+
+M2 tests session-only login/logout and CSRF rejection, fail-closed throttle-store outages, role
+denial, cross-organization direct-ID denial, non-superuser admin scope and explicit management/
+Celery tenant context. Signed fixture webhooks prove tamper rejection, size/event allowlists,
+delivery dedupe/conflict, inactive-installation denial and identifier-only task payloads. Both
+SQLite and PostgreSQL runs prove cross-organization repository/installation rejection; immutable
+record triggers reject raw SQL mutation. This is tenant-boundary evidence, not a claim that the
+later live GitHub adapter, full production deployment or hostile-code sandbox is validated.
 
 
 ---

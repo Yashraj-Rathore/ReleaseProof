@@ -18,6 +18,10 @@ if not ALLOWED_HOSTS:
     raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS is required")
 
 DEBUG = False
+if len(GITHUB_WEBHOOK_SECRET) < 32:  # noqa: F405
+    raise ImproperlyConfigured("GITHUB_WEBHOOK_SECRET must contain at least 32 characters")
+if not GITHUB_APP_CREDENTIAL_REFERENCE:  # noqa: F405
+    raise ImproperlyConfigured("GITHUB_APP_CREDENTIAL_REFERENCE is required")
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
