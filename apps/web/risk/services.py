@@ -1,10 +1,13 @@
-"""Tenant-scoped deterministic risk-score persistence."""
+"""Tenant-scoped deterministic risk-score persistence and retrieval."""
 
 from __future__ import annotations
 
-from django.db import IntegrityError, transaction
+import uuid
 
-from apps.web.changes.models import ChangeFeatureSet
+from django.db import IntegrityError, transaction
+from django.http import Http404
+
+from apps.web.changes.models import ChangeFeatureSet, PullRequestSnapshot
 from apps.web.organizations.models import Organization
 from apps.web.risk.models import RiskScore
 from packages.ml_core import (
@@ -72,3 +75,54 @@ def persist_deterministic_score(
         if existing is None:
             raise
         return existing, False
+
+
+def get_current_risk_score(
+    *,
+    organization: Organization,
+    snapshot_public_id: uuid.UUID,
+) -> RiskScore:
+    snapshot = (
+        PullRequestSnapshot.objects.filter(
+            organization_id=organization.id,
+            public_id=snapshot_public_id,
+        )
+        .only("id")
+        .first()
+    )
+    if snapshot is None:
+        raise Http404("snapshot not found")
+    score = (
+        RiskScore.objects.for_organization(organization)
+        .filter(
+            snapshot_id=snapshot.id,
+            artifact_version=BASELINE_ARTIFACT_VERSION,
+            artifact_hash=baseline_artifact_hash(),
+            threshold_policy_version=THRESHOLD_POLICY_VERSION,
+        )
+        .first()
+    )
+    if score is None:
+        raise Http404("risk score not found")
+    return score
+
+
+def serialize_risk_score(score: RiskScore) -> dict[str, object]:
+    return {
+        "artifact_hash": score.artifact_hash,
+        "artifact_version": score.artifact_version,
+        "band": score.band,
+        "calibrated_probability": None,
+        "contributions": score.contributions,
+        "created_at": score.created_at.isoformat(),
+        "feature_schema_version": score.feature_schema_version,
+        "missing_required": score.missing_required,
+        "probability_display_allowed": False,
+        "proxy_prediction": score.proxy_prediction,
+        "raw_score": score.raw_score,
+        "result_hash": score.result_hash,
+        "schema_version": "risk-model-response-v1",
+        "snapshot_id": str(score.snapshot.public_id),
+        "threshold": score.threshold,
+        "threshold_policy_version": score.threshold_policy_version,
+    }

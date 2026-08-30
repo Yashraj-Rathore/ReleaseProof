@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Snapshot risk evidence | ReleaseProof</title>
+  </head>
+  <body>
+    <main>
+      <h1>Snapshot risk evidence</h1>
+      <p>Organization: {{ organization.name }}</p>
+      <dl>
+        <dt>Risk score</dt><dd>{{ risk.raw_score }}</dd>
+        <dt>Band</dt><dd>{{ risk.band }}</dd>
+        <dt>Artifact</dt><dd>{{ risk.artifact_version }}</dd>
+        <dt>Probability</dt><dd>Not available — this score is not a calibrated probability.</dd>
+      </dl>
+      <h2>Evidence-backed components</h2>
+      {% if risk.contributions %}
+        <ul>
+          {% for item in risk.contributions %}
+            <li>{{ item.reason }} (+{{ item.points }})</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p>No numeric score is available. Missing: {{ risk.missing_required|join:", " }}</p>
+      {% endif %}
+    </main>
+  </body>
+</html>

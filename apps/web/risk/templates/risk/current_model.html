@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Current risk model | ReleaseProof</title>
+  </head>
+  <body>
+    <main>
+      <h1>Current risk model</h1>
+      <p>Organization: {{ organization.name }}</p>
+      <section aria-labelledby="active-model">
+        <h2 id="active-model">Active artifact</h2>
+        <dl>
+          <dt>Version</dt><dd>{{ summary.active.artifact_version }}</dd>
+          <dt>Decision</dt><dd>{{ summary.active.decision }}</dd>
+          <dt>Probability display</dt><dd>Disabled — this is a risk score, not a probability.</dd>
+          <dt>Evaluation artifact</dt><dd><code>{{ summary.evaluation_artifact_hash }}</code></dd>
+        </dl>
+        <ul>
+          {% for reason in summary.active.reasons %}<li>{{ reason }}</li>{% endfor %}
+        </ul>
+      </section>
+      <section aria-labelledby="candidate-models">
+        <h2 id="candidate-models">Learned candidates</h2>
+        {% for candidate in summary.candidates %}
+          <article>
+            <h3>{{ candidate.artifact_version }}</h3>
+            <p>Status: {{ candidate.lifecycle }}; calibration: {{ candidate.calibration_status }}.</p>
+            <p>No calibrated probability is available.</p>
+          </article>
+        {% endfor %}
+      </section>
+      <section aria-labelledby="limitations">
+        <h2 id="limitations">Limitations</h2>
+        <ul>{% for limitation in summary.limitations %}<li>{{ limitation }}</li>{% endfor %}</ul>
+      </section>
+    </main>
+  </body>
+</html>

@@ -145,6 +145,12 @@ STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "apps" / "web" / "static"]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+M5_CLASSICAL_ARTIFACT_PATH = Path(
+    os.getenv(
+        "M5_CLASSICAL_ARTIFACT_PATH",
+        str(BASE_DIR / "models" / "public" / "m5_classical_ml_v1.json"),
+    )
+)
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
