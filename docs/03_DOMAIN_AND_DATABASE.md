@@ -98,5 +98,17 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
   `(feature_set_id, snapshot_id)` constraint prevents evidence from citing a different same-tenant
   snapshot. SQLite test triggers mirror the PostgreSQL constraints and append-only triggers.
 
+### M4 implemented dataset and baseline evidence
+
+- The canonical synthetic dataset is a source-controlled manifest/artifact rather than tenant
+  product state. It records the admitted source, license/terms evidence, immutable source and split
+  hashes, extraction-code commit, label/feature/split versions, exclusions, counts, leakage report
+  and limitations.
+- `RiskScore` is append-only and tenant-bound to the exact snapshot and `ChangeFeatureSet`. It names
+  the baseline artifact/hash, feature schema, threshold policy, raw score/band, rule contributions,
+  missing requirements and result hash. Deterministic rows require `calibrated_probability=NULL`.
+- Composite database constraints independently enforce organization/snapshot/feature-set identity,
+  including a same-snapshot constraint. PostgreSQL and SQLite both reject raw updates/deletes.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.

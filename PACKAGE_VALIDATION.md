@@ -1,6 +1,6 @@
 # Package Validation
 
-Generated for the ReleaseProof implementation package on 2026-08-28.
+Generated for the ReleaseProof implementation package on 2026-08-30.
 
 ## Structural checks
 
@@ -12,7 +12,7 @@ Generated for the ReleaseProof implementation package on 2026-08-28.
 - Canonical Django apps: **10**, with no standalone policy app
 - Master-spec synchronization: **PASS**
 - `CODEX_MASTER_IMPLEMENTATION_SPEC.md` SHA-256:
-  `1f152dddb63b316bf8db49c5453ff2e16ad6bdd4e7993526a92ff9c438747bc2`
+  `4438de2d2eca91f16a55511d732423ffe63f5cd3a29c63d82cf62c6c965148d6`
 
 ## M1 implementation evidence
 
@@ -44,9 +44,8 @@ versions and a remote GitHub Actions run remain unobserved environment evidence,
 
 ## Recommended next action
 
-Run `codex-prompts/04_DATASET_BASELINE.md` for `RP-0301..RP-0306`. M0 through M3 are complete;
-do not begin learned-model work before the frozen, leakage-resistant dataset and evaluated
-deterministic heuristic baseline pass.
+Run `codex-prompts/05_CLASSICAL_ML_RISK.md` for `RP-0401..RP-0406`. M0 through M4 are complete;
+preserve the frozen M4 manifest/split and predeclare M5 training, final-test and calibration gates.
 
 ## M2 implementation evidence
 
@@ -73,3 +72,21 @@ deterministic heuristic baseline pass.
   Actions Compose gate for this revision
 - Composite risk score/evaluated heuristic, live source-tree provider, mined dataset, model and
   hosted-provider behavior: **not implemented or claimed in M3**
+
+## M4 implementation evidence
+
+- Ruff format/lint and strict mypy: **PASS**, 136 source files
+- SQLite deterministic suite: **PASS**, 62 tests; live S3 test deselected
+- Django system checks, migration drift and Compose configuration: **PASS**
+- Frozen synthetic artifact rebuild: **PASS** for 16 rows, exact admission/license provenance,
+  feature rows, 6/4/4 temporal train/validation/test assignments, two excluded unknowns and nine
+  leakage checks
+- Manifest/split hashes: `eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456`
+  / `81d51ed7011c86744f2cf4bff15cb98bb1aa440b1c81ece921ed9b4a21f0c11b`
+- Held-out four-row synthetic heuristic evidence: TP=2, FP=2, TN=0, FN=0; precision 0.50,
+  recall 1.00 and F1 0.66666667. This validates the harness only and is not a real performance,
+  probability, incident, customer or production-readiness claim.
+- Tenant/snapshot/feature-bound score persistence, null probability, idempotency, composite
+  constraints and append-only controls: **PASS** on SQLite; authoritative PostgreSQL is enforced by
+  the GitHub Actions Compose gate for the revision
+- Public repository mining, customer data, learned model training and model download: **not done**

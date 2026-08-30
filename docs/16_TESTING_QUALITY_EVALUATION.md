@@ -38,3 +38,16 @@ impacted tests, bounded depth, future-history exclusion, unknown-vs-zero behavio
 M3 score/recommendation. Django integration tests cover durable-job idempotency, full/partial source
 coverage and exact artifact versions. Security tests cover service-level cross-tenant denial,
 database composite constraints and append-only application/raw-SQL behavior.
+
+## M4 dataset and baseline evidence
+
+The synthetic dataset tests cover exact admission parsing, rejected/unapproved public acquisition,
+license-evidence verification, observation-window label rules, unknown exclusion, deterministic
+materialization, immutable split/manifest hashes, cross-split SHA/diff/near-duplicate rejection and
+outcome-derived predictor rejection. The evaluation artifact includes every synthetic row/score,
+validation/test threshold tables, prevalence, confusion counts, precision, recall, F1, average
+precision and ROC-AUC plus explicit small-sample/proxy/synthetic limitations.
+
+Django integration/security tests prove idempotent baseline persistence, exact artifact/feature/
+policy attribution, null probability, application scope, composite tenant/snapshot constraints and
+append-only raw-SQL behavior. CI rebuilds the artifact and repeats the suite on PostgreSQL.

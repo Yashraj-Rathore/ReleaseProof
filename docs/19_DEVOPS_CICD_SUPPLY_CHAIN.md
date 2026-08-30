@@ -13,6 +13,10 @@ evidence; SQLite triggers remain a fast mirror, not a substitute. That step supp
 public test-only webhook signing value because `.env.example` correctly leaves the production
 secret blank.
 
+From M4, the same validator also rebuilds the committed synthetic dataset/baseline evidence from
+its recorded extraction-code commit and fails when the manifest, feature rows, split assignments,
+leakage report, raw predictions, thresholds or metrics drift.
+
 ## Planned images
 web, worker, migration job, optional model-service, separate runner. Non-root/multi-stage/minimal where feasible; releases use immutable digests.
 

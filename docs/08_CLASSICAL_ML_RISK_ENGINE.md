@@ -27,3 +27,20 @@ Exact feature-schema compatibility. Missing/incompatible required input => expli
 
 ## Promotion gate
 Dataset manifest valid; leakage checks pass; metrics artifact exists; baseline comparison documented; reproducibility rerun works; security/privacy acceptable; exact checksum/version registered.
+
+## Implemented M4 heuristic baseline
+
+`deterministic-heuristic-v1` is a transparent additive 0-100 score over exact
+`change-features-v1` inputs. Source-controlled rules cover change size/file count, migrations,
+dependencies, deterministic sensitive paths, missing test changes, large deletion, available
+static blast radius and available prior check-failure proxies. Every contribution names points,
+reason and source features; incompatible schema is rejected and missing required core values yield
+UNKNOWN.
+
+Candidate thresholds 20/30/40/50 and a 0.75 validation recall floor are frozen. Threshold 30 was
+selected from the synthetic validation split by maximum precision, then F1, then the higher
+threshold; the held-out synthetic test set was evaluated afterward without retuning. On only four
+test rows the raw confusion is TP=2, FP=2, TN=0, FN=0 (precision 0.50, recall 1.00, F1 0.66666667,
+average precision 0.41666667 and ROC-AUC 0.125). These unstable fictional-fixture measurements
+validate the harness and expose false positives; they do not establish model/customer performance.
+Calibration is explicitly not applicable because the output is not a probability.

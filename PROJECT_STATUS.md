@@ -1,17 +1,46 @@
 # Project Status
 
-**Current state: M3 deterministic change intelligence complete on 2026-08-28.**
+**Current state: M4 dataset and deterministic baseline complete on 2026-08-30.**
 
-The repository now has the M1 foundation and M2 tenant-scoped ingestion plus bounded, versioned
-diff normalization, static Python dependency/blast-radius analysis, strictly pre-change history,
-deterministic feature/risk-factor evidence and append-only tenant-bound persistence. No composite
-risk score, evaluated heuristic baseline, learned model, customer result, live GitHub/source-tree
+The repository now has M1-M3 foundations/change evidence plus admitted synthetic dataset
+provenance, auditable proxy labels, frozen temporal splits, leakage checks, feature materialization,
+and a transparent evaluated deterministic score/band persisted as tenant-bound evidence. No learned
+model, probability claim, real/public dataset evaluation, customer result, live GitHub/source-tree
 adapter validation, sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/04_DATASET_BASELINE.md` for `RP-0301..RP-0306`. Preserve immutable provenance,
-time/repository-aware splits and the distinction between proxy labels and production incidents.
+Run `codex-prompts/05_CLASSICAL_ML_RISK.md` for `RP-0401..RP-0406`. Reverify and lock only the M5
+ML dependencies, preserve the M4 manifest/split, tune only with train/validation and keep the final
+test split untouched until the experiment declaration and calibration decision rule are frozen.
+
+## M4 evidence
+
+- `source-admission-v1` records the synthetic repository numeric identity, fixture URL, MIT
+  license-evidence hash/version, terms review, allowed local acquisition/fields/artifacts,
+  retention/redistribution/attribution rules, `as_of`, 30-day observation window, reviewer and
+  record limits. No public repository or customer data was accessed.
+- `proxy-label-rule-v1` keeps revert/hotfix/follow-up/required-check signals as proxies. Complete
+  no-proxy windows become proxy negatives; ambiguous/incomplete observations stay unknown.
+- `releaseproof-m4-synthetic-v1` contains 16 deliberately synthetic rows: 6 train, 4 validation,
+  4 held-out test and 2 excluded unknowns. Seven included rows are positive proxies and seven are
+  negative proxies; this designed 50% prevalence is not a real population estimate.
+- `temporal-split-v1` and `leakage-report-v1` freeze assignments and pass checks for prediction-time
+  features, observation completeness, exact schema, author/outcome exclusion and no cross-split
+  head SHA, diff hash or normalized near-duplicate. One fixture repository means repository
+  holdout is not measured and is an explicit limitation.
+- Manifest hash `eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456`
+  names extraction code commit `3448b1f879682d2b12a212d4c82d8fee87e33a12`; split hash is
+  `81d51ed7011c86744f2cf4bff15cb98bb1aa440b1c81ece921ed9b4a21f0c11b`.
+- `deterministic-heuristic-v1` uses threshold 30 selected from validation only. The four-row
+  synthetic held-out confusion is TP=2, FP=2, TN=0, FN=0: precision 0.50, recall 1.00,
+  F1 0.66666667, average precision 0.41666667 and ROC-AUC 0.125. The sample is too small and
+  fictional for product/incident claims; calibration is not applicable because this is a score.
+- `RiskScore` persists exact feature/artifact/policy attribution, contributions, score/band or
+  UNKNOWN and a null probability. Composite tenant/snapshot/feature constraints and append-only
+  triggers passed on SQLite; CI repeats them against PostgreSQL.
+- The canonical local suite passed **62 tests** with one live S3 test deselected; Ruff and strict
+  mypy passed for 136 source files, and Django/migration/artifact reproducibility checks passed.
 
 ## M3 evidence
 
@@ -84,7 +113,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M1 foundation | Complete — RP-0001..RP-0005 |
 | M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
 | M3 change intelligence | Complete - RP-0201..RP-0206 |
-| M4 dataset/baseline | Not started |
+| M4 dataset/baseline | Complete - RP-0301..RP-0306 |
 | M5 classical ML | Not started |
 | M6 RAG | Not started |
 | M7 LLM evidence | Not started |

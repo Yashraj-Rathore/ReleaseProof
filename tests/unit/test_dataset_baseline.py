@@ -7,7 +7,14 @@ from pathlib import Path
 
 import pytest
 
-from eng.evaluate_m4_baseline import ADMISSION_PATH, SNAPSHOTS_PATH, build_fixture_dataset
+from eng.evaluate_m4_baseline import (
+    ADMISSION_PATH,
+    DEFAULT_OUTPUT,
+    SNAPSHOTS_PATH,
+    build_artifact,
+    build_fixture_dataset,
+)
+from eng.validate import COMMANDS
 from packages.dataset_core import (
     AcquisitionMethod,
     DatasetSplit,
@@ -191,3 +198,16 @@ def test_baseline_is_a_versioned_score_not_a_probability_and_can_abstain() -> No
 
     with pytest.raises(ValueError, match="incompatible"):
         score_features(feature_schema_version="future-features-v2", values=row.feature_values)
+
+
+def test_committed_raw_artifact_rebuilds_from_its_recorded_code_commit() -> None:
+    committed = _json_object(DEFAULT_OUTPUT)
+    dataset = committed["dataset"]
+    assert isinstance(dataset, dict)
+    manifest = dataset["manifest"]
+    assert isinstance(manifest, dict)
+    code_commit = manifest["extraction_code_commit"]
+    assert isinstance(code_commit, str)
+
+    assert build_artifact(extraction_code_commit=code_commit) == committed
+    assert any(command[-2:] == ("eng.evaluate_m4_baseline", "--check") for command in COMMANDS)

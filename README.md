@@ -200,3 +200,24 @@ uv run pytest tests/unit/test_change_intel_pipeline.py
 uv run pytest tests/integration/test_change_intelligence_persistence.py
 uv run pytest tests/security/test_change_intelligence_tenancy.py
 ```
+
+## M4 dataset and deterministic baseline
+
+M4 implements `RP-0301..RP-0306` without mining a public repository or adding an ML dependency.
+The admitted MIT fixture has a complete `source-admission-v1` record, 16 explicitly synthetic
+snapshot/outcome rows, auditable proxy labels, a frozen temporal split and materialized
+`change-features-v1` rows. Two unknown rows are excluded rather than silently labeled negative.
+
+The transparent `deterministic-heuristic-v1` artifact produces a 0-100 risk score and
+LOW/MEDIUM/HIGH or UNKNOWN band. It is not a probability. Threshold 30 is selected only from the
+four-row validation split using the frozen recall-floor rule, then applied unchanged to the
+four-row held-out synthetic test split. The committed raw artifact is implementation evidence,
+not a customer-performance or incident-prediction claim.
+
+Reproduce the dataset, leakage checks, threshold table and raw confusion artifact with:
+
+```text
+uv run python -m eng.evaluate_m4_baseline --check
+uv run pytest tests/unit/test_dataset_baseline.py
+uv run pytest tests/integration/test_deterministic_risk_persistence.py
+```

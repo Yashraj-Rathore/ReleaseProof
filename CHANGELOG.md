@@ -32,6 +32,10 @@
   import graph, deterministic blast radius, strictly pre-change history and cited risk factors.
 - Append-only tenant-bound feature/evidence persistence, durable-job integration and a richer MIT
   synthetic golden fixture with explicit dynamic/unsupported-language behavior.
+- M4 source-admission, proxy-label, frozen temporal-split, leakage-check and feature-materialization
+  contracts with a 16-row synthetic MIT fixture and byte-reproducible raw evaluation artifact.
+- The first transparent deterministic heuristic score/band and validation-selected threshold
+  policy, persisted as append-only tenant/snapshot/feature-bound risk evidence with no probability.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -52,6 +56,8 @@
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
   tenant and immutability controls cannot be inferred only from SQLite tests; the step uses an
   explicit public test-only webhook signing value while `.env.example` remains secret-free.
+- Added the frozen M4 artifact rebuild to the canonical validator and kept NumPy, pandas,
+  scikit-learn and XGBoost deferred until a learned-model milestone needs them.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -61,3 +67,5 @@
 - M3 evidence is recorded in `PROJECT_STATUS.md`: 55 local deterministic tests cover the versioned
   change-intelligence contracts and CI provides the authoritative PostgreSQL/S3 gate. No composite
   baseline, learned-model result, customer outcome, or sandbox claim is made.
+- M4 evidence is recorded in `PROJECT_STATUS.md`; its metrics come only from a tiny balanced
+  synthetic fixture and are not product-performance, probability, incident or customer claims.

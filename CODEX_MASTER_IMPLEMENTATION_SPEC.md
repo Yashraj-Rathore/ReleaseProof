@@ -213,6 +213,27 @@ uv run pytest tests/integration/test_change_intelligence_persistence.py
 uv run pytest tests/security/test_change_intelligence_tenancy.py
 ```
 
+## M4 dataset and deterministic baseline
+
+M4 implements `RP-0301..RP-0306` without mining a public repository or adding an ML dependency.
+The admitted MIT fixture has a complete `source-admission-v1` record, 16 explicitly synthetic
+snapshot/outcome rows, auditable proxy labels, a frozen temporal split and materialized
+`change-features-v1` rows. Two unknown rows are excluded rather than silently labeled negative.
+
+The transparent `deterministic-heuristic-v1` artifact produces a 0-100 risk score and
+LOW/MEDIUM/HIGH or UNKNOWN band. It is not a probability. Threshold 30 is selected only from the
+four-row validation split using the frozen recall-floor rule, then applied unchanged to the
+four-row held-out synthetic test split. The committed raw artifact is implementation evidence,
+not a customer-performance or incident-prediction claim.
+
+Reproduce the dataset, leakage checks, threshold table and raw confusion artifact with:
+
+```text
+uv run python -m eng.evaluate_m4_baseline --check
+uv run pytest tests/unit/test_dataset_baseline.py
+uv run pytest tests/integration/test_deterministic_risk_persistence.py
+```
+
 
 ---
 
@@ -507,11 +528,11 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 - [ ] Signed idempotent GitHub ingestion.
 - [ ] Immutable PR snapshots.
 - [x] Reproducible change features/blast radius.
-- [ ] Deterministic risk baseline precedes learned models.
+- [x] Deterministic risk baseline precedes learned models.
 
 ## ML/RAG
-- [ ] Dataset manifests/provenance/labels.
-- [ ] Time/repository leakage controls.
+- [x] Dataset manifests/provenance/labels.
+- [x] Time/repository leakage controls.
 - [ ] Logistic + XGBoost evaluated and versioned.
 - [ ] Hybrid RAG with tenant isolation/citations.
 - [ ] PyTorch/HF semantic model + model card.
@@ -546,18 +567,47 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M3 deterministic change intelligence complete on 2026-08-28.**
+**Current state: M4 dataset and deterministic baseline complete on 2026-08-30.**
 
-The repository now has the M1 foundation and M2 tenant-scoped ingestion plus bounded, versioned
-diff normalization, static Python dependency/blast-radius analysis, strictly pre-change history,
-deterministic feature/risk-factor evidence and append-only tenant-bound persistence. No composite
-risk score, evaluated heuristic baseline, learned model, customer result, live GitHub/source-tree
+The repository now has M1-M3 foundations/change evidence plus admitted synthetic dataset
+provenance, auditable proxy labels, frozen temporal splits, leakage checks, feature materialization,
+and a transparent evaluated deterministic score/band persisted as tenant-bound evidence. No learned
+model, probability claim, real/public dataset evaluation, customer result, live GitHub/source-tree
 adapter validation, sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/04_DATASET_BASELINE.md` for `RP-0301..RP-0306`. Preserve immutable provenance,
-time/repository-aware splits and the distinction between proxy labels and production incidents.
+Run `codex-prompts/05_CLASSICAL_ML_RISK.md` for `RP-0401..RP-0406`. Reverify and lock only the M5
+ML dependencies, preserve the M4 manifest/split, tune only with train/validation and keep the final
+test split untouched until the experiment declaration and calibration decision rule are frozen.
+
+## M4 evidence
+
+- `source-admission-v1` records the synthetic repository numeric identity, fixture URL, MIT
+  license-evidence hash/version, terms review, allowed local acquisition/fields/artifacts,
+  retention/redistribution/attribution rules, `as_of`, 30-day observation window, reviewer and
+  record limits. No public repository or customer data was accessed.
+- `proxy-label-rule-v1` keeps revert/hotfix/follow-up/required-check signals as proxies. Complete
+  no-proxy windows become proxy negatives; ambiguous/incomplete observations stay unknown.
+- `releaseproof-m4-synthetic-v1` contains 16 deliberately synthetic rows: 6 train, 4 validation,
+  4 held-out test and 2 excluded unknowns. Seven included rows are positive proxies and seven are
+  negative proxies; this designed 50% prevalence is not a real population estimate.
+- `temporal-split-v1` and `leakage-report-v1` freeze assignments and pass checks for prediction-time
+  features, observation completeness, exact schema, author/outcome exclusion and no cross-split
+  head SHA, diff hash or normalized near-duplicate. One fixture repository means repository
+  holdout is not measured and is an explicit limitation.
+- Manifest hash `eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456`
+  names extraction code commit `3448b1f879682d2b12a212d4c82d8fee87e33a12`; split hash is
+  `81d51ed7011c86744f2cf4bff15cb98bb1aa440b1c81ece921ed9b4a21f0c11b`.
+- `deterministic-heuristic-v1` uses threshold 30 selected from validation only. The four-row
+  synthetic held-out confusion is TP=2, FP=2, TN=0, FN=0: precision 0.50, recall 1.00,
+  F1 0.66666667, average precision 0.41666667 and ROC-AUC 0.125. The sample is too small and
+  fictional for product/incident claims; calibration is not applicable because this is a score.
+- `RiskScore` persists exact feature/artifact/policy attribution, contributions, score/band or
+  UNKNOWN and a null probability. Composite tenant/snapshot/feature constraints and append-only
+  triggers passed on SQLite; CI repeats them against PostgreSQL.
+- The canonical local suite passed **62 tests** with one live S3 test deselected; Ruff and strict
+  mypy passed for 136 source files, and Django/migration/artifact reproducibility checks passed.
 
 ## M3 evidence
 
@@ -630,7 +680,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M1 foundation | Complete — RP-0001..RP-0005 |
 | M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
 | M3 change intelligence | Complete - RP-0201..RP-0206 |
-| M4 dataset/baseline | Not started |
+| M4 dataset/baseline | Complete - RP-0301..RP-0306 |
 | M5 classical ML | Not started |
 | M6 RAG | Not started |
 | M7 LLM evidence | Not started |
@@ -684,6 +734,10 @@ and its remote M2 result is tracked in GitHub Actions.
   import graph, deterministic blast radius, strictly pre-change history and cited risk factors.
 - Append-only tenant-bound feature/evidence persistence, durable-job integration and a richer MIT
   synthetic golden fixture with explicit dynamic/unsupported-language behavior.
+- M4 source-admission, proxy-label, frozen temporal-split, leakage-check and feature-materialization
+  contracts with a 16-row synthetic MIT fixture and byte-reproducible raw evaluation artifact.
+- The first transparent deterministic heuristic score/band and validation-selected threshold
+  policy, persisted as append-only tenant/snapshot/feature-bound risk evidence with no probability.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -704,6 +758,8 @@ and its remote M2 result is tracked in GitHub Actions.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
   tenant and immutability controls cannot be inferred only from SQLite tests; the step uses an
   explicit public test-only webhook signing value while `.env.example` remains secret-free.
+- Added the frozen M4 artifact rebuild to the canonical validator and kept NumPy, pandas,
+  scikit-learn and XGBoost deferred until a learned-model milestone needs them.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -713,6 +769,8 @@ and its remote M2 result is tracked in GitHub Actions.
 - M3 evidence is recorded in `PROJECT_STATUS.md`: 55 local deterministic tests cover the versioned
   change-intelligence contracts and CI provides the authoritative PostgreSQL/S3 gate. No composite
   baseline, learned-model result, customer outcome, or sandbox claim is made.
+- M4 evidence is recorded in `PROJECT_STATUS.md`; its metrics come only from a tiny balanced
+  synthetic fixture and are not product-performance, probability, incident or customer claims.
 
 
 ---
@@ -1079,6 +1137,18 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
   `(feature_set_id, snapshot_id)` constraint prevents evidence from citing a different same-tenant
   snapshot. SQLite test triggers mirror the PostgreSQL constraints and append-only triggers.
 
+### M4 implemented dataset and baseline evidence
+
+- The canonical synthetic dataset is a source-controlled manifest/artifact rather than tenant
+  product state. It records the admitted source, license/terms evidence, immutable source and split
+  hashes, extraction-code commit, label/feature/split versions, exclusions, counts, leakage report
+  and limitations.
+- `RiskScore` is append-only and tenant-bound to the exact snapshot and `ChangeFeatureSet`. It names
+  the baseline artifact/hash, feature schema, threshold policy, raw score/band, rule contributions,
+  missing requirements and result hash. Deterministic rows require `calibrated_probability=NULL`.
+- Composite database constraints independently enforce organization/snapshot/feature-set identity,
+  including a same-snapshot constraint. PostgreSQL and SQLite both reject raw updates/deletes.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
 
@@ -1142,6 +1212,12 @@ M3 persists, but does not yet expose as a public scoring API, the following dete
 Missing inputs are nullable with explicit reasons. Exact-schema mismatch is rejected. Risk factors
 contain values, reasons and source references only; score/threshold/recommendation fields are not
 part of the M3 contract.
+
+M4 adds internal persisted contract `deterministic-risk-score-v1` with artifact
+`deterministic-heuristic-v1` and threshold policy `deterministic-threshold-v1`. It records a bounded
+integer score, LOW/MEDIUM/HIGH or UNKNOWN band, triggered rule contributions and exact artifact,
+feature and policy hashes/versions. `calibrated_probability` is always null. M5 still owns the
+public risk-scoring API/UI and learned-model contracts.
 
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
@@ -1369,6 +1445,33 @@ Missingness, class balance, duplicates, split counts, feature distributions, lab
 
 Large/raw/private data stays out of Git; manifests/small safe fixtures live in Git and large artifacts are content-addressed in object storage.
 
+## Implemented M4 contracts and evidence
+
+- Admission `source-admission-v1` captures numeric repository identity, canonical source, SPDX and
+  license-evidence hash/version, terms URL/review date, acquisition method, allowed fields and
+  artifacts, redistribution/retention/attribution limits, `as_of`, observation window, reviewer,
+  record/rate bounds and synthetic/approval status. The extractor has no HTTP client; public input
+  without a complete approved API admission fails closed.
+- Label rule `proxy-label-rule-v1` separately represents explicit revert, hotfix, rapid follow-up,
+  required-check failure, no-proxy-observed and ambiguous outcomes. Positives are not called
+  incidents. A negative requires an observation exactly closing the complete window; ambiguous,
+  missing, late or incomplete evidence stays unknown and is excluded.
+- Split rule `temporal-split-v1` uses frozen half-open timestamps. The one-repository fixture cannot
+  support a repository holdout, which is recorded as a limitation. M5 must not reinterpret or
+  mutate the committed assignments.
+- Leakage report `leakage-report-v1` fails on cross-split head SHA, exact diff or normalized
+  near-duplicate fingerprints; incompatible feature schema; label/outcome/identity predictors;
+  unknown included rows; invalid temporal assignment; or unavailable observation time.
+- Materialization `feature-materialization-v1` invokes the same `change-features-v1` extractor used
+  by product analysis and records feature values, missingness, provenance and hashes per immutable
+  snapshot. Outcome fields are joined only after prediction-time feature extraction.
+- Dataset `releaseproof-m4-synthetic-v1` contains 16 synthetic rows: 6 train, 4 validation, 4 test
+  and 2 excluded unknowns; the 14 included rows have seven positive and seven negative proxies.
+  These balanced fixture counts are designed test data, not an estimate of real prevalence.
+- `tests/golden/m4_synthetic_baseline_v1.json` is the raw reproducible manifest, feature-row,
+  split/leakage and baseline-evaluation artifact. Its manifest names extraction code commit
+  `3448b1f879682d2b12a212d4c82d8fee87e33a12`; the repository validator rebuilds it byte-for-byte.
+
 
 ---
 
@@ -1403,6 +1506,23 @@ Exact feature-schema compatibility. Missing/incompatible required input => expli
 
 ## Promotion gate
 Dataset manifest valid; leakage checks pass; metrics artifact exists; baseline comparison documented; reproducibility rerun works; security/privacy acceptable; exact checksum/version registered.
+
+## Implemented M4 heuristic baseline
+
+`deterministic-heuristic-v1` is a transparent additive 0-100 score over exact
+`change-features-v1` inputs. Source-controlled rules cover change size/file count, migrations,
+dependencies, deterministic sensitive paths, missing test changes, large deletion, available
+static blast radius and available prior check-failure proxies. Every contribution names points,
+reason and source features; incompatible schema is rejected and missing required core values yield
+UNKNOWN.
+
+Candidate thresholds 20/30/40/50 and a 0.75 validation recall floor are frozen. Threshold 30 was
+selected from the synthetic validation split by maximum precision, then F1, then the higher
+threshold; the held-out synthetic test set was evaluated afterward without retuning. On only four
+test rows the raw confusion is TP=2, FP=2, TN=0, FN=0 (precision 0.50, recall 1.00, F1 0.66666667,
+average precision 0.41666667 and ROC-AUC 0.125). These unstable fictional-fixture measurements
+validate the harness and expose false positives; they do not establish model/customer performance.
+Calibration is explicitly not applicable because the output is not a probability.
 
 
 ---
@@ -1792,6 +1912,19 @@ M3 score/recommendation. Django integration tests cover durable-job idempotency,
 coverage and exact artifact versions. Security tests cover service-level cross-tenant denial,
 database composite constraints and append-only application/raw-SQL behavior.
 
+## M4 dataset and baseline evidence
+
+The synthetic dataset tests cover exact admission parsing, rejected/unapproved public acquisition,
+license-evidence verification, observation-window label rules, unknown exclusion, deterministic
+materialization, immutable split/manifest hashes, cross-split SHA/diff/near-duplicate rejection and
+outcome-derived predictor rejection. The evaluation artifact includes every synthetic row/score,
+validation/test threshold tables, prevalence, confusion counts, precision, recall, F1, average
+precision and ROC-AUC plus explicit small-sample/proxy/synthetic limitations.
+
+Django integration/security tests prove idempotent baseline persistence, exact artifact/feature/
+policy attribution, null probability, application scope, composite tenant/snapshot constraints and
+append-only raw-SQL behavior. CI rebuilds the artifact and repeats the suite on PostgreSQL.
+
 
 ---
 
@@ -1820,6 +1953,11 @@ Monitor only when sample size supports interpretation. Organization-local learne
 
 ## Reproducibility
 Seeds where possible, lock/environment/hardware metadata, immutable splits, raw evaluation outputs, package code shared by notebooks and production.
+
+M4's first governed lineage is source admission/hash -> extraction code commit -> immutable snapshot
+hash -> `change-features-v1` row/hash -> frozen split/hash -> `deterministic-heuristic-v1` artifact
+and threshold policy -> raw evaluation/hash. It is committed as a synthetic fixture artifact; M13
+will register later formal experiments in MLflow without replacing this source lineage.
 
 
 ---
@@ -1869,6 +2007,10 @@ SeaweedFS contract. This PostgreSQL pass is required for tenant composite-key an
 evidence; SQLite triggers remain a fast mirror, not a substitute. That step supplies an explicit
 public test-only webhook signing value because `.env.example` correctly leaves the production
 secret blank.
+
+From M4, the same validator also rebuilds the committed synthetic dataset/baseline evidence from
+its recorded extraction-code commit and fails when the manifest, feature rows, split assignments,
+leakage report, raw predictions, thresholds or metrics drift.
 
 ## Planned images
 web, worker, migration job, optional model-service, separate runner. Non-root/multi-stage/minimal where feasible; releases use immutable digests.

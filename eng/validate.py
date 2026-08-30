@@ -27,6 +27,7 @@ COMMANDS = (
     ),
     (sys.executable, "eng/sync_master_spec.py", "--check"),
     (sys.executable, "eng/update_file_inventory.py", "--check"),
+    (sys.executable, "-m", "eng.evaluate_m4_baseline", "--check"),
 )
 
 

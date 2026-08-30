@@ -24,7 +24,7 @@ FIXTURE_DIR = ROOT / "tests" / "fixtures" / "datasets"
 ADMISSION_PATH = FIXTURE_DIR / "m4_source_admission.json"
 SNAPSHOTS_PATH = FIXTURE_DIR / "m4_snapshots.json"
 LICENSE_PATH = ROOT / "tests" / "fixtures" / "repositories" / "releaseproof_fixture" / "LICENSE"
-DEFAULT_OUTPUT = ROOT / "artifacts" / "evaluation" / "m4_synthetic_baseline_v1.json"
+DEFAULT_OUTPUT = ROOT / "tests" / "golden" / "m4_synthetic_baseline_v1.json"
 DATASET_VERSION = "releaseproof-m4-synthetic-v1"
 
 
@@ -70,14 +70,33 @@ def _serialized(value: dict[str, object]) -> str:
     return json.dumps(value, indent=2, sort_keys=True, ensure_ascii=True) + "\n"
 
 
+def _stored_code_commit(output: Path) -> str:
+    artifact = _json_object(output)
+    dataset = artifact.get("dataset")
+    if not isinstance(dataset, dict):
+        raise ValueError("stored M4 artifact is missing its dataset")
+    manifest = dataset.get("manifest")
+    if not isinstance(manifest, dict):
+        raise ValueError("stored M4 artifact is missing its manifest")
+    code_commit = manifest.get("extraction_code_commit")
+    if not isinstance(code_commit, str):
+        raise ValueError("stored M4 artifact is missing its extraction code commit")
+    return code_commit
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--code-commit", required=True)
+    parser.add_argument("--code-commit")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     output = args.output.resolve()
-    expected = _serialized(build_artifact(extraction_code_commit=args.code_commit))
+    code_commit = args.code_commit
+    if code_commit is None:
+        if not args.check or not output.is_file():
+            parser.error("--code-commit is required when generating an artifact")
+        code_commit = _stored_code_commit(output)
+    expected = _serialized(build_artifact(extraction_code_commit=code_commit))
     if args.check:
         if not output.is_file() or output.read_text(encoding="utf-8") != expected:
             print(f"M4 evidence artifact is stale: {output}")

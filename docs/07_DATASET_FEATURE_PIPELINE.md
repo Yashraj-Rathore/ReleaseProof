@@ -62,3 +62,30 @@ split assignment, materialization and evaluated baseline artifacts.
 Missingness, class balance, duplicates, split counts, feature distributions, label ambiguity, drift vs previous compatible dataset, leakage checks.
 
 Large/raw/private data stays out of Git; manifests/small safe fixtures live in Git and large artifacts are content-addressed in object storage.
+
+## Implemented M4 contracts and evidence
+
+- Admission `source-admission-v1` captures numeric repository identity, canonical source, SPDX and
+  license-evidence hash/version, terms URL/review date, acquisition method, allowed fields and
+  artifacts, redistribution/retention/attribution limits, `as_of`, observation window, reviewer,
+  record/rate bounds and synthetic/approval status. The extractor has no HTTP client; public input
+  without a complete approved API admission fails closed.
+- Label rule `proxy-label-rule-v1` separately represents explicit revert, hotfix, rapid follow-up,
+  required-check failure, no-proxy-observed and ambiguous outcomes. Positives are not called
+  incidents. A negative requires an observation exactly closing the complete window; ambiguous,
+  missing, late or incomplete evidence stays unknown and is excluded.
+- Split rule `temporal-split-v1` uses frozen half-open timestamps. The one-repository fixture cannot
+  support a repository holdout, which is recorded as a limitation. M5 must not reinterpret or
+  mutate the committed assignments.
+- Leakage report `leakage-report-v1` fails on cross-split head SHA, exact diff or normalized
+  near-duplicate fingerprints; incompatible feature schema; label/outcome/identity predictors;
+  unknown included rows; invalid temporal assignment; or unavailable observation time.
+- Materialization `feature-materialization-v1` invokes the same `change-features-v1` extractor used
+  by product analysis and records feature values, missingness, provenance and hashes per immutable
+  snapshot. Outcome fields are joined only after prediction-time feature extraction.
+- Dataset `releaseproof-m4-synthetic-v1` contains 16 synthetic rows: 6 train, 4 validation, 4 test
+  and 2 excluded unknowns; the 14 included rows have seven positive and seven negative proxies.
+  These balanced fixture counts are designed test data, not an estimate of real prevalence.
+- `tests/golden/m4_synthetic_baseline_v1.json` is the raw reproducible manifest, feature-row,
+  split/leakage and baseline-evaluation artifact. Its manifest names extraction code commit
+  `3448b1f879682d2b12a212d4c82d8fee87e33a12`; the repository validator rebuilds it byte-for-byte.

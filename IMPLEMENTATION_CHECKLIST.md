@@ -12,11 +12,11 @@
 - [ ] Signed idempotent GitHub ingestion.
 - [ ] Immutable PR snapshots.
 - [x] Reproducible change features/blast radius.
-- [ ] Deterministic risk baseline precedes learned models.
+- [x] Deterministic risk baseline precedes learned models.
 
 ## ML/RAG
-- [ ] Dataset manifests/provenance/labels.
-- [ ] Time/repository leakage controls.
+- [x] Dataset manifests/provenance/labels.
+- [x] Time/repository leakage controls.
 - [ ] Logistic + XGBoost evaluated and versioned.
 - [ ] Hybrid RAG with tenant isolation/citations.
 - [ ] PyTorch/HF semantic model + model card.

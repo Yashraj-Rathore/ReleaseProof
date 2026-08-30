@@ -54,6 +54,12 @@ Missing inputs are nullable with explicit reasons. Exact-schema mismatch is reje
 contain values, reasons and source references only; score/threshold/recommendation fields are not
 part of the M3 contract.
 
+M4 adds internal persisted contract `deterministic-risk-score-v1` with artifact
+`deterministic-heuristic-v1` and threshold policy `deterministic-threshold-v1`. It records a bounded
+integer score, LOW/MEDIUM/HIGH or UNKNOWN band, triggered rule contributions and exact artifact,
+feature and policy hashes/versions. `calibrated_probability` is always null. M5 still owns the
+public risk-scoring API/UI and learned-model contracts.
+
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
 `RiskModelResponseV1`: exact model artifact/checksum, raw score, calibrated probability nullable, band, explanation, latency metadata.

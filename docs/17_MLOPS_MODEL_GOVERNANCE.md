@@ -21,3 +21,8 @@ Monitor only when sample size supports interpretation. Organization-local learne
 
 ## Reproducibility
 Seeds where possible, lock/environment/hardware metadata, immutable splits, raw evaluation outputs, package code shared by notebooks and production.
+
+M4's first governed lineage is source admission/hash -> extraction code commit -> immutable snapshot
+hash -> `change-features-v1` row/hash -> frozen split/hash -> `deterministic-heuristic-v1` artifact
+and threshold policy -> raw evaluation/hash. It is committed as a synthetic fixture artifact; M13
+will register later formal experiments in MLflow without replacing this source lineage.
