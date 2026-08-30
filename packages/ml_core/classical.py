@@ -758,6 +758,23 @@ def train_classical_models(
 
 
 def validate_classical_artifact(artifact: dict[str, object]) -> None:
+    required_top_level = {
+        "active_selection",
+        "artifact_hash",
+        "artifact_schema_version",
+        "baseline_comparison",
+        "dataset",
+        "experiment_declaration",
+        "limitations",
+        "model_card_version",
+        "models",
+        "preprocessing",
+        "reproducibility",
+        "runtime_compatibility",
+        "training_code_commit",
+    }
+    if set(artifact) != required_top_level:
+        raise ModelCompatibilityError("classical artifact top-level schema is invalid")
     if artifact.get("artifact_schema_version") != CLASSICAL_ARTIFACT_SCHEMA_VERSION:
         raise ModelCompatibilityError("classical artifact schema is incompatible")
     stored_hash = artifact.get("artifact_hash")
@@ -781,6 +798,14 @@ def validate_classical_artifact(artifact: dict[str, object]) -> None:
         raise ModelCompatibilityError("classical artifact feature schema is incompatible")
     if not isinstance(preprocessing, dict) or not isinstance(models, dict):
         raise ModelCompatibilityError("classical artifact model metadata is invalid")
+    limitations = artifact.get("limitations")
+    if (
+        not isinstance(limitations, list)
+        or not limitations
+        or len(limitations) > 32
+        or not all(isinstance(item, str) and 1 <= len(item) <= 512 for item in limitations)
+    ):
+        raise ModelCompatibilityError("classical artifact limitations are invalid")
     preprocessor_payload = {
         key: value for key, value in preprocessing.items() if key != "preprocessor_hash"
     }
@@ -808,10 +833,37 @@ def validate_classical_artifact(artifact: dict[str, object]) -> None:
             "threshold_policy_version",
         ),
     }
+    model_required_fields = {
+        LOGISTIC_ARTIFACT_VERSION: set(model_payload_fields[LOGISTIC_ARTIFACT_VERSION])
+        | {
+            "algorithm",
+            "artifact_hash",
+            "calibration",
+            "coefficient_interpretation",
+            "lifecycle",
+            "raw_test_predictions",
+            "test_metrics",
+            "tuning",
+        },
+        XGBOOST_ARTIFACT_VERSION: set(model_payload_fields[XGBOOST_ARTIFACT_VERSION])
+        | {
+            "algorithm",
+            "artifact_hash",
+            "calibration",
+            "feature_importance_gain",
+            "importance_interpretation",
+            "lifecycle",
+            "raw_test_predictions",
+            "test_metrics",
+            "tuning",
+        },
+    }
     for model_version in (LOGISTIC_ARTIFACT_VERSION, XGBOOST_ARTIFACT_VERSION):
         model = models.get(model_version)
         if not isinstance(model, dict) or not isinstance(model.get("artifact_hash"), str):
             raise ModelCompatibilityError(f"{model_version} metadata is invalid")
+        if set(model) != model_required_fields[model_version]:
+            raise ModelCompatibilityError(f"{model_version} schema is invalid")
         if model.get("preprocessor_hash") != preprocessing.get("preprocessor_hash"):
             raise ModelCompatibilityError(f"{model_version} preprocessor binding is invalid")
         model_payload = {field: model.get(field) for field in model_payload_fields[model_version]}
@@ -820,8 +872,17 @@ def validate_classical_artifact(artifact: dict[str, object]) -> None:
         calibration = model.get("calibration")
         if (
             not isinstance(calibration, dict)
+            or set(calibration)
+            != {
+                "calibrated_probability",
+                "probability_display_allowed",
+                "status",
+                "test_diagnostics",
+                "validation_sample",
+            }
             or calibration.get("probability_display_allowed") is not False
             or calibration.get("calibrated_probability") is not None
+            or not isinstance(calibration.get("status"), str)
         ):
             raise ModelCompatibilityError(f"{model_version} calibration gate is invalid")
     boosted = cast(dict[str, object], models[XGBOOST_ARTIFACT_VERSION])
@@ -835,13 +896,32 @@ def validate_classical_artifact(artifact: dict[str, object]) -> None:
     if hashlib.sha256(raw_booster).hexdigest() != boosted.get("booster_json_sha256"):
         raise ModelCompatibilityError("XGBoost serialized model checksum is invalid")
     selection = artifact.get("active_selection")
+    selection_fields = {
+        "active_artifact_hash",
+        "active_artifact_version",
+        "candidate_artifacts",
+        "decision",
+        "human_approval_required_for_change",
+        "probability_display_allowed",
+        "reasons",
+        "rollback",
+    }
     if (
         not isinstance(selection, dict)
+        or set(selection) != selection_fields
         or selection.get("active_artifact_version") != BASELINE_ARTIFACT_VERSION
         or selection.get("active_artifact_hash") != baseline_artifact_hash()
         or selection.get("probability_display_allowed") is not False
+        or selection.get("human_approval_required_for_change") is not True
     ):
         raise ModelCompatibilityError("classical active-model selection is invalid")
+    reasons = selection.get("reasons")
+    if (
+        not isinstance(reasons, list)
+        or not reasons
+        or not all(isinstance(item, str) and 1 <= len(item) <= 256 for item in reasons)
+    ):
+        raise ModelCompatibilityError("classical active-model reasons are invalid")
 
 
 def _score_band(score: float, threshold: float) -> str:

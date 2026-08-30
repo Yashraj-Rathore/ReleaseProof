@@ -33,5 +33,7 @@
 | `29_PILOT_PACKAGE.md` | pilot onboarding/measurement |
 | `30_LEARNING_CHECKPOINTS.md` | owner learning plan |
 | `31_FINAL_ARCHITECTURE_REVIEW.md` | final claim/security/architecture audit |
+| `32_M5_CLASSICAL_MODEL_CARD.md` | exact M5 lineage, measurements, calibration and promotion decision |
+| `33_M5_OWNER_LEARNING_NOTE.md` | owner-defensible M5 concepts, assumptions and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

@@ -36,6 +36,14 @@
   contracts with a 16-row synthetic MIT fixture and byte-reproducible raw evaluation artifact.
 - The first transparent deterministic heuristic score/band and validation-selected threshold
   policy, persisted as append-only tenant/snapshot/feature-bound risk evidence with no probability.
+- M5 train-only tabular preprocessing, logistic-regression and XGBoost CPU candidate training,
+  validation-only configuration/threshold selection and one frozen held-out synthetic evaluation.
+- A checksum-bound `classical-risk-artifact-v1` with exact runtime/data/feature/preprocessor/model
+  lineage, raw predictions/metrics, calibration abstention, promotion/rollback decision and model
+  card.
+- Authenticated tenant-scoped current-model and snapshot-risk API/HTML reads with evidence-backed
+  components, explicit non-probability wording and safe deterministic fallback when learned
+  artifacts are missing or invalid.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -58,6 +66,10 @@
   explicit public test-only webhook signing value while `.env.example` remains secret-free.
 - Added the frozen M4 artifact rebuild to the canonical validator and kept NumPy, pandas,
   scikit-learn and XGBoost deferred until a learned-model milestone needs them.
+- Reverified and locked NumPy 2.5.2, pandas 3.0.5, scikit-learn 1.9.0 and CPU-only XGBoost 3.4.1
+  in the M5 `ml` group; CI and the canonical validator now reproduce the M5 model artifact.
+- Kept `deterministic-heuristic-v1` active because the learned candidates use tiny one-repository
+  synthetic data, fail the frozen calibration sample gate and do not add defensible product value.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -69,3 +81,5 @@
   baseline, learned-model result, customer outcome, or sandbox claim is made.
 - M4 evidence is recorded in `PROJECT_STATUS.md`; its metrics come only from a tiny balanced
   synthetic fixture and are not product-performance, probability, incident or customer claims.
+- M5 evidence is recorded in `PROJECT_STATUS.md` and docs/32; learned-model figures remain tiny
+  synthetic harness measurements, probability is disabled and neither candidate is promoted.

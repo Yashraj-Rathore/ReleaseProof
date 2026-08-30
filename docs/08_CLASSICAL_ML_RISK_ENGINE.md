@@ -44,3 +44,27 @@ test rows the raw confusion is TP=2, FP=2, TN=0, FN=0 (precision 0.50, recall 1.
 average precision 0.41666667 and ROC-AUC 0.125). These unstable fictional-fixture measurements
 validate the harness and expose false positives; they do not establish model/customer performance.
 Calibration is explicitly not applicable because the output is not a probability.
+
+## Implemented M5 classical candidates
+
+`classical-preprocessor-v1` validates exact `change-features-v1` input, fits only on training rows,
+records nullable-feature median/zero imputation, adds missingness indicators and freezes z-score
+parameters. Required missing input returns UNKNOWN; schema or artifact incompatibility is rejected.
+
+`logistic-risk-v1` and `xgboost-risk-v1` use the immutable M4 temporal split. Candidate
+hyperparameters and model-score thresholds 0.3/0.5/0.7 use train/validation only under a frozen
+five-unit false-negative/two-unit false-positive cost rule and 0.75 recall floor. The final four
+test rows are evaluated once after selection/calibration rules are declared. Exact raw results,
+parameters, coefficients/gain associations, native XGBoost JSON, runtime versions, checksums and
+rollback metadata are in `models/public/m5_classical_ml_v1.json`.
+
+The calibration declaration freezes sigmoid/Platt and isotonic candidates, a training-prevalence
+Brier baseline, 10 equal-width bins with 20 rows per bin, minimum 200 validation rows/50 per class,
+ECE at most 0.05, bin gap at most 0.10 and Brier improvement at least 0.01. Four validation rows fail
+the sample gate, so calibration is not attempted and probability wording is prohibited.
+
+On the four synthetic held-out rows, logistic records TP=1, FP=1, TN=1, FN=1, F1=0.50,
+AP=0.50 and ROC-AUC=0.25. XGBoost records TP=1, FP=2, TN=0, FN=1, F1=0.40,
+AP=0.41666667 and ROC-AUC=0.25. These unstable fixture figures do not establish product value.
+Neither model defensibly improves the heuristic, so both remain candidates and
+`deterministic-heuristic-v1` remains active. The full model card is docs/32.

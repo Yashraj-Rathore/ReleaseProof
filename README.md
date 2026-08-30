@@ -221,3 +221,22 @@ uv run python -m eng.evaluate_m4_baseline --check
 uv run pytest tests/unit/test_dataset_baseline.py
 uv run pytest tests/integration/test_deterministic_risk_persistence.py
 ```
+
+## M5 classical risk candidates
+
+M5 implements `RP-0401..RP-0406` with a train-only shared preprocessor, logistic regression,
+XGBoost CPU candidate, validation-only hyperparameter/threshold selection, frozen calibration
+rules, checksum-bound artifacts and tenant-scoped risk/model evidence pages. The unchanged M4
+manifest and temporal split are used; no public or customer data is added.
+
+The learned results are deliberately **not promoted**. Four validation and four held-out synthetic
+rows are below the frozen 200-row/50-per-class calibration gate, so probability wording remains
+disabled. `deterministic-heuristic-v1` stays active, and a missing/invalid learned artifact falls
+back to deterministic evidence. See `docs/32_M5_CLASSICAL_MODEL_CARD.md` for the raw tiny-fixture
+metrics and limitations.
+
+```text
+uv sync --frozen --group dev --group ml
+uv run python -m eng.evaluate_m5_classical --check
+uv run pytest tests/unit/test_classical_ml.py tests/web/test_risk_evidence.py
+```

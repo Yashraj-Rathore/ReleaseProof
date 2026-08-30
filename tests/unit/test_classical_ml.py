@@ -6,6 +6,7 @@ from typing import cast
 
 import pytest
 
+from apps.web.risk.artifacts import load_public_model_artifact
 from eng.evaluate_m4_baseline import build_fixture_dataset
 from packages.dataset_core import DatasetBuild, DatasetSplit
 from packages.ml_core import (
@@ -131,3 +132,11 @@ def test_training_is_repeatable_in_the_same_pinned_environment() -> None:
     first = train_classical_models(_dataset(), training_code_commit="d" * 40)
     second = train_classical_models(_dataset(), training_code_commit="d" * 40)
     assert first == second
+
+
+def test_committed_public_model_artifact_is_checksum_valid() -> None:
+    artifact = load_public_model_artifact()
+    assert artifact["artifact_hash"] == (
+        "cb552fd83b257d67248d804c931cf604942d76bac245069b64f58048bfa9a8d6"
+    )
+    assert artifact["training_code_commit"] == "e63fcff3b2afd18775cd3a1cb01bb4688db316a3"

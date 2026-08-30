@@ -110,5 +110,17 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 - Composite database constraints independently enforce organization/snapshot/feature-set identity,
   including a same-snapshot constraint. PostgreSQL and SQLite both reject raw updates/deletes.
 
+### M5 implemented learned-model evidence
+
+- The small committed `classical-risk-artifact-v1` JSON binds the unchanged synthetic dataset and
+  split hashes, training-code commit, exact runtime, train-only preprocessing, logistic/XGBoost
+  parameters, raw test predictions/metrics, calibration failure, rollback and root/model checksums.
+  It is source-controlled fixture evidence rather than a tenant/customer database record.
+- `RiskScore` continues to persist only the active deterministic artifact because neither learned
+  candidate passed promotion. Public risk reads resolve the snapshot inside the active organization
+  and then select the exact active artifact/hash; no user-supplied organization ID controls scope.
+- A future approved learned artifact may reuse the append-only `RiskScore` contract only after its
+  probability/score validation and lifecycle rules are implemented by an assigned promotion issue.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.

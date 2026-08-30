@@ -26,3 +26,9 @@ M4's first governed lineage is source admission/hash -> extraction code commit -
 hash -> `change-features-v1` row/hash -> frozen split/hash -> `deterministic-heuristic-v1` artifact
 and threshold policy -> raw evaluation/hash. It is committed as a synthetic fixture artifact; M13
 will register later formal experiments in MLflow without replacing this source lineage.
+
+M5 extends that chain with training-code commit -> exact pinned CPU runtime -> train-only
+preprocessor/hash -> validation-selected logistic/XGBoost configurations and threshold policy ->
+one held-out raw evaluation -> model/root checksums -> explicit `candidate_not_promoted` decision ->
+deterministic rollback artifact. No mutable `latest` identifier or automatic promotion is used.
+M13 will import/register this lineage in MLflow rather than changing the historical evidence.

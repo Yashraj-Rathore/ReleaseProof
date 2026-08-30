@@ -89,3 +89,10 @@ Large/raw/private data stays out of Git; manifests/small safe fixtures live in G
 - `tests/golden/m4_synthetic_baseline_v1.json` is the raw reproducible manifest, feature-row,
   split/leakage and baseline-evaluation artifact. Its manifest names extraction code commit
   `3448b1f879682d2b12a212d4c82d8fee87e33a12`; the repository validator rebuilds it byte-for-byte.
+
+## M5 reuse
+
+M5 does not mutate the manifest, rows, labels or split assignments. Train-only preprocessing fits
+explicit nullable-feature imputation, missingness indicators and scaling on the six training rows;
+validation selects configurations/thresholds, and the four test rows are read only after the
+experiment declaration is frozen. The resulting artifact names the exact M4 manifest/split hashes.

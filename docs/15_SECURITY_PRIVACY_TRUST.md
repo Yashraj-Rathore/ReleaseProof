@@ -49,3 +49,12 @@ The default worker has no live source-tree provider and safely persists missing 
 Feature/evidence rows are organization scoped, have composite parent constraints and are append-only
 in application and database controls. Optional opaque author keys never leave the history
 aggregation path or become identity/employee-scoring features.
+
+## M5 model-artifact boundary
+
+The public synthetic artifact is bounded before JSON parsing and validates root, preprocessing,
+individual model and native XGBoost checksums before inference. Exact feature-schema compatibility
+is required. Invalid/unavailable learned artifacts cannot replace or erase deterministic evidence;
+the current-model read reports explicit baseline fallback. Artifact contents include no customer
+source, credentials or provider payloads. Snapshot-risk reads resolve tenant scope server-side and
+cross-organization IDs return the safe not-found envelope.

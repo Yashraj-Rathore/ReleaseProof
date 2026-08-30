@@ -60,6 +60,18 @@ integer score, LOW/MEDIUM/HIGH or UNKNOWN band, triggered rule contributions and
 feature and policy hashes/versions. `calibrated_probability` is always null. M5 still owns the
 public risk-scoring API/UI and learned-model contracts.
 
+M5 implements authenticated, active-organization-scoped reads:
+- `GET /api/v1/models/current` and `/app/models/current/` expose the exact active artifact,
+  non-promoted learned candidates, calibration state, dataset/evaluation lineage and limitations;
+- `GET /api/v1/risk/snapshots/{snapshot_public_id}` and
+  `/app/risk/snapshots/{snapshot_public_id}/` expose the active persisted score and evidence-backed
+  contributions after tenant-scoped snapshot resolution.
+
+The first public `RiskModelResponseV1` representation is `risk-model-response-v1`. It uses
+`raw_score`/band vocabulary, sets calibrated probability to null and explicitly disables
+probability display. An unavailable or checksum-invalid learned artifact leaves the deterministic
+baseline active with an explicit fallback reason.
+
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
 `RiskModelResponseV1`: exact model artifact/checksum, raw score, calibrated probability nullable, band, explanation, latency metadata.

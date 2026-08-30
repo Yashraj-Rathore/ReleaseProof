@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — verified 2026-08-27
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -53,10 +53,10 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 
 | Technology | Verified snapshot | Owning gate |
 |---|---:|---|
-| NumPy | `2.5.2` | M4/M5 reverify |
-| pandas | `3.0.5` | M4/M5 reverify |
-| scikit-learn | `1.9.0` | M5 reverify |
-| XGBoost | `3.4.1` | M5 reverify |
+| NumPy | `2.5.2` | Locked by M5; see the verified M5 table below |
+| pandas | `3.0.5` | Locked by M5; see the verified M5 table below |
+| scikit-learn | `1.9.0` | Locked by M5; see the verified M5 table below |
+| XGBoost | `3.4.1` | Locked by M5 as the CPU distribution; see below |
 | PyTorch | `2.13.0`, CPU build first | M11 reverify against hardware/runtime |
 | Transformers | `5.15.1` | M11 reverify with PyTorch |
 | sentence-transformers | `6.0.0` | M6/M11 reverify |
@@ -73,6 +73,25 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 Official compatibility/release evidence: [NumPy](https://numpy.org/news/), [pandas](https://pandas.pydata.org/docs/whatsnew/), [scikit-learn](https://scikit-learn.org/stable/whats_new.html), [XGBoost](https://xgboost.readthedocs.io/en/stable/changes/index.html), [PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md), [Transformers](https://huggingface.co/docs/transformers/installation), [sentence-transformers](https://sbert.net/docs/installation.html), [LangChain](https://docs.langchain.com/oss/python/versioning), [MLflow](https://mlflow.org/releases/), [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-python/releases), [FastAPI](https://fastapi.tiangolo.com/deployment/versions/), [Ollama](https://github.com/ollama/ollama/releases), [vLLM](https://github.com/vllm-project/vllm/releases).
 
 The OpenAI Python SDK is milestone-resolved rather than assigned an invented pin. Official OpenAI documentation establishes the `openai` package and Responses API pattern but does not publish the package's current exact version. RP-0602 must reverify, lock and record the exact SDK version with the adapter/model configuration. [Official SDK documentation](https://developers.openai.com/api/docs/libraries).
+
+## M5 classical-ML pins — verified and locked 2026-08-30
+
+These four direct packages live in the separate `ml` dependency group. CPython remains 3.13.15;
+the exact lock resolved SciPy 1.18.1, joblib 1.5.3, narwhals 2.25.0 and threadpoolctl 3.6.0 as
+transitive requirements. pandas is used for the explicit ordered tabular preprocessing boundary,
+NumPy for numeric matrices/artifacts, scikit-learn for logistic regression/metrics and XGBoost for
+the tree candidate. No notebook, SHAP, GPU or model-serving dependency is added.
+
+| Package | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| NumPy | `2.5.2` | The official [2.5.2 release notes](https://numpy.org/devdocs/release/2.5.2-notes.html) identify it as the 2026-08-09 patch and support Python 3.12–3.15, including the selected 3.13. |
+| pandas | `3.0.5` | The official [3.0.5 release notes](https://pandas.pydata.org/docs/whatsnew/v3.0.5.html) identify the 2026-07-22 patch; the pandas [3.0.5 release](https://github.com/pandas-dev/pandas/releases/tag/v3.0.5) supports Python 3.11+, and its [install guide](https://pandas.pydata.org/docs/getting_started/install.html) requires NumPy at least 1.26.0. |
+| scikit-learn | `1.9.0` | The official [1.9.0 release notes](https://scikit-learn.org/stable/whats_new/v1.9.html) identify the June 2026 stable release; its [tagged project metadata](https://github.com/scikit-learn/scikit-learn/blob/1.9.0/pyproject.toml) requires Python 3.11+ and includes Python 3.13, while the official [install guide](https://scikit-learn.org/stable/install.html) lists its NumPy/SciPy/joblib/narwhals/threadpoolctl requirements. |
+| XGBoost CPU | `xgboost-cpu==3.4.1` | The official [3.4.1 notes](https://xgboost.readthedocs.io/en/stable/changes/v3.4.0.html) identify the 2026-08-14 patch; 3.3 raised the [minimum Python version to 3.12](https://xgboost.readthedocs.io/en/stable/changes/v3.3.0.html), and the [install guide](https://xgboost.readthedocs.io/en/stable/install.html#minimal-installation-cpu-only) documents the smaller CPU-only distribution. Python 3.13 is inside that supported range. |
+
+`uv sync --frozen --group dev --group ml` installed these exact pins together on CPython 3.13.15,
+and M5 training/inference/serialization tests passed. That repository result is compatibility
+evidence for this locked ReleaseProof environment, not a universal platform claim.
 
 ## Dependency and image management
 

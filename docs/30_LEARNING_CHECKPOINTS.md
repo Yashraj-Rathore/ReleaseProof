@@ -12,3 +12,5 @@ The project is not interview-ready unless the owner can explain it without Codex
 - **M13:** trace one prediction from code -> dataset -> experiment -> artifact -> score; demonstrate model rollback.
 
 Every AI/ML Codex completion report includes an Owner Learning Note.
+
+M5's completed explanation and rerun checkpoint is `docs/33_M5_OWNER_LEARNING_NOTE.md`.

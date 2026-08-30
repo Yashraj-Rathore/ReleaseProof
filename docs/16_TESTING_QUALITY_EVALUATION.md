@@ -51,3 +51,12 @@ precision and ROC-AUC plus explicit small-sample/proxy/synthetic limitations.
 Django integration/security tests prove idempotent baseline persistence, exact artifact/feature/
 policy attribution, null probability, application scope, composite tenant/snapshot constraints and
 append-only raw-SQL behavior. CI rebuilds the artifact and repeats the suite on PostgreSQL.
+
+## M5 classical-model evidence
+
+Tests cover train-only preprocessing, explicit missingness, logistic/XGBoost tuning, frozen
+threshold/calibration rules, one held-out result set, exact artifact checksums, safe candidate
+inference, schema/required-input rejection, same-environment repeatability, learned-artifact outage
+fallback, probability prohibition and cross-tenant risk HTTP denial. CI installs the separate `ml`
+group and rebuilds the committed M5 artifact; native/platform numeric variation is limited by its
+recorded `1e-8` absolute tolerance while the committed model checksums remain exact.

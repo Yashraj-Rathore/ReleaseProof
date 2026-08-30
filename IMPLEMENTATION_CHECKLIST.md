@@ -17,7 +17,7 @@
 ## ML/RAG
 - [x] Dataset manifests/provenance/labels.
 - [x] Time/repository leakage controls.
-- [ ] Logistic + XGBoost evaluated and versioned.
+- [x] Logistic + XGBoost evaluated and versioned; synthetic candidates remain unpromoted.
 - [ ] Hybrid RAG with tenant isolation/citations.
 - [ ] PyTorch/HF semantic model + model card.
 - [ ] MLflow lineage/evaluation.

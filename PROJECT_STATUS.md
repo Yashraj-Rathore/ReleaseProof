@@ -1,18 +1,51 @@
 # Project Status
 
-**Current state: M4 dataset and deterministic baseline complete on 2026-08-30.**
+**Current state: M5 classical ML risk engine complete on 2026-08-30.**
 
-The repository now has M1-M3 foundations/change evidence plus admitted synthetic dataset
-provenance, auditable proxy labels, frozen temporal splits, leakage checks, feature materialization,
-and a transparent evaluated deterministic score/band persisted as tenant-bound evidence. No learned
-model, probability claim, real/public dataset evaluation, customer result, live GitHub/source-tree
-adapter validation, sandbox security claim, or production-readiness claim exists yet.
+The repository now has M1-M4 foundations/data/baseline evidence plus real logistic-regression and
+XGBoost CPU candidate training on the unchanged synthetic split, train-only preprocessing,
+validation-only selection, a frozen calibration abstention rule, checksum-bound model artifacts and
+tenant-scoped risk/model reads. The learned candidates are not promoted and are never presented as
+probabilities. No real/public dataset evaluation, customer result, live GitHub/source-tree adapter
+validation, sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/05_CLASSICAL_ML_RISK.md` for `RP-0401..RP-0406`. Reverify and lock only the M5
-ML dependencies, preserve the M4 manifest/split, tune only with train/validation and keep the final
-test split untouched until the experiment declaration and calibration decision rule are frozen.
+Run `codex-prompts/06_RAG_RETRIEVAL.md` for `RP-0501..RP-0506`. Keep every document/chunk/vector
+tenant and repository scoped, reverify the exact embedding/reranker artifacts before adding them,
+and compare lexical, vector, hybrid and reranked retrieval on a frozen relevance fixture.
+
+## M5 evidence
+
+- The separate `ml` group locks NumPy 2.5.2, pandas 3.0.5, scikit-learn 1.9.0 and
+  `xgboost-cpu` 3.4.1 on CPython 3.13.15. Official release/compatibility evidence is recorded in
+  docs/26; the exact transitive environment is in `uv.lock`.
+- `classical-preprocessor-v1` fits only on six training rows, binds exact `change-features-v1`,
+  records imputation/missingness/scaling and has hash
+  `41f9072f1e5d34aa1e934788fe1026b096222482534acca308ce7dc6b7ddcd33`.
+- Logistic and XGBoost configurations plus score thresholds use train/validation only. The final
+  test read occurs after target, costs, thresholds, calibration candidates, Brier/reliability/ECE
+  rules, sample minimums and tolerances are declared.
+- Both calibration candidates are not attempted because four validation rows fail the frozen
+  200-row/50-per-class gate. Calibrated probability is null and probability display is prohibited.
+- On four synthetic held-out rows, logistic has TP=1, FP=1, TN=1, FN=1, F1=0.50, AP=0.50 and
+  ROC-AUC=0.25. XGBoost has TP=1, FP=2, TN=0, FN=1, F1=0.40, AP=0.41666667 and ROC-AUC=0.25.
+  These unstable fictional measurements validate only the harness.
+- The 56,530-byte artifact `models/public/m5_classical_ml_v1.json` names training commit
+  `e63fcff3b2afd18775cd3a1cb01bb4688db316a3` and root hash
+  `cb552fd83b257d67248d804c931cf604942d76bac245069b64f58048bfa9a8d6`.
+  Same-environment rebuild is byte-identical; cross-platform numeric comparison is bounded at
+  `1e-8` after excluding native bytes/platform identity.
+- Neither candidate beats/complements the heuristic defensibly. `deterministic-heuristic-v1`
+  remains active and is the explicit rollback. Missing/invalid learned artifacts report baseline
+  fallback instead of erasing deterministic evidence.
+- Authenticated model/risk API and HTML views expose exact versions, score components, limitations
+  and no probability. Tests cover cross-tenant snapshot denial, checksum/schema/input failures and
+  fallback behavior.
+- The canonical local suite passed **72 tests** with one live S3 test deselected; Ruff and strict
+  mypy passed for 141 source files, and Django/migration/M4/M5/doc/inventory checks passed.
+- No public repository/customer data was acquired, no pretrained model was downloaded, no paid or
+  hosted provider was called, and no untrusted repository code was executed.
 
 ## M4 evidence
 
@@ -114,8 +147,8 @@ and its remote M2 result is tracked in GitHub Actions.
 | M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
 | M3 change intelligence | Complete - RP-0201..RP-0206 |
 | M4 dataset/baseline | Complete - RP-0301..RP-0306 |
-| M5 classical ML | Not started |
-| M6 RAG | Not started |
+| M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
+| M6 RAG | Not started - next |
 | M7 LLM evidence | Not started |
 | M8 generated tests | Not started |
 | M9 sandbox | Not started |

@@ -30,6 +30,8 @@ a generated single-file master specification, and one Codex milestone at a time.
 - `codex-prompts/` — one prompt per milestone.
 - `templates/` — DoD, dataset/model/experiment/security/pilot templates.
 - `notebooks/`, `datasets/` — guarded placeholders for their owning milestones.
+- `models/public/` — small checksum-bound synthetic model artifacts safe for source control;
+  private or large artifacts remain excluded/content-addressed.
 
 ## Repository shape
 

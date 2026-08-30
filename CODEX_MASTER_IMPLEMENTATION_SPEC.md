@@ -234,6 +234,25 @@ uv run pytest tests/unit/test_dataset_baseline.py
 uv run pytest tests/integration/test_deterministic_risk_persistence.py
 ```
 
+## M5 classical risk candidates
+
+M5 implements `RP-0401..RP-0406` with a train-only shared preprocessor, logistic regression,
+XGBoost CPU candidate, validation-only hyperparameter/threshold selection, frozen calibration
+rules, checksum-bound artifacts and tenant-scoped risk/model evidence pages. The unchanged M4
+manifest and temporal split are used; no public or customer data is added.
+
+The learned results are deliberately **not promoted**. Four validation and four held-out synthetic
+rows are below the frozen 200-row/50-per-class calibration gate, so probability wording remains
+disabled. `deterministic-heuristic-v1` stays active, and a missing/invalid learned artifact falls
+back to deterministic evidence. See `docs/32_M5_CLASSICAL_MODEL_CARD.md` for the raw tiny-fixture
+metrics and limitations.
+
+```text
+uv sync --frozen --group dev --group ml
+uv run python -m eng.evaluate_m5_classical --check
+uv run pytest tests/unit/test_classical_ml.py tests/web/test_risk_evidence.py
+```
+
 
 ---
 
@@ -533,7 +552,7 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 ## ML/RAG
 - [x] Dataset manifests/provenance/labels.
 - [x] Time/repository leakage controls.
-- [ ] Logistic + XGBoost evaluated and versioned.
+- [x] Logistic + XGBoost evaluated and versioned; synthetic candidates remain unpromoted.
 - [ ] Hybrid RAG with tenant isolation/citations.
 - [ ] PyTorch/HF semantic model + model card.
 - [ ] MLflow lineage/evaluation.
@@ -567,19 +586,52 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M4 dataset and deterministic baseline complete on 2026-08-30.**
+**Current state: M5 classical ML risk engine complete on 2026-08-30.**
 
-The repository now has M1-M3 foundations/change evidence plus admitted synthetic dataset
-provenance, auditable proxy labels, frozen temporal splits, leakage checks, feature materialization,
-and a transparent evaluated deterministic score/band persisted as tenant-bound evidence. No learned
-model, probability claim, real/public dataset evaluation, customer result, live GitHub/source-tree
-adapter validation, sandbox security claim, or production-readiness claim exists yet.
+The repository now has M1-M4 foundations/data/baseline evidence plus real logistic-regression and
+XGBoost CPU candidate training on the unchanged synthetic split, train-only preprocessing,
+validation-only selection, a frozen calibration abstention rule, checksum-bound model artifacts and
+tenant-scoped risk/model reads. The learned candidates are not promoted and are never presented as
+probabilities. No real/public dataset evaluation, customer result, live GitHub/source-tree adapter
+validation, sandbox security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/05_CLASSICAL_ML_RISK.md` for `RP-0401..RP-0406`. Reverify and lock only the M5
-ML dependencies, preserve the M4 manifest/split, tune only with train/validation and keep the final
-test split untouched until the experiment declaration and calibration decision rule are frozen.
+Run `codex-prompts/06_RAG_RETRIEVAL.md` for `RP-0501..RP-0506`. Keep every document/chunk/vector
+tenant and repository scoped, reverify the exact embedding/reranker artifacts before adding them,
+and compare lexical, vector, hybrid and reranked retrieval on a frozen relevance fixture.
+
+## M5 evidence
+
+- The separate `ml` group locks NumPy 2.5.2, pandas 3.0.5, scikit-learn 1.9.0 and
+  `xgboost-cpu` 3.4.1 on CPython 3.13.15. Official release/compatibility evidence is recorded in
+  docs/26; the exact transitive environment is in `uv.lock`.
+- `classical-preprocessor-v1` fits only on six training rows, binds exact `change-features-v1`,
+  records imputation/missingness/scaling and has hash
+  `41f9072f1e5d34aa1e934788fe1026b096222482534acca308ce7dc6b7ddcd33`.
+- Logistic and XGBoost configurations plus score thresholds use train/validation only. The final
+  test read occurs after target, costs, thresholds, calibration candidates, Brier/reliability/ECE
+  rules, sample minimums and tolerances are declared.
+- Both calibration candidates are not attempted because four validation rows fail the frozen
+  200-row/50-per-class gate. Calibrated probability is null and probability display is prohibited.
+- On four synthetic held-out rows, logistic has TP=1, FP=1, TN=1, FN=1, F1=0.50, AP=0.50 and
+  ROC-AUC=0.25. XGBoost has TP=1, FP=2, TN=0, FN=1, F1=0.40, AP=0.41666667 and ROC-AUC=0.25.
+  These unstable fictional measurements validate only the harness.
+- The 56,530-byte artifact `models/public/m5_classical_ml_v1.json` names training commit
+  `e63fcff3b2afd18775cd3a1cb01bb4688db316a3` and root hash
+  `cb552fd83b257d67248d804c931cf604942d76bac245069b64f58048bfa9a8d6`.
+  Same-environment rebuild is byte-identical; cross-platform numeric comparison is bounded at
+  `1e-8` after excluding native bytes/platform identity.
+- Neither candidate beats/complements the heuristic defensibly. `deterministic-heuristic-v1`
+  remains active and is the explicit rollback. Missing/invalid learned artifacts report baseline
+  fallback instead of erasing deterministic evidence.
+- Authenticated model/risk API and HTML views expose exact versions, score components, limitations
+  and no probability. Tests cover cross-tenant snapshot denial, checksum/schema/input failures and
+  fallback behavior.
+- The canonical local suite passed **72 tests** with one live S3 test deselected; Ruff and strict
+  mypy passed for 141 source files, and Django/migration/M4/M5/doc/inventory checks passed.
+- No public repository/customer data was acquired, no pretrained model was downloaded, no paid or
+  hosted provider was called, and no untrusted repository code was executed.
 
 ## M4 evidence
 
@@ -681,8 +733,8 @@ and its remote M2 result is tracked in GitHub Actions.
 | M2 tenancy/GitHub | Complete â€” RP-0101..RP-0106 |
 | M3 change intelligence | Complete - RP-0201..RP-0206 |
 | M4 dataset/baseline | Complete - RP-0301..RP-0306 |
-| M5 classical ML | Not started |
-| M6 RAG | Not started |
+| M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
+| M6 RAG | Not started - next |
 | M7 LLM evidence | Not started |
 | M8 generated tests | Not started |
 | M9 sandbox | Not started |
@@ -738,6 +790,14 @@ and its remote M2 result is tracked in GitHub Actions.
   contracts with a 16-row synthetic MIT fixture and byte-reproducible raw evaluation artifact.
 - The first transparent deterministic heuristic score/band and validation-selected threshold
   policy, persisted as append-only tenant/snapshot/feature-bound risk evidence with no probability.
+- M5 train-only tabular preprocessing, logistic-regression and XGBoost CPU candidate training,
+  validation-only configuration/threshold selection and one frozen held-out synthetic evaluation.
+- A checksum-bound `classical-risk-artifact-v1` with exact runtime/data/feature/preprocessor/model
+  lineage, raw predictions/metrics, calibration abstention, promotion/rollback decision and model
+  card.
+- Authenticated tenant-scoped current-model and snapshot-risk API/HTML reads with evidence-backed
+  components, explicit non-probability wording and safe deterministic fallback when learned
+  artifacts are missing or invalid.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -760,6 +820,10 @@ and its remote M2 result is tracked in GitHub Actions.
   explicit public test-only webhook signing value while `.env.example` remains secret-free.
 - Added the frozen M4 artifact rebuild to the canonical validator and kept NumPy, pandas,
   scikit-learn and XGBoost deferred until a learned-model milestone needs them.
+- Reverified and locked NumPy 2.5.2, pandas 3.0.5, scikit-learn 1.9.0 and CPU-only XGBoost 3.4.1
+  in the M5 `ml` group; CI and the canonical validator now reproduce the M5 model artifact.
+- Kept `deterministic-heuristic-v1` active because the learned candidates use tiny one-repository
+  synthetic data, fail the frozen calibration sample gate and do not add defensible product value.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -771,6 +835,8 @@ and its remote M2 result is tracked in GitHub Actions.
   baseline, learned-model result, customer outcome, or sandbox claim is made.
 - M4 evidence is recorded in `PROJECT_STATUS.md`; its metrics come only from a tiny balanced
   synthetic fixture and are not product-performance, probability, incident or customer claims.
+- M5 evidence is recorded in `PROJECT_STATUS.md` and docs/32; learned-model figures remain tiny
+  synthetic harness measurements, probability is disabled and neither candidate is promoted.
 
 
 ---
@@ -809,6 +875,8 @@ a generated single-file master specification, and one Codex milestone at a time.
 - `codex-prompts/` — one prompt per milestone.
 - `templates/` — DoD, dataset/model/experiment/security/pilot templates.
 - `notebooks/`, `datasets/` — guarded placeholders for their owning milestones.
+- `models/public/` — small checksum-bound synthetic model artifacts safe for source control;
+  private or large artifacts remain excluded/content-addressed.
 
 ## Repository shape
 
@@ -883,6 +951,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `29_PILOT_PACKAGE.md` | pilot onboarding/measurement |
 | `30_LEARNING_CHECKPOINTS.md` | owner learning plan |
 | `31_FINAL_ARCHITECTURE_REVIEW.md` | final claim/security/architecture audit |
+| `32_M5_CLASSICAL_MODEL_CARD.md` | exact M5 lineage, measurements, calibration and promotion decision |
+| `33_M5_OWNER_LEARNING_NOTE.md` | owner-defensible M5 concepts, assumptions and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1149,6 +1219,18 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 - Composite database constraints independently enforce organization/snapshot/feature-set identity,
   including a same-snapshot constraint. PostgreSQL and SQLite both reject raw updates/deletes.
 
+### M5 implemented learned-model evidence
+
+- The small committed `classical-risk-artifact-v1` JSON binds the unchanged synthetic dataset and
+  split hashes, training-code commit, exact runtime, train-only preprocessing, logistic/XGBoost
+  parameters, raw test predictions/metrics, calibration failure, rollback and root/model checksums.
+  It is source-controlled fixture evidence rather than a tenant/customer database record.
+- `RiskScore` continues to persist only the active deterministic artifact because neither learned
+  candidate passed promotion. Public risk reads resolve the snapshot inside the active organization
+  and then select the exact active artifact/hash; no user-supplied organization ID controls scope.
+- A future approved learned artifact may reuse the append-only `RiskScore` contract only after its
+  probability/score validation and lifecycle rules are implemented by an assigned promotion issue.
+
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
 
@@ -1218,6 +1300,18 @@ M4 adds internal persisted contract `deterministic-risk-score-v1` with artifact
 integer score, LOW/MEDIUM/HIGH or UNKNOWN band, triggered rule contributions and exact artifact,
 feature and policy hashes/versions. `calibrated_probability` is always null. M5 still owns the
 public risk-scoring API/UI and learned-model contracts.
+
+M5 implements authenticated, active-organization-scoped reads:
+- `GET /api/v1/models/current` and `/app/models/current/` expose the exact active artifact,
+  non-promoted learned candidates, calibration state, dataset/evaluation lineage and limitations;
+- `GET /api/v1/risk/snapshots/{snapshot_public_id}` and
+  `/app/risk/snapshots/{snapshot_public_id}/` expose the active persisted score and evidence-backed
+  contributions after tenant-scoped snapshot resolution.
+
+The first public `RiskModelResponseV1` representation is `risk-model-response-v1`. It uses
+`raw_score`/band vocabulary, sets calibrated probability to null and explicitly disables
+probability display. An unavailable or checksum-invalid learned artifact leaves the deterministic
+baseline active with an explicit fallback reason.
 
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
@@ -1472,6 +1566,13 @@ Large/raw/private data stays out of Git; manifests/small safe fixtures live in G
   split/leakage and baseline-evaluation artifact. Its manifest names extraction code commit
   `3448b1f879682d2b12a212d4c82d8fee87e33a12`; the repository validator rebuilds it byte-for-byte.
 
+## M5 reuse
+
+M5 does not mutate the manifest, rows, labels or split assignments. Train-only preprocessing fits
+explicit nullable-feature imputation, missingness indicators and scaling on the six training rows;
+validation selects configurations/thresholds, and the four test rows are read only after the
+experiment declaration is frozen. The resulting artifact names the exact M4 manifest/split hashes.
+
 
 ---
 
@@ -1523,6 +1624,30 @@ test rows the raw confusion is TP=2, FP=2, TN=0, FN=0 (precision 0.50, recall 1.
 average precision 0.41666667 and ROC-AUC 0.125). These unstable fictional-fixture measurements
 validate the harness and expose false positives; they do not establish model/customer performance.
 Calibration is explicitly not applicable because the output is not a probability.
+
+## Implemented M5 classical candidates
+
+`classical-preprocessor-v1` validates exact `change-features-v1` input, fits only on training rows,
+records nullable-feature median/zero imputation, adds missingness indicators and freezes z-score
+parameters. Required missing input returns UNKNOWN; schema or artifact incompatibility is rejected.
+
+`logistic-risk-v1` and `xgboost-risk-v1` use the immutable M4 temporal split. Candidate
+hyperparameters and model-score thresholds 0.3/0.5/0.7 use train/validation only under a frozen
+five-unit false-negative/two-unit false-positive cost rule and 0.75 recall floor. The final four
+test rows are evaluated once after selection/calibration rules are declared. Exact raw results,
+parameters, coefficients/gain associations, native XGBoost JSON, runtime versions, checksums and
+rollback metadata are in `models/public/m5_classical_ml_v1.json`.
+
+The calibration declaration freezes sigmoid/Platt and isotonic candidates, a training-prevalence
+Brier baseline, 10 equal-width bins with 20 rows per bin, minimum 200 validation rows/50 per class,
+ECE at most 0.05, bin gap at most 0.10 and Brier improvement at least 0.01. Four validation rows fail
+the sample gate, so calibration is not attempted and probability wording is prohibited.
+
+On the four synthetic held-out rows, logistic records TP=1, FP=1, TN=1, FN=1, F1=0.50,
+AP=0.50 and ROC-AUC=0.25. XGBoost records TP=1, FP=2, TN=0, FN=1, F1=0.40,
+AP=0.41666667 and ROC-AUC=0.25. These unstable fixture figures do not establish product value.
+Neither model defensibly improves the heuristic, so both remain candidates and
+`deterministic-heuristic-v1` remains active. The full model card is docs/32.
 
 
 ---
@@ -1800,6 +1925,13 @@ Active approved model, dataset manifest, split, metrics, threshold/calibration, 
 ### Policy/admin
 GitHub installation, hosted LLM policy, retention, org-local learning opt-in, execution policy, quotas/budgets.
 
+## Implemented M5 evidence views
+
+The current-model page names the active artifact, candidate lifecycle/calibration states, evaluation
+artifact and limitations. The snapshot-risk page names the exact active score artifact and renders
+its deterministic rule contributions. Both are authenticated, active-organization scoped and say
+that the score is not a calibrated probability; no color-only status or JavaScript is required.
+
 ## HTMX
 Use for partial status refresh, evidence filtering, proposal approval, policy forms and evaluation detail. Server remains authoritative.
 
@@ -1866,6 +1998,15 @@ Feature/evidence rows are organization scoped, have composite parent constraints
 in application and database controls. Optional opaque author keys never leave the history
 aggregation path or become identity/employee-scoring features.
 
+## M5 model-artifact boundary
+
+The public synthetic artifact is bounded before JSON parsing and validates root, preprocessing,
+individual model and native XGBoost checksums before inference. Exact feature-schema compatibility
+is required. Invalid/unavailable learned artifacts cannot replace or erase deterministic evidence;
+the current-model read reports explicit baseline fallback. Artifact contents include no customer
+source, credentials or provider payloads. Snapshot-risk reads resolve tenant scope server-side and
+cross-organization IDs return the safe not-found envelope.
+
 
 ---
 
@@ -1925,6 +2066,15 @@ Django integration/security tests prove idempotent baseline persistence, exact a
 policy attribution, null probability, application scope, composite tenant/snapshot constraints and
 append-only raw-SQL behavior. CI rebuilds the artifact and repeats the suite on PostgreSQL.
 
+## M5 classical-model evidence
+
+Tests cover train-only preprocessing, explicit missingness, logistic/XGBoost tuning, frozen
+threshold/calibration rules, one held-out result set, exact artifact checksums, safe candidate
+inference, schema/required-input rejection, same-environment repeatability, learned-artifact outage
+fallback, probability prohibition and cross-tenant risk HTTP denial. CI installs the separate `ml`
+group and rebuilds the committed M5 artifact; native/platform numeric variation is limited by its
+recorded `1e-8` absolute tolerance while the committed model checksums remain exact.
+
 
 ---
 
@@ -1958,6 +2108,12 @@ M4's first governed lineage is source admission/hash -> extraction code commit -
 hash -> `change-features-v1` row/hash -> frozen split/hash -> `deterministic-heuristic-v1` artifact
 and threshold policy -> raw evaluation/hash. It is committed as a synthetic fixture artifact; M13
 will register later formal experiments in MLflow without replacing this source lineage.
+
+M5 extends that chain with training-code commit -> exact pinned CPU runtime -> train-only
+preprocessor/hash -> validation-selected logistic/XGBoost configurations and threshold policy ->
+one held-out raw evaluation -> model/root checksums -> explicit `candidate_not_promoted` decision ->
+deterministic rollback artifact. No mutable `latest` identifier or automatic promotion is used.
+M13 will import/register this lineage in MLflow rather than changing the historical evidence.
 
 
 ---
@@ -2627,7 +2783,7 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — verified 2026-08-27
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -2682,10 +2838,10 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 
 | Technology | Verified snapshot | Owning gate |
 |---|---:|---|
-| NumPy | `2.5.2` | M4/M5 reverify |
-| pandas | `3.0.5` | M4/M5 reverify |
-| scikit-learn | `1.9.0` | M5 reverify |
-| XGBoost | `3.4.1` | M5 reverify |
+| NumPy | `2.5.2` | Locked by M5; see the verified M5 table below |
+| pandas | `3.0.5` | Locked by M5; see the verified M5 table below |
+| scikit-learn | `1.9.0` | Locked by M5; see the verified M5 table below |
+| XGBoost | `3.4.1` | Locked by M5 as the CPU distribution; see below |
 | PyTorch | `2.13.0`, CPU build first | M11 reverify against hardware/runtime |
 | Transformers | `5.15.1` | M11 reverify with PyTorch |
 | sentence-transformers | `6.0.0` | M6/M11 reverify |
@@ -2702,6 +2858,25 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 Official compatibility/release evidence: [NumPy](https://numpy.org/news/), [pandas](https://pandas.pydata.org/docs/whatsnew/), [scikit-learn](https://scikit-learn.org/stable/whats_new.html), [XGBoost](https://xgboost.readthedocs.io/en/stable/changes/index.html), [PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md), [Transformers](https://huggingface.co/docs/transformers/installation), [sentence-transformers](https://sbert.net/docs/installation.html), [LangChain](https://docs.langchain.com/oss/python/versioning), [MLflow](https://mlflow.org/releases/), [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-python/releases), [FastAPI](https://fastapi.tiangolo.com/deployment/versions/), [Ollama](https://github.com/ollama/ollama/releases), [vLLM](https://github.com/vllm-project/vllm/releases).
 
 The OpenAI Python SDK is milestone-resolved rather than assigned an invented pin. Official OpenAI documentation establishes the `openai` package and Responses API pattern but does not publish the package's current exact version. RP-0602 must reverify, lock and record the exact SDK version with the adapter/model configuration. [Official SDK documentation](https://developers.openai.com/api/docs/libraries).
+
+## M5 classical-ML pins — verified and locked 2026-08-30
+
+These four direct packages live in the separate `ml` dependency group. CPython remains 3.13.15;
+the exact lock resolved SciPy 1.18.1, joblib 1.5.3, narwhals 2.25.0 and threadpoolctl 3.6.0 as
+transitive requirements. pandas is used for the explicit ordered tabular preprocessing boundary,
+NumPy for numeric matrices/artifacts, scikit-learn for logistic regression/metrics and XGBoost for
+the tree candidate. No notebook, SHAP, GPU or model-serving dependency is added.
+
+| Package | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| NumPy | `2.5.2` | The official [2.5.2 release notes](https://numpy.org/devdocs/release/2.5.2-notes.html) identify it as the 2026-08-09 patch and support Python 3.12–3.15, including the selected 3.13. |
+| pandas | `3.0.5` | The official [3.0.5 release notes](https://pandas.pydata.org/docs/whatsnew/v3.0.5.html) identify the 2026-07-22 patch; the pandas [3.0.5 release](https://github.com/pandas-dev/pandas/releases/tag/v3.0.5) supports Python 3.11+, and its [install guide](https://pandas.pydata.org/docs/getting_started/install.html) requires NumPy at least 1.26.0. |
+| scikit-learn | `1.9.0` | The official [1.9.0 release notes](https://scikit-learn.org/stable/whats_new/v1.9.html) identify the June 2026 stable release; its [tagged project metadata](https://github.com/scikit-learn/scikit-learn/blob/1.9.0/pyproject.toml) requires Python 3.11+ and includes Python 3.13, while the official [install guide](https://scikit-learn.org/stable/install.html) lists its NumPy/SciPy/joblib/narwhals/threadpoolctl requirements. |
+| XGBoost CPU | `xgboost-cpu==3.4.1` | The official [3.4.1 notes](https://xgboost.readthedocs.io/en/stable/changes/v3.4.0.html) identify the 2026-08-14 patch; 3.3 raised the [minimum Python version to 3.12](https://xgboost.readthedocs.io/en/stable/changes/v3.3.0.html), and the [install guide](https://xgboost.readthedocs.io/en/stable/install.html#minimal-installation-cpu-only) documents the smaller CPU-only distribution. Python 3.13 is inside that supported range. |
+
+`uv sync --frozen --group dev --group ml` installed these exact pins together on CPython 3.13.15,
+and M5 training/inference/serialization tests passed. That repository result is compatibility
+evidence for this locked ReleaseProof environment, not a universal platform claim.
 
 ## Dependency and image management
 
@@ -2819,6 +2994,8 @@ The project is not interview-ready unless the owner can explain it without Codex
 
 Every AI/ML Codex completion report includes an Owner Learning Note.
 
+M5's completed explanation and rerun checkpoint is `docs/33_M5_OWNER_LEARNING_NOTE.md`.
+
 
 ---
 
@@ -2845,6 +3022,189 @@ Return:
 
 Allowed decision vocabulary: `READY_FOR_DEMO`, `READY_FOR_NARROW_PILOT`, `NOT_READY`.
 Never say `PRODUCTION_READY` without a defined production environment, security/ops ownership, backups/recovery and deployment evidence.
+
+
+---
+
+# SOURCE FILE: `docs/32_M5_CLASSICAL_MODEL_CARD.md`
+
+# 32 — M5 Classical Risk Model Card
+
+## Artifact identity
+
+- Card version: `classical-model-card-v1`
+- Experiment artifact: `models/public/m5_classical_ml_v1.json`
+- Canonical root payload SHA-256 contract:
+  `cb552fd83b257d67248d804c931cf604942d76bac245069b64f58048bfa9a8d6`
+- Committed file SHA-256:
+  `e0c58feb3f824a8d7fa7786d1ba19da8de5c0ee45b00f0401265ab9294aaa044`
+- Training code commit: `e63fcff3b2afd18775cd3a1cb01bb4688db316a3`
+- Dataset manifest: `releaseproof-m4-synthetic-v1`, hash
+  `eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456`
+- Frozen split hash: `81d51ed7011c86744f2cf4bff15cb98bb1aa440b1c81ece921ed9b4a21f0c11b`
+- Feature schema: `change-features-v1`
+- Preprocessor hash: `41f9072f1e5d34aa1e934788fe1026b096222482534acca308ce7dc6b7ddcd33`
+
+The JSON artifact is small, synthetic, source-controlled evidence. The XGBoost native JSON bytes
+have their own checksum inside the artifact. The root, preprocessing and model checksums are
+validated before candidate inference. Large or private future artifacts belong in content-addressed
+object storage rather than Git.
+
+## Intended and prohibited use
+
+The experiment predicts the documented `proxy_positive` label within the admitted 30-day fixture
+observation window. It validates preprocessing, training, comparison, artifact loading and
+evaluation behavior. It must not be described as incident prediction, customer performance,
+production calibration, release safety, or measured business value. Neither learned candidate is
+approved for active product scoring.
+
+ReleaseProof keeps `deterministic-heuristic-v1` active. Learned outputs are advisory candidates and
+cannot merge, deploy, change the recommendation policy, or authorize code execution.
+
+## Data and preprocessing
+
+The unchanged M4 fixture has 16 explicitly synthetic rows: 6 train, 4 validation, 4 held-out test
+and 2 excluded unknown labels. Seven included rows are proxy-positive and seven are proxy-negative.
+The one-repository dataset has a temporal split but no repository holdout.
+
+The shared preprocessor fits on the six training rows only. It validates the exact 25-feature input
+schema, uses recorded training medians for nullable features (or a recorded zero when training has
+no observation), adds nullable-feature missingness indicators and applies frozen training z-score
+parameters. Required missing input produces UNKNOWN; incompatible schemas or invalid checksums are
+rejected.
+
+## Training and selection
+
+All candidates use seed 1729. Logistic regression compares `C` 0.1/1/10 and optional balanced class
+weights with the liblinear solver. XGBoost compares depths 1/2 and 8/16 estimators using CPU `hist`,
+one thread, learning rate 0.1 and otherwise frozen parameters. Only train/validation data select
+hyperparameters and one of model-score thresholds 0.3/0.5/0.7. The cost rule assigns five units to
+a false negative, two to a false positive and first requires validation recall of at least 0.75.
+
+Selected artifacts:
+
+| Candidate | Selected configuration | Threshold | Artifact hash |
+|---|---|---:|---|
+| Logistic | `C=10`, no class weighting, liblinear | 0.7 | `67ab25274ea4fc70e7154f521060b98abe0c8d3ccccb4250fe1348ba8603c947` |
+| XGBoost | depth 2, 16 estimators, CPU hist, one thread | 0.7 | `1eb6f54d30d97baee0b8d57cd2f7b9b4b690ffce34d01db8169e20181cec2f78` |
+
+Logistic coefficients are stored in exact ordered standardized-feature order. XGBoost gain
+importance is stored where a split used a feature. These are associations, not causal explanations.
+
+## Held-out synthetic measurements
+
+The final four test rows were inspected after the experiment, calibration and threshold rules were
+declared. These tiny fictional-fixture results are raw harness evidence only.
+
+| Artifact | TP | FP | TN | FN | Precision | Recall | F1 | PR-AUC/AP | ROC-AUC |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Deterministic heuristic | 2 | 2 | 0 | 0 | 0.50 | 1.00 | 0.66666667 | 0.41666667 | 0.125 |
+| Logistic candidate | 1 | 1 | 1 | 1 | 0.50 | 0.50 | 0.50 | 0.50 | 0.25 |
+| XGBoost candidate | 1 | 2 | 0 | 1 | 0.33333333 | 0.50 | 0.40 | 0.41666667 | 0.25 |
+
+Logistic has higher ranking metrics than the heuristic on these four rows but lower recall/F1 at the
+validation-selected threshold. XGBoost does not add defensible value. No statistical or product
+conclusion is possible at this sample size.
+
+## Calibration and uncertainty
+
+Before final-test inspection, the experiment froze sigmoid/Platt and isotonic candidates, a
+training-prevalence constant Brier baseline, 10 equal-width reliability bins, 20 rows per bin,
+minimum 200 validation rows and 50 rows per class, maximum ECE 0.05, maximum bin gap 0.10 and
+minimum Brier improvement 0.01. The four validation rows fail the minimum-sample gate, so
+calibration is not attempted. Candidate numbers remain model scores/bands; calibrated probability
+is null and probability wording is prohibited.
+
+## Promotion, rollback and privacy
+
+Both learned models remain `candidate_not_promoted`. The deterministic heuristic is the active and
+rollback artifact because the evidence is synthetic, lacks a repository holdout, fails calibration
+sample requirements and does not establish product value. Any later promotion requires a new
+immutable dataset/artifact, leakage review, held-out comparison and human approval.
+
+No public repository was mined, no customer/private code was used, no model was downloaded and no
+hosted or paid provider was called. The fixture remains MIT-licensed under its recorded source
+admission.
+
+## Reproduction
+
+Run:
+
+```text
+uv sync --frozen --group dev --group ml
+uv run python -m eng.evaluate_m5_classical --check
+uv run pytest tests/unit/test_classical_ml.py tests/web/test_risk_evidence.py
+```
+
+The committed run was byte-repeatable on its recorded Windows x86-64 CPU environment. The check
+allows at most `1e-8` absolute numeric variation after excluding native XGBoost bytes and recorded
+platform identity; model/runtime checksums remain exact for the committed artifact. GPU training is
+not used.
+
+
+---
+
+# SOURCE FILE: `docs/33_M5_OWNER_LEARNING_NOTE.md`
+
+# 33 — M5 Owner Learning Note
+
+## 1. Concept implemented
+
+M5 implements a leakage-controlled tabular ML experiment: train-only preprocessing, logistic
+regression, an XGBoost candidate, validation-only hyperparameter/threshold selection, one final
+held-out evaluation, calibration abstention, immutable model lineage and checksum-verified
+inference.
+
+## 2. Why it is used here
+
+The heuristic is transparent but cannot learn weights or interactions from data. Logistic
+regression is the interpretable learned baseline: each standardized coefficient has a direction
+and magnitude. XGBoost tests whether nonlinear feature interactions add value. ReleaseProof keeps
+the simpler heuristic active unless learned evidence adds defensible held-out value.
+
+## 3. Algorithm and data assumptions
+
+- Rows are independent enough after temporal/repository/duplicate leakage controls; the one-repo
+  fixture cannot validate the repository-independence assumption.
+- Proxy labels approximate follow-up risk but are not incidents or causal truth.
+- Logistic regression models a linear log-odds relationship after scaling; regularization controls
+  coefficient magnitude.
+- XGBoost builds sequential shallow trees to correct prior residual errors and can model nonlinear
+  interactions, but tiny data makes it easy to overfit.
+- Class prevalence, feature missingness and observation windows in deployment must resemble the
+  evaluated target population before metrics or calibration transfer.
+- An uncalibrated sigmoid/tree score is useful for ranking or bands but is not automatically a
+  probability.
+
+## 4. Key code paths
+
+- `packages/ml_core/classical.py`: preprocessor, tuning, frozen evaluation, artifact validation and
+  candidate inference.
+- `eng/evaluate_m5_classical.py`: rebuild and exact/tolerance reproducibility gate.
+- `models/public/m5_classical_ml_v1.json`: immutable raw experiment/model artifact.
+- `apps/web/risk/artifacts.py`: bounded checksum-validated loading with deterministic fallback.
+- `apps/web/risk/api.py` and `views.py`: tenant-scoped model/risk evidence presentation.
+
+## 5. Exact experiment/test to rerun
+
+```text
+uv run python -m eng.evaluate_m4_baseline --check
+uv run python -m eng.evaluate_m5_classical --check
+uv run pytest tests/unit/test_classical_ml.py tests/web/test_risk_evidence.py
+```
+
+Inspect `test_metrics`, `raw_test_predictions`, `calibration`, `tuning`, `active_selection` and all
+hash bindings in the JSON artifact. Do not tune after examining held-out results.
+
+## 6. Likely interview question and answer
+
+**Question:** Why did you not promote XGBoost—or call its output a probability?
+
+**Answer:** XGBoost did not add defensible held-out value over the heuristic on the frozen synthetic
+fixture, and four validation/test rows cannot support the predeclared calibration gate. I therefore
+kept it as a checksum-versioned candidate, exposed only a model score/band, retained explicit
+UNKNOWN behavior and left the transparent deterministic heuristic active. Promotion needs larger,
+provenance-controlled, repository-aware real proxy data and successful held-out calibration.
 
 
 ---
