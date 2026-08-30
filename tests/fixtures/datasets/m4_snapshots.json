@@ -1,0 +1,166 @@
+{
+  "schema_version": "fixture-extraction-v1",
+  "source_id": "releaseproof-m4-synthetic-v1",
+  "records": [
+    {
+      "snapshot_id": "m4-001",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-01-01T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000001",
+      "commit_count": 1,
+      "changed_files": [{"path": "docs/alpha.md", "additions": 5, "deletions": 0, "status": "modified", "previous_path": null, "patch": "+alpha documentation clarification"}],
+      "outcome": {"kind": "no_proxy_observed", "observed_at": "2024-01-31T00:00:00+00:00", "evidence_refs": ["fixture:outcome:m4-001"], "note": "Synthetic completed window with no configured proxy."}
+    },
+    {
+      "snapshot_id": "m4-002",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-02-01T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000002",
+      "commit_count": 1,
+      "changed_files": [{"path": "tests/test_beta.py", "additions": 20, "deletions": 1, "status": "modified", "previous_path": null, "patch": "+def test_beta_discount_contract(): pass"}],
+      "outcome": {"kind": "no_proxy_observed", "observed_at": "2024-03-02T00:00:00+00:00", "evidence_refs": ["fixture:outcome:m4-002"], "note": "Synthetic completed window with no configured proxy."}
+    },
+    {
+      "snapshot_id": "m4-003",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-03-01T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000003",
+      "commit_count": 2,
+      "changed_files": [{"path": "requirements.txt", "additions": 3, "deletions": 1, "status": "modified", "previous_path": null, "patch": "+gamma-parser==2.0.0"}],
+      "outcome": {"kind": "failed_required_check", "observed_at": "2024-03-03T00:00:00+00:00", "evidence_refs": ["fixture:check:m4-003"], "note": "Synthetic required-check failure proxy."}
+    },
+    {
+      "snapshot_id": "m4-004",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-04-01T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000004",
+      "commit_count": 2,
+      "changed_files": [{"path": "src/app/migrations/0004_delta.py", "additions": 30, "deletions": 2, "status": "added", "previous_path": null, "patch": "+create_delta_audit_index"}],
+      "outcome": {"kind": "hotfix", "observed_at": "2024-04-02T00:00:00+00:00", "evidence_refs": ["fixture:hotfix:m4-004"], "note": "Synthetic hotfix proxy."}
+    },
+    {
+      "snapshot_id": "m4-005",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-05-01T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000005",
+      "commit_count": 4,
+      "changed_files": [{"path": "src/auth/epsilon_token.py", "additions": 80, "deletions": 30, "status": "modified", "previous_path": null, "patch": "+rotate_epsilon_signing_context safely"}],
+      "outcome": {"kind": "explicit_revert", "observed_at": "2024-05-04T00:00:00+00:00", "evidence_refs": ["fixture:revert:m4-005"], "note": "Synthetic explicit-revert proxy."}
+    },
+    {
+      "snapshot_id": "m4-006",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-06-01T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000006",
+      "commit_count": 1,
+      "changed_files": [{"path": "config/zeta.yaml", "additions": 4, "deletions": 1, "status": "modified", "previous_path": null, "patch": "+zeta_feature_toggle: false"}],
+      "outcome": {"kind": "no_proxy_observed", "observed_at": "2024-07-01T00:00:00+00:00", "evidence_refs": ["fixture:outcome:m4-006"], "note": "Synthetic completed window with no configured proxy."}
+    },
+    {
+      "snapshot_id": "m4-007",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-07-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000007",
+      "commit_count": 2,
+      "changed_files": [{"path": "src/security/eta_policy.py", "additions": 10, "deletions": 2, "status": "modified", "previous_path": null, "patch": "+enforce_eta_scope_membership"}],
+      "outcome": {"kind": "rapid_followup_fix", "observed_at": "2024-07-16T00:00:00+00:00", "evidence_refs": ["fixture:followup:m4-007"], "note": "Synthetic rapid-follow-up proxy."}
+    },
+    {
+      "snapshot_id": "m4-008",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-08-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000008",
+      "commit_count": 3,
+      "changed_files": [{"path": "src/app/migrations/0008_theta.py", "additions": 120, "deletions": 0, "status": "added", "previous_path": null, "patch": "+backfill_theta_projection_columns"}],
+      "outcome": {"kind": "hotfix", "observed_at": "2024-08-18T00:00:00+00:00", "evidence_refs": ["fixture:hotfix:m4-008"], "note": "Synthetic hotfix proxy."}
+    },
+    {
+      "snapshot_id": "m4-009",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-09-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000009",
+      "commit_count": 1,
+      "changed_files": [{"path": "config/iota.yaml", "additions": 2, "deletions": 1, "status": "modified", "previous_path": null, "patch": "+iota_mode: conservative"}],
+      "outcome": {"kind": "no_proxy_observed", "observed_at": "2024-10-15T00:00:00+00:00", "evidence_refs": ["fixture:outcome:m4-009"], "note": "Synthetic completed window with no configured proxy."}
+    },
+    {
+      "snapshot_id": "m4-010",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-10-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000010",
+      "commit_count": 1,
+      "changed_files": [{"path": "tests/test_kappa.py", "additions": 12, "deletions": 0, "status": "added", "previous_path": null, "patch": "+def test_kappa_rounding(): pass"}],
+      "outcome": {"kind": "no_proxy_observed", "observed_at": "2024-11-14T00:00:00+00:00", "evidence_refs": ["fixture:outcome:m4-010"], "note": "Synthetic completed window with no configured proxy."}
+    },
+    {
+      "snapshot_id": "m4-011",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-11-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000011",
+      "commit_count": 3,
+      "changed_files": [{"path": "src/ledger/lambda_report.py", "additions": 120, "deletions": 0, "status": "modified", "previous_path": null, "patch": "+stream_lambda_ledger_summary"}],
+      "outcome": {"kind": "rapid_followup_fix", "observed_at": "2024-11-18T00:00:00+00:00", "evidence_refs": ["fixture:followup:m4-011"], "note": "Synthetic rapid-follow-up proxy."}
+    },
+    {
+      "snapshot_id": "m4-012",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2024-12-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000012",
+      "commit_count": 2,
+      "changed_files": [{"path": "src/identity/mu_session.py", "additions": 14, "deletions": 3, "status": "modified", "previous_path": null, "patch": "+bind_mu_session_to_tenant"}],
+      "outcome": {"kind": "explicit_revert", "observed_at": "2024-12-17T00:00:00+00:00", "evidence_refs": ["fixture:revert:m4-012"], "note": "Synthetic explicit-revert proxy."}
+    },
+    {
+      "snapshot_id": "m4-013",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2025-01-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000013",
+      "commit_count": 1,
+      "changed_files": [{"path": "uv.lock", "additions": 6, "deletions": 4, "status": "modified", "previous_path": null, "patch": "+nu-library resolution metadata"}],
+      "outcome": {"kind": "no_proxy_observed", "observed_at": "2025-02-14T00:00:00+00:00", "evidence_refs": ["fixture:outcome:m4-013"], "note": "Synthetic completed window with no configured proxy."}
+    },
+    {
+      "snapshot_id": "m4-014",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2025-02-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000014",
+      "commit_count": 1,
+      "changed_files": [{"path": "src/auth/xi_refactor.py", "additions": 9, "deletions": 7, "status": "modified", "previous_path": null, "patch": "+rename_xi_authorization_helper"}],
+      "outcome": {"kind": "no_proxy_observed", "observed_at": "2025-03-17T00:00:00+00:00", "evidence_refs": ["fixture:outcome:m4-014"], "note": "Synthetic negative proxy intentionally exercises a heuristic false positive."}
+    },
+    {
+      "snapshot_id": "m4-015",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2025-04-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000015",
+      "commit_count": 2,
+      "changed_files": [{"path": "src/security/omicron_policy.py", "additions": 7, "deletions": 2, "status": "modified", "previous_path": null, "patch": "+review_omicron_policy_interaction"}],
+      "outcome": {"kind": "ambiguous", "observed_at": "2025-04-17T00:00:00+00:00", "evidence_refs": ["fixture:ambiguous:m4-015"], "note": "Synthetic evidence intentionally cannot support a binary proxy label."}
+    },
+    {
+      "snapshot_id": "m4-016",
+      "repository_numeric_id": 9000001,
+      "prediction_time": "2025-06-15T00:00:00+00:00",
+      "base_sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "head_sha": "0000000000000000000000000000000000000016",
+      "commit_count": 1,
+      "changed_files": [{"path": "docs/pi_notes.md", "additions": 3, "deletions": 0, "status": "modified", "previous_path": null, "patch": "+pi observation remains incomplete"}],
+      "outcome": null
+    }
+  ]
+}

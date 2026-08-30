@@ -9,6 +9,7 @@ from django.db import IntegrityError, transaction
 from apps.web.changes.models import ChangeFeatureSet, PullRequestSnapshot
 from apps.web.evidence.models import EvidenceItem, EvidenceKind
 from apps.web.organizations.models import Organization
+from apps.web.risk.services import persist_deterministic_score
 from packages.change_intel import (
     EVIDENCE_SCHEMA_VERSION,
     EXTRACTOR_VERSION,
@@ -137,6 +138,7 @@ def analyze_snapshot_for_organization(
         raise ValueError("snapshot is unavailable in the active organization")
     existing = _existing_feature_set(organization=organization, snapshot=snapshot)
     if existing is not None:
+        persist_deterministic_score(organization=organization, feature_set=existing)
         return existing, False
 
     history_rows = list(
@@ -206,9 +208,11 @@ def analyze_snapshot_for_organization(
                 evidence.full_clean()
                 evidence_items.append(evidence)
             EvidenceItem.objects.bulk_create(evidence_items)
+            persist_deterministic_score(organization=organization, feature_set=feature_set)
             return feature_set, True
     except IntegrityError:
         existing = _existing_feature_set(organization=organization, snapshot=snapshot)
         if existing is None:
             raise
+        persist_deterministic_score(organization=organization, feature_set=existing)
         return existing, False

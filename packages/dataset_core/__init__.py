@@ -1,1 +1,67 @@
-"""Dataset provenance and feature pipeline core; implemented in M4."""
+"""Framework-light dataset provenance, splitting and materialization."""
+
+from packages.dataset_core.contracts import (
+    DATASET_MANIFEST_SCHEMA_VERSION,
+    EXTRACTION_SCHEMA_VERSION,
+    LABEL_RULE_VERSION,
+    MATERIALIZATION_VERSION,
+    SOURCE_ADMISSION_SCHEMA_VERSION,
+    SPLIT_RULE_VERSION,
+    AcquisitionMethod,
+    DatasetBuild,
+    DatasetManifest,
+    DatasetSplit,
+    ExtractedSnapshot,
+    ExtractedSource,
+    LabelAssignment,
+    LeakageReport,
+    MaterializedFeatureRow,
+    OutcomeObservation,
+    ProxyLabel,
+    ProxyOutcomeKind,
+    SourceAdmission,
+    SourceKind,
+)
+from packages.dataset_core.extraction import extract_approved_source, parse_source_admission
+from packages.dataset_core.labels import KNOWN_LABEL_WEAKNESSES, assign_proxy_label
+from packages.dataset_core.materialize import build_dataset
+from packages.dataset_core.splits import (
+    LEAKAGE_REPORT_SCHEMA_VERSION,
+    LeakageError,
+    TemporalSplitPolicy,
+    run_leakage_checks,
+    split_assignment_hash,
+)
+
+__all__ = [
+    "DATASET_MANIFEST_SCHEMA_VERSION",
+    "EXTRACTION_SCHEMA_VERSION",
+    "KNOWN_LABEL_WEAKNESSES",
+    "LABEL_RULE_VERSION",
+    "LEAKAGE_REPORT_SCHEMA_VERSION",
+    "MATERIALIZATION_VERSION",
+    "SOURCE_ADMISSION_SCHEMA_VERSION",
+    "SPLIT_RULE_VERSION",
+    "AcquisitionMethod",
+    "DatasetBuild",
+    "DatasetManifest",
+    "DatasetSplit",
+    "ExtractedSnapshot",
+    "ExtractedSource",
+    "LabelAssignment",
+    "LeakageError",
+    "LeakageReport",
+    "MaterializedFeatureRow",
+    "OutcomeObservation",
+    "ProxyLabel",
+    "ProxyOutcomeKind",
+    "SourceAdmission",
+    "SourceKind",
+    "TemporalSplitPolicy",
+    "assign_proxy_label",
+    "build_dataset",
+    "extract_approved_source",
+    "parse_source_admission",
+    "run_leakage_checks",
+    "split_assignment_hash",
+]

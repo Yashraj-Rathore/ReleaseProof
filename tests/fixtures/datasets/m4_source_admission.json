@@ -1,0 +1,39 @@
+{
+  "schema_version": "source-admission-v1",
+  "source_id": "releaseproof-m4-synthetic-v1",
+  "source_kind": "fixture",
+  "repository_numeric_id": 9000001,
+  "canonical_url": "fixture://releaseproof/repositories/releaseproof-fixture",
+  "license_spdx": "MIT",
+  "license_evidence_sha256": "67343235cd17e7a46a3822e0b1c1924f4dd0929d7ae12c092962157efa7d1ce3",
+  "license_version": "repository-fixture-license-v1",
+  "terms_url": "fixture://releaseproof/terms/synthetic-test-data-v1",
+  "terms_reviewed_at": "2025-06-30T00:00:00+00:00",
+  "acquisition_method": "fixture_bundle",
+  "allowed_fields": [
+    "base_sha",
+    "changed_files",
+    "commit_count",
+    "head_sha",
+    "outcome",
+    "prediction_time",
+    "repository_numeric_id",
+    "snapshot_id"
+  ],
+  "allowed_artifacts": [
+    "aggregate_evaluation",
+    "feature_rows",
+    "manifest"
+  ],
+  "redistribution_allowed": true,
+  "redistribution_notes": "Synthetic MIT fixture records may be redistributed with attribution.",
+  "retention_days": null,
+  "attribution": "Authored in-repository for ReleaseProof deterministic tests.",
+  "as_of": "2025-06-30T00:00:00+00:00",
+  "observation_window_days": 30,
+  "reviewer": "releaseproof-fixture-maintainer",
+  "approved": true,
+  "synthetic": true,
+  "max_records": 100,
+  "rate_limit_per_hour": null
+}

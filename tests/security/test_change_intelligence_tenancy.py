@@ -9,6 +9,8 @@ from django.db import DatabaseError, connection, transaction
 from apps.web.analysis.change_intelligence import analyze_snapshot_for_organization
 from apps.web.changes.models import ChangeFeatureSet
 from apps.web.evidence.models import EvidenceItem, EvidenceKind
+from apps.web.risk.models import RiskScore
+from apps.web.risk.services import persist_deterministic_score
 from tests.factories import installation, organization, repository
 from tests.integration.test_change_intelligence_persistence import _snapshot
 
@@ -50,6 +52,10 @@ def test_feature_and_evidence_services_and_constraints_reject_cross_tenant_acces
         snapshot_public_id=snapshot_a.public_id,
     )
     assert created is True
+    risk_score = RiskScore.objects.get(feature_set=feature_set)
+
+    with pytest.raises(ValueError, match="active organization"):
+        persist_deterministic_score(organization=tenant_b, feature_set=feature_set)
 
     with (
         pytest.raises(DatabaseError, match=TENANT_CONSTRAINT_PATTERN),
@@ -98,6 +104,29 @@ def test_feature_and_evidence_services_and_constraints_reject_cross_tenant_acces
             schema_version="cross-tenant-attempt-v1",
         )
 
+    with (
+        pytest.raises(DatabaseError, match=TENANT_CONSTRAINT_PATTERN),
+        transaction.atomic(),
+    ):
+        RiskScore.objects.create(
+            organization=tenant_b,
+            snapshot=snapshot_a,
+            feature_set=feature_set,
+            schema_version=risk_score.schema_version,
+            artifact_version="cross-tenant-attempt-v1",
+            artifact_hash=risk_score.artifact_hash,
+            feature_schema_version=risk_score.feature_schema_version,
+            threshold_policy_version=risk_score.threshold_policy_version,
+            threshold=risk_score.threshold,
+            raw_score=risk_score.raw_score,
+            calibrated_probability=None,
+            band=risk_score.band,
+            proxy_prediction=risk_score.proxy_prediction,
+            contributions=risk_score.contributions,
+            missing_required=risk_score.missing_required,
+            result_hash=hashlib.sha256(b"cross-tenant-risk").hexdigest(),
+        )
+
 
 def test_feature_and_evidence_records_are_append_only_in_code_and_database() -> None:
     tenant = organization(name="M3 Immutable", slug="m3-immutable")
@@ -126,12 +155,15 @@ def test_feature_and_evidence_records_are_append_only_in_code_and_database() -> 
         snapshot_public_id=snapshot.public_id,
     )
     evidence = EvidenceItem.objects.filter(feature_set=feature_set).first()
+    risk_score = RiskScore.objects.get(feature_set=feature_set)
     assert evidence is not None
 
     with pytest.raises(ValidationError, match="immutable"):
         ChangeFeatureSet.objects.filter(pk=feature_set.pk).update(result_hash="0" * 64)
     with pytest.raises(ValidationError, match="immutable"):
         EvidenceItem.objects.filter(pk=evidence.pk).delete()
+    with pytest.raises(ValidationError, match="immutable"):
+        RiskScore.objects.filter(pk=risk_score.pk).update(raw_score=0)
     with (
         pytest.raises(DatabaseError, match="immutable"),
         transaction.atomic(),
@@ -140,4 +172,13 @@ def test_feature_and_evidence_records_are_append_only_in_code_and_database() -> 
         cursor.execute(
             "UPDATE changes_changefeatureset SET result_hash = %s WHERE id = %s",
             ["0" * 64, feature_set.pk],
+        )
+    with (
+        pytest.raises(DatabaseError, match="immutable"),
+        transaction.atomic(),
+        connection.cursor() as cursor,
+    ):
+        cursor.execute(
+            "UPDATE risk_riskscore SET raw_score = %s WHERE id = %s",
+            [0, risk_score.pk],
         )
