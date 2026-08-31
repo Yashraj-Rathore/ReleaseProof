@@ -60,3 +60,18 @@ inference, schema/required-input rejection, same-environment repeatability, lear
 fallback, probability prohibition and cross-tenant risk HTTP denial. CI installs the separate `ml`
 group and rebuilds the committed M5 artifact; native/platform numeric variation is limited by its
 recorded `1e-8` absolute tolerance while the committed model checksums remain exact.
+
+## M6 retrieval evidence
+
+Unit tests cover approved/bounded source contracts, Markdown/Python AST chunking, code-aware
+normalization, RRF ranks/scores, bounded reranking, exact model identities, offline cache failure
+and Recall@K/MRR/nDCG calculations. Django integration/security tests cover idempotent ingestion,
+retention/source provenance, active lexical selection, side-by-side vector build/switch without row
+overwrite, source filters, semantic/reranker fallback, service-level cross-tenant rejection,
+composite database constraints and append-only raw SQL behavior. PostgreSQL CI additionally checks
+the GIN and dimension-compatible HNSW indexes and executes the same scoped retrieval path.
+
+The committed eight-chunk/five-query fixture is explicitly synthetic and CC0-1.0. Its four
+ablations have equal K=3 aggregate metrics, so it validates the harness but does not establish
+semantic/reranker superiority. The recorded local in-memory latency excludes database and real
+transformer time; representative PostgreSQL index size/latency remain not yet measured.

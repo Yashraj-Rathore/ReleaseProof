@@ -29,6 +29,7 @@ COMMANDS = (
     (sys.executable, "eng/update_file_inventory.py", "--check"),
     (sys.executable, "-m", "eng.evaluate_m4_baseline", "--check"),
     (sys.executable, "-m", "eng.evaluate_m5_classical", "--check"),
+    (sys.executable, "-m", "eng.evaluate_m6_retrieval", "--check"),
 )
 
 

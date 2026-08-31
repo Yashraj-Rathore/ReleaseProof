@@ -240,3 +240,25 @@ uv sync --frozen --group dev --group ml
 uv run python -m eng.evaluate_m5_classical --check
 uv run pytest tests/unit/test_classical_ml.py tests/web/test_risk_evidence.py
 ```
+
+## M6 repository-scoped historical retrieval
+
+M6 implements `RP-0501..RP-0506`: bounded approved evidence ingestion, Markdown/Python-aware
+chunking, versioned PostgreSQL `simple` FTS, a 384-dimensional pgvector physical table/index,
+side-by-side embedding-profile build and activation, deterministic RRF, optional bounded
+cross-encoder reranking and a frozen synthetic relevance evaluation. Documents, chunks, lexical
+rows, embedding rows and every query are organization and repository scoped.
+
+The exact selected public artifacts are
+`sentence-transformers/all-MiniLM-L6-v2@1110a243...` and
+`cross-encoder/ms-marco-MiniLM-L6-v2@4bebbd56...`, both Apache-2.0 with recorded safetensors
+checksums. Real weights are never fetched implicitly: adapters require an explicitly provisioned,
+checksum-verified local cache. Tests and the committed evaluation use clearly identified
+deterministic fakes. The real reranker remains disabled by default because the synthetic fake
+benchmark does not prove incremental value.
+
+```text
+uv sync --frozen --group dev --group ml
+uv run python -m eng.evaluate_m6_retrieval --check
+uv run pytest tests/unit/test_retrieval_core.py tests/integration/test_retrieval_persistence.py tests/security/test_retrieval_tenancy.py
+```

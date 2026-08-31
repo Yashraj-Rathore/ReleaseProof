@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -92,6 +92,22 @@ the tree candidate. No notebook, SHAP, GPU or model-serving dependency is added.
 `uv sync --frozen --group dev --group ml` installed these exact pins together on CPython 3.13.15,
 and M5 training/inference/serialization tests passed. That repository result is compatibility
 evidence for this locked ReleaseProof environment, not a universal platform claim.
+
+## M6 retrieval pins — verified and locked 2026-08-31
+
+| Package/artifact | Exact pin | Official evidence / use |
+|---|---:|---|
+| pgvector Python | `0.5.0` | The official [pgvector-python project](https://github.com/pgvector/pgvector-python) documents Django `VectorField`, distance expressions and HNSW indexes; its project metadata requires Python 3.10+. This is the Django adapter for the already pinned pgvector PostgreSQL extension. |
+| sentence-transformers | `6.0.0` | The official [PyPI release](https://pypi.org/project/sentence-transformers/6.0.0/) is stable, supports Python 3.13 and documents both `SentenceTransformer` and `CrossEncoder`. It is isolated in the optional `semantic` group; normal CI/test paths do not download model weights. |
+| embedding weights | `sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41` | The official [model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) records Apache-2.0 and 384 dimensions. The exact safetensors SHA-256 is `53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db`. |
+| reranker weights | `cross-encoder/ms-marco-MiniLM-L6-v2@4bebbd56fc380a66525f95b03d4ec1a4b41a4f1e` | The official [model revision](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2/tree/4bebbd56fc380a66525f95b03d4ec1a4b41a4f1e) records Apache-2.0 and the CrossEncoder path. Safetensors SHA-256 is `821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae`. |
+
+The lock resolves sentence-transformers dependencies for the optional group, but M6 does not treat
+transitive PyTorch/Transformers versions as an M11 training/serving decision. Real weights are not
+fetched implicitly. Production adapters require a pre-provisioned local directory with the exact
+safetensors checksum and `trust_remote_code=False`; the default test/demo path uses named
+deterministic fakes. This validates dependency resolution and contract wiring, not real-model
+quality or representative latency.
 
 ## Dependency and image management
 

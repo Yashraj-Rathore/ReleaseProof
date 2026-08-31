@@ -20,7 +20,10 @@ build/
 *.egg-info/
 node_modules/
 local-data/
-artifacts/
+artifacts/*
+!artifacts/evaluation/
+artifacts/evaluation/*
+!artifacts/evaluation/m6_retrieval_eval_v1.json
 mlruns/
 .minio/
 *.sqlite3

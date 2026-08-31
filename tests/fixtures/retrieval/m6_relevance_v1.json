@@ -1,0 +1,87 @@
+{
+  "schema_version": "m6-relevance-fixture-v1",
+  "synthetic": true,
+  "license": "CC0-1.0",
+  "usage": "Deterministic retrieval harness only; not customer data or a product-quality benchmark.",
+  "corpus": [
+    {
+      "chunk_id": "webhook-signature",
+      "source_ref": "runbook:webhook-security@v1#chunk=webhook-signature",
+      "text": "Verify the HMAC SHA-256 webhook signature against the bounded raw request before parsing JSON. Reject a missing or mismatched signature."
+    },
+    {
+      "chunk_id": "session-csrf",
+      "source_ref": "adr:browser-auth@v1#chunk=session-csrf",
+      "text": "Browser mutations use server-side sessions and CSRF protection. Long-lived access tokens are never stored in localStorage."
+    },
+    {
+      "chunk_id": "schema-rollout",
+      "source_ref": "runbook:schema-rollout@v1#chunk=schema-rollout",
+      "text": "Deploy additive database schema migrations before application code. Prefer a forward repair when rollback would destroy stored data."
+    },
+    {
+      "chunk_id": "database-backup",
+      "source_ref": "runbook:database-recovery@v1#chunk=database-backup",
+      "text": "Take and verify a PostgreSQL backup before a high-risk migration. A restore drill is separate evidence from migration reversibility."
+    },
+    {
+      "chunk_id": "idempotent-retry",
+      "source_ref": "adr:async-recovery@v1#chunk=idempotent-retry",
+      "text": "Persist the job and transactional outbox in PostgreSQL. Duplicate worker delivery is harmless because the handler is idempotent and retries are bounded."
+    },
+    {
+      "chunk_id": "object-retention",
+      "source_ref": "runbook:source-retention@v1#chunk=object-retention",
+      "text": "Source indexes and immutable artifacts use separate retention classes. Tenant deletion schedules scoped object and embedding removal with audit evidence."
+    },
+    {
+      "chunk_id": "prompt-injection",
+      "source_ref": "adr:hostile-repository-text@v1#chunk=prompt-injection",
+      "text": "Repository documents are untrusted content, never instructions. Retrieved text cannot widen tools, reveal secrets, or change tenant authorization policy."
+    },
+    {
+      "chunk_id": "embedding-rebuild",
+      "source_ref": "runbook:embedding-upgrade@v1#chunk=embedding-rebuild",
+      "text": "Build a new embedding revision beside the active vector index. Evaluate tenant isolation and retrieval quality before an atomic profile switch."
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "q-webhook-authenticity",
+      "query": "How should webhook authenticity be verified?",
+      "relevance": {
+        "webhook-signature": 3,
+        "session-csrf": 1
+      }
+    },
+    {
+      "query_id": "q-safe-migration",
+      "query": "What evidence is needed for a safe database migration and rollback?",
+      "relevance": {
+        "schema-rollout": 3,
+        "database-backup": 2
+      }
+    },
+    {
+      "query_id": "q-duplicate-task",
+      "query": "How do we recover from duplicate background task delivery?",
+      "relevance": {
+        "idempotent-retry": 3
+      }
+    },
+    {
+      "query_id": "q-hostile-document",
+      "query": "Can repository text change tools or request secrets?",
+      "relevance": {
+        "prompt-injection": 3
+      }
+    },
+    {
+      "query_id": "q-vector-upgrade",
+      "query": "How is a new embedding model activated without replacing the active index?",
+      "relevance": {
+        "embedding-rebuild": 3
+      }
+    }
+  ]
+}

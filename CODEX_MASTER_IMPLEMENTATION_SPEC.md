@@ -253,6 +253,28 @@ uv run python -m eng.evaluate_m5_classical --check
 uv run pytest tests/unit/test_classical_ml.py tests/web/test_risk_evidence.py
 ```
 
+## M6 repository-scoped historical retrieval
+
+M6 implements `RP-0501..RP-0506`: bounded approved evidence ingestion, Markdown/Python-aware
+chunking, versioned PostgreSQL `simple` FTS, a 384-dimensional pgvector physical table/index,
+side-by-side embedding-profile build and activation, deterministic RRF, optional bounded
+cross-encoder reranking and a frozen synthetic relevance evaluation. Documents, chunks, lexical
+rows, embedding rows and every query are organization and repository scoped.
+
+The exact selected public artifacts are
+`sentence-transformers/all-MiniLM-L6-v2@1110a243...` and
+`cross-encoder/ms-marco-MiniLM-L6-v2@4bebbd56...`, both Apache-2.0 with recorded safetensors
+checksums. Real weights are never fetched implicitly: adapters require an explicitly provisioned,
+checksum-verified local cache. Tests and the committed evaluation use clearly identified
+deterministic fakes. The real reranker remains disabled by default because the synthetic fake
+benchmark does not prove incremental value.
+
+```text
+uv sync --frozen --group dev --group ml
+uv run python -m eng.evaluate_m6_retrieval --check
+uv run pytest tests/unit/test_retrieval_core.py tests/integration/test_retrieval_persistence.py tests/security/test_retrieval_tenancy.py
+```
+
 
 ---
 
@@ -586,20 +608,54 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M5 classical ML risk engine complete on 2026-08-30.**
+**Current state: M6 RAG and historical evidence complete on 2026-08-31.**
 
-The repository now has M1-M4 foundations/data/baseline evidence plus real logistic-regression and
-XGBoost CPU candidate training on the unchanged synthetic split, train-only preprocessing,
-validation-only selection, a frozen calibration abstention rule, checksum-bound model artifacts and
-tenant-scoped risk/model reads. The learned candidates are not promoted and are never presented as
-probabilities. No real/public dataset evaluation, customer result, live GitHub/source-tree adapter
-validation, sandbox security claim, or production-readiness claim exists yet.
+The repository now has M1-M5 foundations/risk evidence plus tenant/repository-scoped approved
+evidence ingestion, source-aware chunking, PostgreSQL `simple` FTS, a dimension-compatible pgvector
+index, side-by-side embedding-profile activation, RRF hybrid retrieval, bounded reranking fallback
+and a frozen synthetic relevance evaluation. Exact public model artifacts are pinned but weights
+are not implicitly downloaded; deterministic fakes remain the validated offline path. No
+real/public/customer retrieval-quality result, live GitHub/source-tree adapter validation, sandbox
+security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/06_RAG_RETRIEVAL.md` for `RP-0501..RP-0506`. Keep every document/chunk/vector
-tenant and repository scoped, reverify the exact embedding/reranker artifacts before adding them,
-and compare lexical, vector, hybrid and reranked retrieval on a frozen relevance fixture.
+Run `codex-prompts/07_LLM_EVIDENCE.md` for `RP-0601..RP-0606`. Keep deterministic evidence when a
+provider is disabled/unavailable, enforce organization privacy routing before any source
+transmission, reverify the exact OpenAI SDK/model configuration, reject invalid structured output
+and preserve cited M6 evidence IDs.
+
+## M6 evidence
+
+- `KnowledgeDocument`, `KnowledgeChunk`, versioned lexical profiles/rows and 384-dimensional
+  embedding profiles/rows are organization/repository bound. Composite PostgreSQL foreign keys and
+  SQLite test triggers reject mismatched repository/document/chunk/profile relationships; source
+  and index rows are append-only.
+- `source-aware-chunker-v1` uses Markdown headings, inert Python AST boundaries and bounded
+  fallback chunks. `postgres-simple-code-v1` uses PostgreSQL `simple` plus
+  `code-aware-normalizer-v1`; the forward migration creates GIN and cosine HNSW physical indexes.
+- The selected embedding is `sentence-transformers/all-MiniLM-L6-v2` revision `1110a243...`, 384
+  dimensions, and the reranker is `cross-encoder/ms-marco-MiniLM-L6-v2` revision `4bebbd56...`.
+  Apache-2.0 license metadata and exact safetensors checksums are recorded. Real adapters are
+  offline-only and fail closed on a missing/mismatched local artifact.
+- `rrf-v1-k60` preserves lexical/vector scores and ranks. Missing semantic evidence falls back to
+  lexical retrieval; reranker failure preserves hybrid ordering. No repository text controls a
+  provider, tool, authorization or network decision.
+- The frozen CC0 synthetic fixture has eight chunks and five graded queries. At K=3, lexical,
+  deterministic fake vector, hybrid and deterministic fake-reranked variants all measure Recall
+  0.90, MRR 1.00 and nDCG 0.950262129022. Equality does not prove semantic/reranker value, so the
+  real reranker is disabled by default.
+- The raw artifact root hash is
+  `f7e9009bdc7547b3fb677013b0f7752d5a28ea1071f92a17754d36af3d107b70`. Recorded local in-memory
+  full-ablation latency is median 6.930450 ms/p95 7.680900 ms; it excludes PostgreSQL and real-model
+  time. Representative database index size/latency remain not yet measured.
+- The canonical local suite passed **86 tests** with one PostgreSQL physical-index assertion
+  skipped and the live S3 contract deselected. Ruff and strict mypy passed for 156 source files;
+  Django/migration/M4/M5/M6/doc/inventory checks passed. M6 coverage includes ingestion,
+  provenance, side-by-side activation, component scoring, fallback, exact artifacts, metrics,
+  database immutability and cross-tenant denial. CI supplies the authoritative PostgreSQL/S3 run.
+- No model weight, public/customer source or paid/hosted provider was downloaded or contacted, and
+  no untrusted repository code was executed.
 
 ## M5 evidence
 
@@ -734,7 +790,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M3 change intelligence | Complete - RP-0201..RP-0206 |
 | M4 dataset/baseline | Complete - RP-0301..RP-0306 |
 | M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
-| M6 RAG | Not started - next |
+| M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
 | M7 LLM evidence | Not started |
 | M8 generated tests | Not started |
 | M9 sandbox | Not started |
@@ -798,6 +854,17 @@ and its remote M2 result is tracked in GitHub Actions.
 - Authenticated tenant-scoped current-model and snapshot-risk API/HTML reads with evidence-backed
   components, explicit non-probability wording and safe deterministic fallback when learned
   artifacts are missing or invalid.
+- M6 approved evidence ingestion with Markdown-heading, inert Python-AST and bounded fallback
+  chunking; every document/chunk retains tenant, repository, source/version/hash and retention
+  provenance.
+- Versioned PostgreSQL `simple` FTS rows, a 384-dimensional pgvector table, forward GIN/HNSW
+  indexes and transactionally activated side-by-side lexical/embedding profiles.
+- Deterministic `rrf-v1-k60` hybrid fusion with component ranks/scores plus bounded optional
+  cross-encoder reranking and explicit provider/model mismatch fallback.
+- Offline checksum-verified sentence-transformers embedding/reranker adapters and separately named
+  deterministic fakes; exact Hugging Face revisions, licenses, dimensions and safetensors hashes.
+- A frozen CC0 synthetic retrieval relevance set, raw per-query Recall@K/MRR/nDCG ablations,
+  bounded latency evidence, failure modes, activation decision and M6 Owner Learning Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -824,6 +891,10 @@ and its remote M2 result is tracked in GitHub Actions.
   in the M5 `ml` group; CI and the canonical validator now reproduce the M5 model artifact.
 - Kept `deterministic-heuristic-v1` active because the learned candidates use tiny one-repository
   synthetic data, fail the frozen calibration sample gate and do not add defensible product value.
+- Added pgvector Python 0.5.0 to the runtime and sentence-transformers 6.0.0 to an optional semantic
+  group without permitting implicit model downloads or changing the later M11 training decision.
+- Kept the real M6 cross-encoder disabled because the synthetic fake-provider ablation showed no
+  aggregate retrieval improvement and cannot establish representative value/latency.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -837,6 +908,9 @@ and its remote M2 result is tracked in GitHub Actions.
   synthetic fixture and are not product-performance, probability, incident or customer claims.
 - M5 evidence is recorded in `PROJECT_STATUS.md` and docs/32; learned-model figures remain tiny
   synthetic harness measurements, probability is disabled and neither candidate is promoted.
+- M6 evidence is recorded in `PROJECT_STATUS.md` and docs/34; retrieval figures are synthetic
+  harness measurements, real weights were not executed, and no customer/public quality claim is
+  made.
 
 
 ---
@@ -953,6 +1027,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `31_FINAL_ARCHITECTURE_REVIEW.md` | final claim/security/architecture audit |
 | `32_M5_CLASSICAL_MODEL_CARD.md` | exact M5 lineage, measurements, calibration and promotion decision |
 | `33_M5_OWNER_LEARNING_NOTE.md` | owner-defensible M5 concepts, assumptions and rerun path |
+| `34_M6_RETRIEVAL_EVALUATION.md` | exact retrieval configuration, frozen measurements and activation decision |
+| `35_M6_OWNER_LEARNING_NOTE.md` | owner-defensible M6 concepts, assumptions and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1233,6 +1309,25 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
+
+### M6 implemented retrieval evidence
+
+- `KnowledgeDocument` and `KnowledgeChunk` are append-only organization/repository-bound records.
+  They retain approved source type/identity/version/URI, content and chunk hashes, line/heading
+  provenance, exact chunk/normalizer versions and an organization-policy-derived retention date.
+- `LexicalIndexProfile` and `KnowledgeLexicalIndex` build versioned PostgreSQL `simple` FTS rows
+  beside existing profiles. The active-profile switch changes only profile lifecycle metadata; it
+  never rewrites source chunks or historical lexical rows.
+- `EmbeddingIndexProfile` records exact model ID, revision, safetensors checksum, license,
+  dimension, adapter, chunk version and physical table/index. `KnowledgeEmbedding384` is the M6
+  dimension-compatible pgvector table with a cosine HNSW index. A different dimension requires a
+  new physical table/migration rather than guessing or coercing values.
+- PostgreSQL composite foreign keys and equivalent SQLite test triggers independently enforce
+  organization/repository/document/chunk/profile consistency. Document, chunk, lexical and vector
+  rows reject application and raw-SQL update/delete before the governed M14 retention path.
+- Retrieval selects only unexpired rows from one active lexical and embedding profile inside the
+  server-provided organization/repository scope. Reranker/provider failure leaves attributable
+  lexical/hybrid evidence instead of fabricating a historical claim.
 
 
 ---
@@ -1729,6 +1824,35 @@ FTS configuration/normalizer, embedding model/revision/dimension, chunk strategy
 ## Why pgvector first
 Transactions + relational scope filters + operational simplicity. Dedicated vector DB only after measured scale/latency need.
 
+## Implemented M6 contracts and evidence
+
+- Ingestion accepts only explicitly approved bounded inert content. `source-aware-chunker-v1`
+  splits Markdown by headings, Python with `ast` function/class boundaries and unsupported input
+  with a bounded fallback; it never imports or executes repository code.
+- Lexical profile `postgres-simple-code-v1` uses PostgreSQL configuration `simple` and
+  `code-aware-normalizer-v1`, retaining complete lower-cased identifiers/path tokens plus
+  camelCase/snake/path components. A GIN index is created by a forward PostgreSQL migration.
+- The first semantic physical contract is `retrieval_knowledgeembedding384` with cosine HNSW index
+  `retrieval_embedding384_cosine_hnsw_v1`. The selected embedding is
+  `sentence-transformers/all-MiniLM-L6-v2` revision
+  `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, 384 dimensions, Apache-2.0, safetensors SHA-256
+  `53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db`.
+- Hybrid profile `rrf-v1-k60` combines bounded lexical and vector rankings and exposes original
+  component scores/ranks. Semantic absence or incompatibility degrades explicitly to lexical
+  evidence.
+- The optional reranker is `cross-encoder/ms-marco-MiniLM-L6-v2` revision
+  `4bebbd56fc380a66525f95b03d4ec1a4b41a4f1e`, Apache-2.0, safetensors SHA-256
+  `821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae`. It receives at most 50
+  candidates and falls back to RRF on provider failure.
+- Neither real artifact is downloaded implicitly. The local adapter requires an explicitly
+  provisioned checksum-verified safetensors cache and disables remote code. Offline tests/demo use
+  a separately named deterministic fake.
+- `m6-relevance-fixture-v1` has eight synthetic chunks and five synthetic graded queries. At K=3,
+  lexical, fake-vector, hybrid and fake-reranked variants all record Recall 0.90, MRR 1.00 and nDCG
+  0.950262129022. The equality provides no evidence that semantic or reranked retrieval is better,
+  so the real reranker remains disabled by default. Full raw rankings and local timing evidence are
+  in `artifacts/evaluation/m6_retrieval_eval_v1.json` and docs/34.
+
 
 ---
 
@@ -2007,6 +2131,20 @@ the current-model read reports explicit baseline fallback. Artifact contents inc
 source, credentials or provider payloads. Snapshot-risk reads resolve tenant scope server-side and
 cross-organization IDs return the safe not-found envelope.
 
+## M6 retrieval boundary
+
+Repository documents are stored and chunked only as bounded inert text. Approval, source identity,
+version, checksum, organization/repository scope and retention metadata are mandatory; repository
+content cannot select a provider, change tool policy or widen authorization. Every lexical/vector
+query applies scope and expiry filters before ranking. Composite database constraints and
+cross-tenant tests prevent a chunk/profile/embedding from being rebound to another tenant.
+
+Public model identity, revision, license and safetensors checksum are fixed in source. Real adapters
+read only an explicitly provisioned local directory, verify weights before import, disable remote
+code and never download on a web/worker request. Provider/model mismatch or outage is visible and
+falls back to scoped deterministic evidence. Raw queries/source are not logged or persisted as
+retrieval traces in M6; the response retains only a query SHA-256 and cited source/chunk IDs.
+
 
 ---
 
@@ -2075,6 +2213,21 @@ fallback, probability prohibition and cross-tenant risk HTTP denial. CI installs
 group and rebuilds the committed M5 artifact; native/platform numeric variation is limited by its
 recorded `1e-8` absolute tolerance while the committed model checksums remain exact.
 
+## M6 retrieval evidence
+
+Unit tests cover approved/bounded source contracts, Markdown/Python AST chunking, code-aware
+normalization, RRF ranks/scores, bounded reranking, exact model identities, offline cache failure
+and Recall@K/MRR/nDCG calculations. Django integration/security tests cover idempotent ingestion,
+retention/source provenance, active lexical selection, side-by-side vector build/switch without row
+overwrite, source filters, semantic/reranker fallback, service-level cross-tenant rejection,
+composite database constraints and append-only raw SQL behavior. PostgreSQL CI additionally checks
+the GIN and dimension-compatible HNSW indexes and executes the same scoped retrieval path.
+
+The committed eight-chunk/five-query fixture is explicitly synthetic and CC0-1.0. Its four
+ablations have equal K=3 aggregate metrics, so it validates the harness but does not establish
+semantic/reranker superiority. The recorded local in-memory latency excludes database and real
+transformer time; representative PostgreSQL index size/latency remain not yet measured.
+
 
 ---
 
@@ -2114,6 +2267,13 @@ preprocessor/hash -> validation-selected logistic/XGBoost configurations and thr
 one held-out raw evaluation -> model/root checksums -> explicit `candidate_not_promoted` decision ->
 deterministic rollback artifact. No mutable `latest` identifier or automatic promotion is used.
 M13 will import/register this lineage in MLflow rather than changing the historical evidence.
+
+M6 adds source/version/hash/retention -> chunk/normalizer version -> lexical profile or exact
+embedding artifact/revision/checksum/dimension -> physical index -> fusion/reranker version ->
+frozen relevance fixture/hash -> raw rankings/metrics/latency limitations -> activation decision.
+Profiles build beside active rows and switch transactionally only after completeness and scope
+checks. The real reranker is not active because only a deterministic synthetic fake was evaluated;
+M13 can register this evidence without changing that historical decision.
 
 
 ---
@@ -2783,7 +2943,7 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -2877,6 +3037,22 @@ the tree candidate. No notebook, SHAP, GPU or model-serving dependency is added.
 `uv sync --frozen --group dev --group ml` installed these exact pins together on CPython 3.13.15,
 and M5 training/inference/serialization tests passed. That repository result is compatibility
 evidence for this locked ReleaseProof environment, not a universal platform claim.
+
+## M6 retrieval pins — verified and locked 2026-08-31
+
+| Package/artifact | Exact pin | Official evidence / use |
+|---|---:|---|
+| pgvector Python | `0.5.0` | The official [pgvector-python project](https://github.com/pgvector/pgvector-python) documents Django `VectorField`, distance expressions and HNSW indexes; its project metadata requires Python 3.10+. This is the Django adapter for the already pinned pgvector PostgreSQL extension. |
+| sentence-transformers | `6.0.0` | The official [PyPI release](https://pypi.org/project/sentence-transformers/6.0.0/) is stable, supports Python 3.13 and documents both `SentenceTransformer` and `CrossEncoder`. It is isolated in the optional `semantic` group; normal CI/test paths do not download model weights. |
+| embedding weights | `sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41` | The official [model card](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2) records Apache-2.0 and 384 dimensions. The exact safetensors SHA-256 is `53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db`. |
+| reranker weights | `cross-encoder/ms-marco-MiniLM-L6-v2@4bebbd56fc380a66525f95b03d4ec1a4b41a4f1e` | The official [model revision](https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2/tree/4bebbd56fc380a66525f95b03d4ec1a4b41a4f1e) records Apache-2.0 and the CrossEncoder path. Safetensors SHA-256 is `821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae`. |
+
+The lock resolves sentence-transformers dependencies for the optional group, but M6 does not treat
+transitive PyTorch/Transformers versions as an M11 training/serving decision. Real weights are not
+fetched implicitly. Production adapters require a pre-provisioned local directory with the exact
+safetensors checksum and `trust_remote_code=False`; the default test/demo path uses named
+deterministic fakes. This validates dependency resolution and contract wiring, not real-model
+quality or representative latency.
 
 ## Dependency and image management
 
@@ -3205,6 +3381,144 @@ fixture, and four validation/test rows cannot support the predeclared calibratio
 kept it as a checksum-versioned candidate, exposed only a model score/band, retained explicit
 UNKNOWN behavior and left the transparent deterministic heuristic active. Promotion needs larger,
 provenance-controlled, repository-aware real proxy data and successful held-out calibration.
+
+
+---
+
+# SOURCE FILE: `docs/34_M6_RETRIEVAL_EVALUATION.md`
+
+# 34 — M6 Retrieval Evaluation
+
+## Scope and artifact identity
+
+- Issues: `RP-0501..RP-0506`
+- Evaluation schema: `m6-retrieval-eval-v1`
+- Frozen fixture: `tests/fixtures/retrieval/m6_relevance_v1.json`
+- Fixture SHA-256: `c6ec6c4473b264a027ca7ab9482a31ed0b2d9ea1f0d76a3247d76fc694ac9976`
+- Raw artifact: `artifacts/evaluation/m6_retrieval_eval_v1.json`
+- Artifact root SHA-256 contract:
+  `f7e9009bdc7547b3fb677013b0f7752d5a28ea1071f92a17754d36af3d107b70`
+
+The fixture contains eight CC0-1.0 synthetic evidence chunks and five synthetic graded queries.
+It is designed to validate ingestion/ranking/evaluation mechanics. It is not customer or public
+repository data and cannot support a product-quality claim.
+
+## Exact retrieval configuration
+
+- FTS: PostgreSQL `simple`, profile `postgres-simple-code-v1`
+- Normalizer: `code-aware-normalizer-v1`
+- Fusion: reciprocal-rank fusion `rrf-v1-k60`
+- Evaluation embedding: `deterministic-hash-embedding-v1`, 384 dimensions, synthetic fake
+- Selected real embedding: `sentence-transformers/all-MiniLM-L6-v2`, revision
+  `1110a243fdf4706b3f48f1d95db1a4f5529b4d41`, 384 dimensions, Apache-2.0
+- Selected real reranker: `cross-encoder/ms-marco-MiniLM-L6-v2`, revision
+  `4bebbd56fc380a66525f95b03d4ec1a4b41a4f1e`, Apache-2.0
+
+## Frozen synthetic measurements at K=3
+
+| Variant | Recall@3 | MRR@3 | nDCG@3 |
+|---|---:|---:|---:|
+| Lexical | 0.90 | 1.00 | 0.950262129022 |
+| Deterministic fake vector | 0.90 | 1.00 | 0.950262129022 |
+| Hybrid RRF | 0.90 | 1.00 | 0.950262129022 |
+| Deterministic fake reranked | 0.90 | 1.00 | 0.950262129022 |
+
+The raw artifact contains every query ranking and relevance-derived metric. Equal aggregate results
+mean this fixture provides no evidence that semantic search or reranking is superior to lexical
+retrieval. The real reranker therefore stays disabled by default.
+
+## Latency and size evidence
+
+On the recorded Windows/Python 3.13.15 environment, 100 in-memory executions of the complete
+five-query/four-variant synthetic suite recorded median 6.930450 ms, p95 7.680900 ms and minimum
+6.620100 ms. This explicitly excludes PostgreSQL/network time and real transformer inference.
+The fixture contains 1,123 text bytes and 3,072 fake-vector floats. Representative PostgreSQL
+on-disk index size, end-to-end latency and real-model latency are **not yet measured**.
+
+## Failure and privacy behavior
+
+- Missing lexical/embedding profiles return explicit unavailable status.
+- Missing/mismatched embedding provider keeps scoped lexical evidence.
+- Reranker failure preserves deterministic hybrid ordering.
+- Expired documents are filtered before ranking.
+- Cross-tenant/repository service requests and database relationships fail closed.
+- Repository text remains untrusted inert data; no query/source content is logged.
+- Real adapters require checksum-verified local safetensors and never fetch weights implicitly.
+
+## Reproduction
+
+```text
+uv run python -m eng.evaluate_m6_retrieval --check
+uv run pytest tests/unit/test_retrieval_core.py tests/integration/test_retrieval_persistence.py tests/security/test_retrieval_tenancy.py
+```
+
+`--check` verifies the frozen configuration, rankings, metrics and artifact root hash, then reports
+a fresh local timing sample without pretending timing is byte-deterministic.
+
+
+---
+
+# SOURCE FILE: `docs/35_M6_OWNER_LEARNING_NOTE.md`
+
+# 35 — M6 Owner Learning Note
+
+## 1. Concept implemented
+
+M6 implements repository-scoped retrieval-augmented evidence: approved source ingestion,
+source-aware chunking, PostgreSQL lexical search, pgvector semantic candidates, reciprocal-rank
+fusion, optional cross-encoder reranking, side-by-side index activation and frozen retrieval
+evaluation.
+
+## 2. Why it is used here
+
+Risk scores explain current change properties but do not surface prior architectural decisions,
+runbooks or similar historical evidence. Lexical search is strong for exact code identifiers;
+embeddings can retrieve related wording; RRF combines ranks without pretending incomparable raw
+scores share a calibrated scale. A cross-encoder can inspect query/document pairs more deeply, but
+its latency and value must be measured before activation.
+
+## 3. Algorithm and data assumptions
+
+- Approved source content and relevance judgments are trustworthy metadata even though document
+  text itself remains hostile/untrusted content.
+- PostgreSQL `simple` tokenization plus code-aware identifier/path expansion preserves exact source
+  names better than language stemming for the first corpus.
+- Cosine similarity is meaningful only for vectors from the exact same model/revision/dimension.
+- RRF uses ranks rather than raw lexical/vector scores and therefore avoids unsafe score scaling;
+  K=60 is a fixed versioned hyperparameter, not a learned probability.
+- Synthetic fake embeddings validate contracts and degradation behavior, not real semantic quality.
+- Retrieval quality from eight fictional chunks cannot generalize to customer repositories.
+
+## 4. Key code paths
+
+- `packages/retrieval_core/`: validation, normalization, chunking, RRF, reranking and metrics.
+- `apps/web/retrieval/models.py`: scoped immutable evidence and versioned index profiles.
+- `apps/web/retrieval/services.py`: ingestion, build/switch, scoped FTS/vector retrieval and fallback.
+- `adapters/retrieval/`: deterministic fakes and offline checksum-verified sentence-transformers.
+- `eng/evaluate_m6_retrieval.py`: frozen ablations, metrics, latency evidence and artifact check.
+- `artifacts/evaluation/m6_retrieval_eval_v1.json`: raw rankings and limitations.
+
+## 5. Exact experiment/test to rerun
+
+```text
+uv run python -m eng.evaluate_m6_retrieval --check
+uv run pytest tests/unit/test_retrieval_core.py tests/integration/test_retrieval_persistence.py tests/security/test_retrieval_tenancy.py
+```
+
+Inspect per-query rankings and confirm every source reference retains type, source ID/version and
+chunk ID. Then inspect active/candidate profile rows to verify switching did not delete old vectors.
+
+## 6. Likely interview question and answer
+
+**Question:** Why combine PostgreSQL FTS and vectors with RRF instead of using vector similarity
+alone?
+
+**Answer:** Code retrieval needs exact identifiers and paths, where lexical search is often best,
+while embeddings may help with paraphrases. Their raw scores are not directly comparable, so I use
+a deterministic versioned reciprocal-rank fusion over tenant-filtered candidate lists and preserve
+both component ranks/scores. The frozen synthetic fixture showed no aggregate improvement from the
+fake semantic/reranked variants, so I did not claim superiority or enable the real reranker without
+representative evidence.
 
 
 ---

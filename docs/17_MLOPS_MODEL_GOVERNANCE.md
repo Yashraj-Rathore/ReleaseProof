@@ -32,3 +32,10 @@ preprocessor/hash -> validation-selected logistic/XGBoost configurations and thr
 one held-out raw evaluation -> model/root checksums -> explicit `candidate_not_promoted` decision ->
 deterministic rollback artifact. No mutable `latest` identifier or automatic promotion is used.
 M13 will import/register this lineage in MLflow rather than changing the historical evidence.
+
+M6 adds source/version/hash/retention -> chunk/normalizer version -> lexical profile or exact
+embedding artifact/revision/checksum/dimension -> physical index -> fusion/reranker version ->
+frozen relevance fixture/hash -> raw rankings/metrics/latency limitations -> activation decision.
+Profiles build beside active rows and switch transactionally only after completeness and scope
+checks. The real reranker is not active because only a deterministic synthetic fake was evaluated;
+M13 can register this evidence without changing that historical decision.

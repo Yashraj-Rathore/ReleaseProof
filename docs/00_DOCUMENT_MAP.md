@@ -35,5 +35,7 @@
 | `31_FINAL_ARCHITECTURE_REVIEW.md` | final claim/security/architecture audit |
 | `32_M5_CLASSICAL_MODEL_CARD.md` | exact M5 lineage, measurements, calibration and promotion decision |
 | `33_M5_OWNER_LEARNING_NOTE.md` | owner-defensible M5 concepts, assumptions and rerun path |
+| `34_M6_RETRIEVAL_EVALUATION.md` | exact retrieval configuration, frozen measurements and activation decision |
+| `35_M6_OWNER_LEARNING_NOTE.md` | owner-defensible M6 concepts, assumptions and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

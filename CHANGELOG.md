@@ -44,6 +44,17 @@
 - Authenticated tenant-scoped current-model and snapshot-risk API/HTML reads with evidence-backed
   components, explicit non-probability wording and safe deterministic fallback when learned
   artifacts are missing or invalid.
+- M6 approved evidence ingestion with Markdown-heading, inert Python-AST and bounded fallback
+  chunking; every document/chunk retains tenant, repository, source/version/hash and retention
+  provenance.
+- Versioned PostgreSQL `simple` FTS rows, a 384-dimensional pgvector table, forward GIN/HNSW
+  indexes and transactionally activated side-by-side lexical/embedding profiles.
+- Deterministic `rrf-v1-k60` hybrid fusion with component ranks/scores plus bounded optional
+  cross-encoder reranking and explicit provider/model mismatch fallback.
+- Offline checksum-verified sentence-transformers embedding/reranker adapters and separately named
+  deterministic fakes; exact Hugging Face revisions, licenses, dimensions and safetensors hashes.
+- A frozen CC0 synthetic retrieval relevance set, raw per-query Recall@K/MRR/nDCG ablations,
+  bounded latency evidence, failure modes, activation decision and M6 Owner Learning Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -70,6 +81,10 @@
   in the M5 `ml` group; CI and the canonical validator now reproduce the M5 model artifact.
 - Kept `deterministic-heuristic-v1` active because the learned candidates use tiny one-repository
   synthetic data, fail the frozen calibration sample gate and do not add defensible product value.
+- Added pgvector Python 0.5.0 to the runtime and sentence-transformers 6.0.0 to an optional semantic
+  group without permitting implicit model downloads or changing the later M11 training decision.
+- Kept the real M6 cross-encoder disabled because the synthetic fake-provider ablation showed no
+  aggregate retrieval improvement and cannot establish representative value/latency.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -83,3 +98,6 @@
   synthetic fixture and are not product-performance, probability, incident or customer claims.
 - M5 evidence is recorded in `PROJECT_STATUS.md` and docs/32; learned-model figures remain tiny
   synthetic harness measurements, probability is disabled and neither candidate is promoted.
+- M6 evidence is recorded in `PROJECT_STATUS.md` and docs/34; retrieval figures are synthetic
+  harness measurements, real weights were not executed, and no customer/public quality claim is
+  made.

@@ -58,3 +58,17 @@ is required. Invalid/unavailable learned artifacts cannot replace or erase deter
 the current-model read reports explicit baseline fallback. Artifact contents include no customer
 source, credentials or provider payloads. Snapshot-risk reads resolve tenant scope server-side and
 cross-organization IDs return the safe not-found envelope.
+
+## M6 retrieval boundary
+
+Repository documents are stored and chunked only as bounded inert text. Approval, source identity,
+version, checksum, organization/repository scope and retention metadata are mandatory; repository
+content cannot select a provider, change tool policy or widen authorization. Every lexical/vector
+query applies scope and expiry filters before ranking. Composite database constraints and
+cross-tenant tests prevent a chunk/profile/embedding from being rebound to another tenant.
+
+Public model identity, revision, license and safetensors checksum are fixed in source. Real adapters
+read only an explicitly provisioned local directory, verify weights before import, disable remote
+code and never download on a web/worker request. Provider/model mismatch or outage is visible and
+falls back to scoped deterministic evidence. Raw queries/source are not logged or persisted as
+retrieval traces in M6; the response retains only a query SHA-256 and cited source/chunk IDs.

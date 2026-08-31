@@ -124,3 +124,22 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
+
+### M6 implemented retrieval evidence
+
+- `KnowledgeDocument` and `KnowledgeChunk` are append-only organization/repository-bound records.
+  They retain approved source type/identity/version/URI, content and chunk hashes, line/heading
+  provenance, exact chunk/normalizer versions and an organization-policy-derived retention date.
+- `LexicalIndexProfile` and `KnowledgeLexicalIndex` build versioned PostgreSQL `simple` FTS rows
+  beside existing profiles. The active-profile switch changes only profile lifecycle metadata; it
+  never rewrites source chunks or historical lexical rows.
+- `EmbeddingIndexProfile` records exact model ID, revision, safetensors checksum, license,
+  dimension, adapter, chunk version and physical table/index. `KnowledgeEmbedding384` is the M6
+  dimension-compatible pgvector table with a cosine HNSW index. A different dimension requires a
+  new physical table/migration rather than guessing or coercing values.
+- PostgreSQL composite foreign keys and equivalent SQLite test triggers independently enforce
+  organization/repository/document/chunk/profile consistency. Document, chunk, lexical and vector
+  rows reject application and raw-SQL update/delete before the governed M14 retention path.
+- Retrieval selects only unexpired rows from one active lexical and embedding profile inside the
+  server-provided organization/repository scope. Reranker/provider failure leaves attributable
+  lexical/hybrid evidence instead of fabricating a historical claim.

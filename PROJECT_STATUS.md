@@ -1,19 +1,53 @@
 # Project Status
 
-**Current state: M5 classical ML risk engine complete on 2026-08-30.**
+**Current state: M6 RAG and historical evidence complete on 2026-08-31.**
 
-The repository now has M1-M4 foundations/data/baseline evidence plus real logistic-regression and
-XGBoost CPU candidate training on the unchanged synthetic split, train-only preprocessing,
-validation-only selection, a frozen calibration abstention rule, checksum-bound model artifacts and
-tenant-scoped risk/model reads. The learned candidates are not promoted and are never presented as
-probabilities. No real/public dataset evaluation, customer result, live GitHub/source-tree adapter
-validation, sandbox security claim, or production-readiness claim exists yet.
+The repository now has M1-M5 foundations/risk evidence plus tenant/repository-scoped approved
+evidence ingestion, source-aware chunking, PostgreSQL `simple` FTS, a dimension-compatible pgvector
+index, side-by-side embedding-profile activation, RRF hybrid retrieval, bounded reranking fallback
+and a frozen synthetic relevance evaluation. Exact public model artifacts are pinned but weights
+are not implicitly downloaded; deterministic fakes remain the validated offline path. No
+real/public/customer retrieval-quality result, live GitHub/source-tree adapter validation, sandbox
+security claim, or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/06_RAG_RETRIEVAL.md` for `RP-0501..RP-0506`. Keep every document/chunk/vector
-tenant and repository scoped, reverify the exact embedding/reranker artifacts before adding them,
-and compare lexical, vector, hybrid and reranked retrieval on a frozen relevance fixture.
+Run `codex-prompts/07_LLM_EVIDENCE.md` for `RP-0601..RP-0606`. Keep deterministic evidence when a
+provider is disabled/unavailable, enforce organization privacy routing before any source
+transmission, reverify the exact OpenAI SDK/model configuration, reject invalid structured output
+and preserve cited M6 evidence IDs.
+
+## M6 evidence
+
+- `KnowledgeDocument`, `KnowledgeChunk`, versioned lexical profiles/rows and 384-dimensional
+  embedding profiles/rows are organization/repository bound. Composite PostgreSQL foreign keys and
+  SQLite test triggers reject mismatched repository/document/chunk/profile relationships; source
+  and index rows are append-only.
+- `source-aware-chunker-v1` uses Markdown headings, inert Python AST boundaries and bounded
+  fallback chunks. `postgres-simple-code-v1` uses PostgreSQL `simple` plus
+  `code-aware-normalizer-v1`; the forward migration creates GIN and cosine HNSW physical indexes.
+- The selected embedding is `sentence-transformers/all-MiniLM-L6-v2` revision `1110a243...`, 384
+  dimensions, and the reranker is `cross-encoder/ms-marco-MiniLM-L6-v2` revision `4bebbd56...`.
+  Apache-2.0 license metadata and exact safetensors checksums are recorded. Real adapters are
+  offline-only and fail closed on a missing/mismatched local artifact.
+- `rrf-v1-k60` preserves lexical/vector scores and ranks. Missing semantic evidence falls back to
+  lexical retrieval; reranker failure preserves hybrid ordering. No repository text controls a
+  provider, tool, authorization or network decision.
+- The frozen CC0 synthetic fixture has eight chunks and five graded queries. At K=3, lexical,
+  deterministic fake vector, hybrid and deterministic fake-reranked variants all measure Recall
+  0.90, MRR 1.00 and nDCG 0.950262129022. Equality does not prove semantic/reranker value, so the
+  real reranker is disabled by default.
+- The raw artifact root hash is
+  `f7e9009bdc7547b3fb677013b0f7752d5a28ea1071f92a17754d36af3d107b70`. Recorded local in-memory
+  full-ablation latency is median 6.930450 ms/p95 7.680900 ms; it excludes PostgreSQL and real-model
+  time. Representative database index size/latency remain not yet measured.
+- The canonical local suite passed **86 tests** with one PostgreSQL physical-index assertion
+  skipped and the live S3 contract deselected. Ruff and strict mypy passed for 156 source files;
+  Django/migration/M4/M5/M6/doc/inventory checks passed. M6 coverage includes ingestion,
+  provenance, side-by-side activation, component scoring, fallback, exact artifacts, metrics,
+  database immutability and cross-tenant denial. CI supplies the authoritative PostgreSQL/S3 run.
+- No model weight, public/customer source or paid/hosted provider was downloaded or contacted, and
+  no untrusted repository code was executed.
 
 ## M5 evidence
 
@@ -148,7 +182,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M3 change intelligence | Complete - RP-0201..RP-0206 |
 | M4 dataset/baseline | Complete - RP-0301..RP-0306 |
 | M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
-| M6 RAG | Not started - next |
+| M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
 | M7 LLM evidence | Not started |
 | M8 generated tests | Not started |
 | M9 sandbox | Not started |

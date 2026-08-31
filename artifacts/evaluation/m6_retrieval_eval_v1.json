@@ -1,0 +1,334 @@
+{
+  "configuration": {
+    "evaluation_embedding": {
+      "dimension": 384,
+      "synthetic_fake": true,
+      "version": "deterministic-hash-embedding-v1"
+    },
+    "fts_configuration": "simple",
+    "fts_profile_version": "postgres-simple-code-v1",
+    "fusion_version": "rrf-v1-k60",
+    "normalizer_version": "code-aware-normalizer-v1",
+    "quality_k": 3,
+    "selected_real_embedding": {
+      "dimension": 384,
+      "license": "Apache-2.0",
+      "model_id": "sentence-transformers/all-MiniLM-L6-v2",
+      "revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+      "safetensors_sha256": "53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db"
+    },
+    "selected_real_reranker": {
+      "license": "Apache-2.0",
+      "model_id": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "revision": "4bebbd56fc380a66525f95b03d4ec1a4b41a4f1e",
+      "safetensors_sha256": "821d1aa69520101d6e0737f78a042ae25b19e5cb9160701909d10434f4aeb0ae"
+    }
+  },
+  "decision": {
+    "fallback": "hybrid RRF, or lexical-only when semantic retrieval is unavailable",
+    "real_reranker_active_by_default": false,
+    "reason": "Only a synthetic fake-provider harness is evaluated in M6. The exact real reranker remains opt-in until an allowed representative corpus and local artifact benchmark demonstrate incremental value."
+  },
+  "failure_modes": [
+    "No active lexical profile returns explicit unavailable status.",
+    "No active or compatible embedding profile degrades to lexical evidence.",
+    "Embedding provider outage does not erase lexical evidence.",
+    "Reranker outage preserves deterministic hybrid ordering.",
+    "Expired documents and cross-tenant/repository rows are excluded before ranking."
+  ],
+  "fixture": {
+    "chunk_count": 8,
+    "corpus_text_bytes": 1123,
+    "license": "CC0-1.0",
+    "path": "tests/fixtures/retrieval/m6_relevance_v1.json",
+    "query_count": 5,
+    "sha256": "c6ec6c4473b264a027ca7ab9482a31ed0b2d9ea1f0d76a3247d76fc694ac9976",
+    "usage": "Deterministic retrieval harness only; not customer data or a product-quality benchmark."
+  },
+  "index_size_evidence": {
+    "fixture_corpus_text_bytes": 1123,
+    "fixture_fake_vector_float_count": 3072,
+    "status": "not yet measured on a representative PostgreSQL corpus"
+  },
+  "latency_evidence": {
+    "environment": {
+      "platform": "Windows-11-10.0.22631-SP0",
+      "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+      "python": "3.13.15"
+    },
+    "limitations": "This excludes PostgreSQL network/query time and real transformer inference; it is a local deterministic harness measurement only.",
+    "measurement": "single-process in-memory full five-query ablation suite",
+    "median_ms": 6.93045,
+    "minimum_ms": 6.6201,
+    "p95_ms": 7.6809,
+    "repetitions": 100
+  },
+  "limitations": [
+    "All relevance labels and content are explicitly synthetic.",
+    "The fixture is small, English-only, and designed to validate the evaluation harness.",
+    "No customer/public-repository retrieval quality is measured.",
+    "The pinned real embedding and reranker weights were not downloaded or executed.",
+    "PostgreSQL on-disk index size and representative end-to-end latency are not yet measured."
+  ],
+  "quality": {
+    "hybrid_rrf": {
+      "k": 3,
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 0.950262129022,
+      "per_query": [
+        {
+          "ndcg_at_k": 0.917319412713,
+          "query_id": "q-webhook-authenticity",
+          "ranking": [
+            "webhook-signature",
+            "embedding-rebuild",
+            "idempotent-retry"
+          ],
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 0.833991232398,
+          "query_id": "q-safe-migration",
+          "ranking": [
+            "database-backup",
+            "schema-rollout",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-duplicate-task",
+          "ranking": [
+            "idempotent-retry",
+            "database-backup",
+            "prompt-injection"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-hostile-document",
+          "ranking": [
+            "prompt-injection",
+            "webhook-signature",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-vector-upgrade",
+          "ranking": [
+            "embedding-rebuild",
+            "database-backup",
+            "idempotent-retry"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        }
+      ],
+      "query_count": 5,
+      "recall_at_k": 0.9
+    },
+    "lexical": {
+      "k": 3,
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 0.950262129022,
+      "per_query": [
+        {
+          "ndcg_at_k": 0.917319412713,
+          "query_id": "q-webhook-authenticity",
+          "ranking": [
+            "webhook-signature",
+            "database-backup",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 0.833991232398,
+          "query_id": "q-safe-migration",
+          "ranking": [
+            "database-backup",
+            "schema-rollout",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-duplicate-task",
+          "ranking": [
+            "idempotent-retry",
+            "database-backup",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-hostile-document",
+          "ranking": [
+            "prompt-injection",
+            "webhook-signature",
+            "database-backup"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-vector-upgrade",
+          "ranking": [
+            "embedding-rebuild",
+            "database-backup",
+            "idempotent-retry"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        }
+      ],
+      "query_count": 5,
+      "recall_at_k": 0.9
+    },
+    "reranked": {
+      "k": 3,
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 0.950262129022,
+      "per_query": [
+        {
+          "ndcg_at_k": 0.917319412713,
+          "query_id": "q-webhook-authenticity",
+          "ranking": [
+            "webhook-signature",
+            "embedding-rebuild",
+            "idempotent-retry"
+          ],
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 0.833991232398,
+          "query_id": "q-safe-migration",
+          "ranking": [
+            "database-backup",
+            "schema-rollout",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-duplicate-task",
+          "ranking": [
+            "idempotent-retry",
+            "database-backup",
+            "prompt-injection"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-hostile-document",
+          "ranking": [
+            "prompt-injection",
+            "webhook-signature",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-vector-upgrade",
+          "ranking": [
+            "embedding-rebuild",
+            "database-backup",
+            "idempotent-retry"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        }
+      ],
+      "query_count": 5,
+      "recall_at_k": 0.9
+    },
+    "vector": {
+      "k": 3,
+      "mrr_at_k": 1.0,
+      "ndcg_at_k": 0.950262129022,
+      "per_query": [
+        {
+          "ndcg_at_k": 0.917319412713,
+          "query_id": "q-webhook-authenticity",
+          "ranking": [
+            "webhook-signature",
+            "embedding-rebuild",
+            "idempotent-retry"
+          ],
+          "recall_at_k": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 0.833991232398,
+          "query_id": "q-safe-migration",
+          "ranking": [
+            "database-backup",
+            "schema-rollout",
+            "session-csrf"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-duplicate-task",
+          "ranking": [
+            "idempotent-retry",
+            "database-backup",
+            "prompt-injection"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-hostile-document",
+          "ranking": [
+            "prompt-injection",
+            "webhook-signature",
+            "embedding-rebuild"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "ndcg_at_k": 1.0,
+          "query_id": "q-vector-upgrade",
+          "ranking": [
+            "embedding-rebuild",
+            "idempotent-retry",
+            "database-backup"
+          ],
+          "recall_at_k": 1.0,
+          "reciprocal_rank": 1.0
+        }
+      ],
+      "query_count": 5,
+      "recall_at_k": 0.9
+    }
+  },
+  "root_sha256": "f7e9009bdc7547b3fb677013b0f7752d5a28ea1071f92a17754d36af3d107b70",
+  "schema_version": "m6-retrieval-eval-v1",
+  "synthetic": true
+}
