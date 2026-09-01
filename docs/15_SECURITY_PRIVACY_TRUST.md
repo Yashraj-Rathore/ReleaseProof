@@ -72,3 +72,18 @@ read only an explicitly provisioned local directory, verify weights before impor
 code and never download on a web/worker request. Provider/model mismatch or outage is visible and
 falls back to scoped deterministic evidence. Raw queries/source are not logged or persisted as
 retrieval traces in M6; the response retains only a query SHA-256 and cited source/chunk IDs.
+
+## M7 hosted-LLM boundary
+
+The organization-level hosted-LLM kill switch and immutable effective policy are evaluated before
+any hosted adapter call. Missing policy, stale terms review, unknown training/retention facts,
+unapproved provider/model/content class/region, an unavailable required response-storage control,
+oversized context or a cost/token violation denies transmission. Repository overrides must belong to the same organization
+and are protected by composite database constraints.
+
+Repository text is encoded inside a versioned data envelope and cannot select providers, change
+policy, enable tools, widen budgets or alter authorization. The OpenAI adapter exposes no tools and
+does not execute model output. Redaction is bounded and versioned but is not proof that source is
+safe to transmit. Persisted evidence excludes prompt/context, provider raw responses, secret values,
+hidden reasoning and arbitrary error text; application logging must maintain the same exclusion.
+The deterministic fake remains the only enabled-by-default M7 path.

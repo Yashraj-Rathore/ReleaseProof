@@ -75,3 +75,20 @@ The committed eight-chunk/five-query fixture is explicitly synthetic and CC0-1.0
 ablations have equal K=3 aggregate metrics, so it validates the harness but does not establish
 semantic/reranker superiority. The recorded local in-memory latency excludes database and real
 transformer time; representative PostgreSQL index size/latency remain not yet measured.
+
+## M7 LLM evidence
+
+Unit tests cover typed requests/responses/errors, deterministic fake stability, strict JSON and
+duplicate/extra-field rejection, citation scope, insufficient evidence, cancellation, budget
+preflight, prompt-injection serialization, fail-closed privacy routes, deterministic redaction and
+the OpenAI Responses request shape/retry bound. Django integration tests cover effective
+organization/repository policy, cross-tenant denial, idempotent append-only safe evidence,
+provider failure and preservation of deterministic evidence.
+
+The committed six-case CC0 synthetic fixture includes four valid cases and two invalid negative
+controls. Its deterministic results are schema validity 1.0, negative-control rejection 1.0,
+citation support 1.0 over five claims, unsupported-claim rate 0.0, exact suggested-check match 1.0,
+prompt-injection resilience 1.0 and five-run output stability 1.0. These measurements validate
+only the fake-provider/schema/evaluator harness. Local in-process latency excludes database, queue,
+network and provider time; hosted quality, latency and billed cost are not measured. Exact evidence
+and limitations are in `36_M7_LLM_EVALUATION.md`.

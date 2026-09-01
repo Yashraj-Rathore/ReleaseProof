@@ -6,7 +6,15 @@ import pytest
 
 from adapters.github import FakeGitHubProvider
 from adapters.llm import FakeLLMProvider
-from packages.ai_core import LLMRequest, LLMSchemaError, LLMSuggestion, LLMUnavailableError
+from packages.ai_core import (
+    ContentClass,
+    EvidenceContext,
+    LLMAnalysisRequest,
+    LLMBudget,
+    LLMSchemaError,
+    LLMUnavailableError,
+    build_analysis_request,
+)
 from packages.github_contracts import (
     ChangedFile,
     GitHubNotFoundError,
@@ -56,34 +64,53 @@ def test_github_fake_rejects_ambiguous_duplicate_configuration() -> None:
         FakeGitHubProvider([snapshot, snapshot])
 
 
-def test_llm_fake_is_deterministic_and_rejects_unknown_citations() -> None:
-    request = LLMRequest(change_id="change:7", evidence_ids=("evidence:7",))
-    expected = LLMSuggestion(
-        summary="Fixture-only response.",
-        risk_hypotheses=("Rounding could change.",),
-        requested_tests=("Check a boundary value.",),
-        cited_evidence_ids=("evidence:7",),
+def _llm_request() -> LLMAnalysisRequest:
+    return build_analysis_request(
+        change_id="change:7",
+        evidence=(
+            EvidenceContext(
+                evidence_id="evidence:7",
+                content_class=ContentClass.DETERMINISTIC_EVIDENCE,
+                content="A fixture behavior changed.",
+                source_reference="fixture:evidence:7",
+            ),
+        ),
+        budget=LLMBudget(
+            max_input_bytes=16_384,
+            max_input_tokens=16_384,
+            max_output_tokens=1_024,
+            max_cost_microusd=100_000,
+            connect_timeout_seconds=5.0,
+            read_timeout_seconds=30.0,
+            max_attempts=2,
+            retry_backoff_seconds=0.5,
+        ),
     )
-    provider = FakeLLMProvider(expected)
 
-    assert provider.suggest(request) == expected
-    assert provider.suggest(request) == expected
+
+def test_llm_fake_is_deterministic_and_rejects_unknown_citations() -> None:
+    request = _llm_request()
+    provider = FakeLLMProvider()
+
+    first = provider.analyze_change(request)
+    second = provider.analyze_change(request)
+    assert first.suggestion == second.suggestion
+    assert first.usage.cost_microusd == 0
 
     invalid = FakeLLMProvider(
-        LLMSuggestion(
-            summary="Invalid citation fixture.",
-            risk_hypotheses=(),
-            requested_tests=(),
-            cited_evidence_ids=("evidence:outside",),
+        raw_output=(
+            '{"summary":"Invalid citation fixture.",'
+            '"summary_evidence_ids":["evidence:outside"],"risks":[],"hypotheses":[],'
+            '"requested_tests":[],"missing_information":[],"uncertainty":"Fixture.",'
+            '"insufficient_evidence":false}'
         )
     )
     with pytest.raises(LLMSchemaError):
-        invalid.suggest(request)
+        invalid.analyze_change(request)
 
 
 def test_llm_fake_has_explicit_unavailable_error() -> None:
-    suggestion = LLMSuggestion("Unavailable", (), (), ())
-    provider = FakeLLMProvider(suggestion, failure=LLMUnavailableError("planned outage"))
+    provider = FakeLLMProvider(failure=LLMUnavailableError("planned outage"))
 
     with pytest.raises(LLMUnavailableError):
-        provider.suggest(LLMRequest("change:1", ()))
+        provider.analyze_change(_llm_request())

@@ -15,5 +15,5 @@ def test_fake_smoke_is_repeatable_and_contains_no_provider_call() -> None:
     }
     assert first["llm"] == {
         "cited_evidence_ids": ("evidence:m1:fixture",),
-        "summary": "Deterministic fake suggestion; no model was called.",
+        "summary": "The supplied evidence warrants focused human review.",
     }

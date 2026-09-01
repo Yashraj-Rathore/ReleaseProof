@@ -143,3 +143,21 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
 - Retrieval selects only unexpired rows from one active lexical and embedding profile inside the
   server-provided organization/repository scope. Reranker/provider failure leaves attributable
   lexical/hybrid evidence instead of fabricating a historical claim.
+
+### M7 implemented LLM policy and evidence
+
+- `HostedLLMPolicy` is an immutable, versioned organization default or repository override. It
+  records route, provider/model/content allowlists, byte/token/cost limits, redaction version,
+  training-use and terms-review facts, retention duration, approved regions, provider storage
+  behavior, approver role and timeout/retry bounds. The newest repository override wins, then the
+  newest organization default; absence or incompatible facts fail closed.
+- Composite `(organization_id, repository_id)` enforcement prevents a policy from naming another
+  tenant's repository. PostgreSQL and SQLite triggers reject raw updates/deletes, while a new
+  version is required for every policy change.
+- Each attempted analysis appends or reuses one tenant/snapshot/feature-bound `EvidenceItem` of
+  kind `llm`. Successful rows contain only the strict suggestion, cited evidence IDs, safe policy
+  decision/hash, exact prompt/schema/model/adapter/SDK identities, usage and elapsed time. Denied or
+  failed rows contain a stable status/reason and preserve pre-existing deterministic evidence.
+- Prompt input, retrieved source, provider raw output, credentials, arbitrary provider errors and
+  hidden reasoning are not persisted in the LLM evidence payload. Idempotency binds the immutable
+  context, policy, provider and versioned request configuration.

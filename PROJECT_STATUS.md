@@ -1,21 +1,55 @@
 # Project Status
 
-**Current state: M6 RAG and historical evidence complete on 2026-08-31.**
+**Current state: M7 evidence-grounded LLM analysis complete on 2026-09-01.**
 
-The repository now has M1-M5 foundations/risk evidence plus tenant/repository-scoped approved
-evidence ingestion, source-aware chunking, PostgreSQL `simple` FTS, a dimension-compatible pgvector
-index, side-by-side embedding-profile activation, RRF hybrid retrieval, bounded reranking fallback
-and a frozen synthetic relevance evaluation. Exact public model artifacts are pinned but weights
-are not implicitly downloaded; deterministic fakes remain the validated offline path. No
-real/public/customer retrieval-quality result, live GitHub/source-tree adapter validation, sandbox
-security claim, or production-readiness claim exists yet.
+The repository now adds typed advisory-LLM contracts, a network-free deterministic provider, one
+pinned hosted adapter, immutable tenant privacy routing, source-controlled prompt/schema identities,
+strict cited structured output, safe append-only LLM evidence and a frozen synthetic evaluation.
+Hosted transmission is disabled without explicit compatible policy; provider failure preserves
+deterministic/retrieval evidence. No hosted provider was called, so hosted usefulness, latency,
+billed cost, retention and regional behavior are not validated. No generated test has been accepted
+or executed, and no sandbox-security or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/07_LLM_EVIDENCE.md` for `RP-0601..RP-0606`. Keep deterministic evidence when a
-provider is disabled/unavailable, enforce organization privacy routing before any source
-transmission, reverify the exact OpenAI SDK/model configuration, reject invalid structured output
-and preserve cited M6 evidence IDs.
+Run `codex-prompts/08_GENERATED_TESTS.md` for `RP-0701..RP-0704`. Keep generated files as immutable
+proposals for the controlled Python fixture, validate them statically without executing repository
+code, and keep M8 review/export acceptance separate from M9 execution approval.
+
+## M7 evidence
+
+- `analysis-suggestion-v1` separates cited grounded risks, visibly uncertain hypotheses, requested
+  tests, missing information and explicit insufficient-evidence behavior. Strict parsing rejects
+  malformed/extra/duplicate fields, invalid vocabularies and citations outside the server-built
+  context.
+- The source-controlled prompt and schema hashes are
+  `de5399fe7640da726411cfcd0dadad0e5e58b6423202590458e35a95a82a0374` and
+  `9fcf0e4be678643081726e579e2ed6df5ac17a45c5598c0c6c23ea0151a5f296`.
+- Immutable organization/repository `HostedLLMPolicy` rows cover local/hosted routes, provider/
+  model/content/region allowlists, size/token/cost budgets, redaction, reviewed training/retention/
+  storage facts, approver role and timeout/retry bounds. Missing or incompatible facts deny hosted
+  transmission; composite database constraints reject cross-tenant policy scope.
+- The OpenAI adapter pins `openai==3.6.0` and `gpt-5.4-mini-2026-03-17`, uses Responses strict JSON
+  Schema with `store=false`, no tools, explicit maximum output and a bounded retry policy. Pricing
+  and contractual facts are externally versioned; response-storage disabled is not called zero
+  retention.
+- Tenant-scoped analysis persists only safe status/decision hashes, strict output, citations,
+  exact prompt/schema/provider/model/adapter/SDK identities, usage and elapsed time. It excludes
+  source/prompt text, raw responses, hidden reasoning, credentials and arbitrary exception text.
+  Duplicate requests reuse the same evidence item; denial/failure does not erase prior evidence.
+- The six-case CC0 synthetic harness records schema validity 1.0, negative-control rejection 1.0,
+  citation support 1.0 over five claims, unsupported-claim rate 0.0, exact suggested-check match
+  1.0, prompt-injection resilience 1.0 and five-repeat stability 1.0. These are deterministic fake
+  contract measurements, not hosted-model or customer-quality results.
+- Evaluation root hash is
+  `5e4f7abc185842fc914b58872ca42971bef4641d6cc81d04ab7dce6564c3eca4`. Local in-process
+  fake-suite latency recorded median 1.8031 ms/p95 3.2425 ms and excludes database, queue, network
+  and provider time. Hosted latency/cost are not measured.
+- The canonical local suite passed **101 tests**, with one PostgreSQL physical-index assertion
+  skipped and the live S3 contract deselected. Ruff, strict mypy, Django/migration, M4/M5/M6/M7,
+  master-spec and inventory validation passed; CI supplies the authoritative PostgreSQL/S3 run.
+- No model weights, public/customer source or paid/hosted provider were contacted, and no untrusted
+  repository code was executed. Exact evaluation and learning evidence are in docs/36 and docs/37.
 
 ## M6 evidence
 
@@ -183,7 +217,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M4 dataset/baseline | Complete - RP-0301..RP-0306 |
 | M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
 | M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
-| M7 LLM evidence | Not started |
+| M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
 | M8 generated tests | Not started |
 | M9 sandbox | Not started |
 | M10 differential | Not started |

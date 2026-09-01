@@ -39,3 +39,10 @@ frozen relevance fixture/hash -> raw rankings/metrics/latency limitations -> act
 Profiles build beside active rows and switch transactionally only after completeness and scope
 checks. The real reranker is not active because only a deterministic synthetic fake was evaluated;
 M13 can register this evidence without changing that historical decision.
+
+M7 adds immutable privacy policy ID/version/hash -> prompt/schema semantic versions and content
+hashes -> provider/model/adapter/SDK identity -> cited source evidence IDs -> strict structured
+suggestion -> usage/cost/latency -> frozen fixture/evaluation root hash. Hosted pricing and provider
+terms are external reviewed inputs rather than mutable constants. The deterministic fake remains
+the default because the frozen synthetic suite does not measure hosted-model quality; later MLflow
+registration must preserve that decision and the original raw artifact.

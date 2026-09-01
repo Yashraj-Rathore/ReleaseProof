@@ -275,6 +275,30 @@ uv run python -m eng.evaluate_m6_retrieval --check
 uv run pytest tests/unit/test_retrieval_core.py tests/integration/test_retrieval_persistence.py tests/security/test_retrieval_tenancy.py
 ```
 
+## M7 evidence-grounded LLM analysis
+
+M7 implements `RP-0601..RP-0606`: provider-neutral typed contracts, a deterministic fake, a pinned
+OpenAI Responses adapter, immutable tenant privacy policy, source-controlled prompt/schema hashes,
+strict citation validation, safe append-only LLM evidence and a frozen synthetic evaluation. LLM
+output is advisory and cannot replace deterministic risk/retrieval evidence or authorize tools,
+file writes, generated-test acceptance or execution.
+
+The optional `ai` group pins `openai==3.6.0`; the hosted adapter fixes
+`gpt-5.4-mini-2026-03-17`, `store=false`, strict JSON Schema, no tools and bounded timeout/retry/
+token/cost behavior. It is disabled unless an organization and immutable effective policy permit
+the exact provider/model/content/region and reviewed training/retention/storage configuration. The
+validated default is the network-free fake; M7 made no hosted API call and makes no hosted quality,
+latency, cost or zero-retention claim.
+
+```text
+uv sync --frozen --group dev --group ml --group ai
+uv run python -m eng.evaluate_m7_llm --check
+uv run pytest tests/unit/test_llm_core.py tests/unit/test_openai_adapter.py tests/integration/test_llm_evidence_persistence.py
+```
+
+See `docs/36_M7_LLM_EVALUATION.md` for exact synthetic measurements and limitations, and
+`docs/37_M7_OWNER_LEARNING_NOTE.md` for the owner-defensible explanation.
+
 
 ---
 
@@ -608,22 +632,56 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M6 RAG and historical evidence complete on 2026-08-31.**
+**Current state: M7 evidence-grounded LLM analysis complete on 2026-09-01.**
 
-The repository now has M1-M5 foundations/risk evidence plus tenant/repository-scoped approved
-evidence ingestion, source-aware chunking, PostgreSQL `simple` FTS, a dimension-compatible pgvector
-index, side-by-side embedding-profile activation, RRF hybrid retrieval, bounded reranking fallback
-and a frozen synthetic relevance evaluation. Exact public model artifacts are pinned but weights
-are not implicitly downloaded; deterministic fakes remain the validated offline path. No
-real/public/customer retrieval-quality result, live GitHub/source-tree adapter validation, sandbox
-security claim, or production-readiness claim exists yet.
+The repository now adds typed advisory-LLM contracts, a network-free deterministic provider, one
+pinned hosted adapter, immutable tenant privacy routing, source-controlled prompt/schema identities,
+strict cited structured output, safe append-only LLM evidence and a frozen synthetic evaluation.
+Hosted transmission is disabled without explicit compatible policy; provider failure preserves
+deterministic/retrieval evidence. No hosted provider was called, so hosted usefulness, latency,
+billed cost, retention and regional behavior are not validated. No generated test has been accepted
+or executed, and no sandbox-security or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/07_LLM_EVIDENCE.md` for `RP-0601..RP-0606`. Keep deterministic evidence when a
-provider is disabled/unavailable, enforce organization privacy routing before any source
-transmission, reverify the exact OpenAI SDK/model configuration, reject invalid structured output
-and preserve cited M6 evidence IDs.
+Run `codex-prompts/08_GENERATED_TESTS.md` for `RP-0701..RP-0704`. Keep generated files as immutable
+proposals for the controlled Python fixture, validate them statically without executing repository
+code, and keep M8 review/export acceptance separate from M9 execution approval.
+
+## M7 evidence
+
+- `analysis-suggestion-v1` separates cited grounded risks, visibly uncertain hypotheses, requested
+  tests, missing information and explicit insufficient-evidence behavior. Strict parsing rejects
+  malformed/extra/duplicate fields, invalid vocabularies and citations outside the server-built
+  context.
+- The source-controlled prompt and schema hashes are
+  `de5399fe7640da726411cfcd0dadad0e5e58b6423202590458e35a95a82a0374` and
+  `9fcf0e4be678643081726e579e2ed6df5ac17a45c5598c0c6c23ea0151a5f296`.
+- Immutable organization/repository `HostedLLMPolicy` rows cover local/hosted routes, provider/
+  model/content/region allowlists, size/token/cost budgets, redaction, reviewed training/retention/
+  storage facts, approver role and timeout/retry bounds. Missing or incompatible facts deny hosted
+  transmission; composite database constraints reject cross-tenant policy scope.
+- The OpenAI adapter pins `openai==3.6.0` and `gpt-5.4-mini-2026-03-17`, uses Responses strict JSON
+  Schema with `store=false`, no tools, explicit maximum output and a bounded retry policy. Pricing
+  and contractual facts are externally versioned; response-storage disabled is not called zero
+  retention.
+- Tenant-scoped analysis persists only safe status/decision hashes, strict output, citations,
+  exact prompt/schema/provider/model/adapter/SDK identities, usage and elapsed time. It excludes
+  source/prompt text, raw responses, hidden reasoning, credentials and arbitrary exception text.
+  Duplicate requests reuse the same evidence item; denial/failure does not erase prior evidence.
+- The six-case CC0 synthetic harness records schema validity 1.0, negative-control rejection 1.0,
+  citation support 1.0 over five claims, unsupported-claim rate 0.0, exact suggested-check match
+  1.0, prompt-injection resilience 1.0 and five-repeat stability 1.0. These are deterministic fake
+  contract measurements, not hosted-model or customer-quality results.
+- Evaluation root hash is
+  `5e4f7abc185842fc914b58872ca42971bef4641d6cc81d04ab7dce6564c3eca4`. Local in-process
+  fake-suite latency recorded median 1.8031 ms/p95 3.2425 ms and excludes database, queue, network
+  and provider time. Hosted latency/cost are not measured.
+- The canonical local suite passed **101 tests**, with one PostgreSQL physical-index assertion
+  skipped and the live S3 contract deselected. Ruff, strict mypy, Django/migration, M4/M5/M6/M7,
+  master-spec and inventory validation passed; CI supplies the authoritative PostgreSQL/S3 run.
+- No model weights, public/customer source or paid/hosted provider were contacted, and no untrusted
+  repository code was executed. Exact evaluation and learning evidence are in docs/36 and docs/37.
 
 ## M6 evidence
 
@@ -791,7 +849,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M4 dataset/baseline | Complete - RP-0301..RP-0306 |
 | M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
 | M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
-| M7 LLM evidence | Not started |
+| M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
 | M8 generated tests | Not started |
 | M9 sandbox | Not started |
 | M10 differential | Not started |
@@ -865,6 +923,17 @@ and its remote M2 result is tracked in GitHub Actions.
   deterministic fakes; exact Hugging Face revisions, licenses, dimensions and safetensors hashes.
 - A frozen CC0 synthetic retrieval relevance set, raw per-query Recall@K/MRR/nDCG ablations,
   bounded latency evidence, failure modes, activation decision and M6 Owner Learning Note.
+- M7 typed advisory-LLM requests/responses/errors, deterministic fake, strict cited suggestion
+  schema and versioned source-controlled prompt/schema content hashes.
+- Immutable organization/repository hosted-LLM policy with fail-closed provider/model/content/
+  region/training/retention/storage routing, bounded redaction and database tenant/immutability
+  enforcement.
+- A pinned OpenAI Responses adapter with strict JSON Schema, disabled response storage, no tools,
+  explicit output/cost/timeout/retry bounds and safe external pricing/contract configuration.
+- Tenant-scoped idempotent append-only LLM evidence that preserves deterministic evidence and never
+  persists prompt/source text, raw provider output, hidden reasoning, secrets or arbitrary errors.
+- A frozen six-case CC0 synthetic grounding suite, raw evaluation artifact and M7 Owner Learning
+  Note covering schema/citation/unsupported-claim/stability/injection/cost/latency evidence.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -895,6 +964,9 @@ and its remote M2 result is tracked in GitHub Actions.
   group without permitting implicit model downloads or changing the later M11 training decision.
 - Kept the real M6 cross-encoder disabled because the synthetic fake-provider ablation showed no
   aggregate retrieval improvement and cannot establish representative value/latency.
+- Reverified and locked `openai==3.6.0` in the optional `ai` group with immutable model snapshot
+  `gpt-5.4-mini-2026-03-17`; omitted LangChain because the bounded adapter needs no additional
+  framework, and kept hosted routing disabled without an explicit compatible tenant policy.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -911,6 +983,9 @@ and its remote M2 result is tracked in GitHub Actions.
 - M6 evidence is recorded in `PROJECT_STATUS.md` and docs/34; retrieval figures are synthetic
   harness measurements, real weights were not executed, and no customer/public quality claim is
   made.
+- M7 evidence is recorded in `PROJECT_STATUS.md` and docs/36; its perfect frozen-fixture figures
+  validate only the deterministic fake/schema harness. No hosted provider/customer source was
+  contacted and no hosted quality, real latency, billed cost or zero-retention claim is made.
 
 
 ---
@@ -1029,6 +1104,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `33_M5_OWNER_LEARNING_NOTE.md` | owner-defensible M5 concepts, assumptions and rerun path |
 | `34_M6_RETRIEVAL_EVALUATION.md` | exact retrieval configuration, frozen measurements and activation decision |
 | `35_M6_OWNER_LEARNING_NOTE.md` | owner-defensible M6 concepts, assumptions and rerun path |
+| `36_M7_LLM_EVALUATION.md` | strict-schema grounding evaluation, configuration, measurements and limitations |
+| `37_M7_OWNER_LEARNING_NOTE.md` | owner-defensible M7 contracts, privacy routing and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1329,6 +1406,24 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
   server-provided organization/repository scope. Reranker/provider failure leaves attributable
   lexical/hybrid evidence instead of fabricating a historical claim.
 
+### M7 implemented LLM policy and evidence
+
+- `HostedLLMPolicy` is an immutable, versioned organization default or repository override. It
+  records route, provider/model/content allowlists, byte/token/cost limits, redaction version,
+  training-use and terms-review facts, retention duration, approved regions, provider storage
+  behavior, approver role and timeout/retry bounds. The newest repository override wins, then the
+  newest organization default; absence or incompatible facts fail closed.
+- Composite `(organization_id, repository_id)` enforcement prevents a policy from naming another
+  tenant's repository. PostgreSQL and SQLite triggers reject raw updates/deletes, while a new
+  version is required for every policy change.
+- Each attempted analysis appends or reuses one tenant/snapshot/feature-bound `EvidenceItem` of
+  kind `llm`. Successful rows contain only the strict suggestion, cited evidence IDs, safe policy
+  decision/hash, exact prompt/schema/model/adapter/SDK identities, usage and elapsed time. Denied or
+  failed rows contain a stable status/reason and preserve pre-existing deterministic evidence.
+- Prompt input, retrieved source, provider raw output, credentials, arbitrary provider errors and
+  hidden reasoning are not persisted in the LLM evidence payload. Idempotency binds the immutable
+  context, policy, provider and versioned request configuration.
+
 
 ---
 
@@ -1418,6 +1513,20 @@ Server-resolved org/repo scope, query, filters, max candidates. Results include 
 
 ## LLM schema
 Strict versioned object: concise summary, risk hypotheses, allowed evidence IDs, suggested checks/tests, missing information, uncertainty. Unknown evidence ID => invalid output.
+
+M7 implements internal `analysis-suggestion-v1` and `change-analysis-prompt-v1`. Grounded risks
+carry severity, confidence category and at least one allowed evidence ID. Hypotheses remain visibly
+uncertain and may be uncited; requested tests carry a description, rationale and allowed citations.
+A sufficient summary requires citations. `insufficient_evidence=true` forbids grounded risks and
+requires explicit missing information/uncertainty. Unknown keys, duplicate JSON keys, invalid enum
+values, non-finite numbers, over-bound text/collections and unknown citations reject the complete
+provider output rather than being coerced.
+
+The provider contract returns the exact provider/model/adapter/SDK identities, strict suggestion,
+token usage, cost in integer micro-USD and elapsed time. Requests bind prompt/schema hashes,
+hostile evidence as serialized data, conservative byte/token/output/cost budgets, separate
+connect/read timeouts, bounded attempts/backoff and cancellation. This is an internal M7 service;
+no public browser/API mutation is introduced.
 
 ## Runner contract
 Runner accepts only immutable/signed internal `ExecutionPlanV1`: artifact hashes, image/toolchain, allowlisted commands, resource/network policy, timeout/output limits. No free-form host paths or Docker options.
@@ -1912,6 +2021,33 @@ Frozen cases measure:
 - latency/tokens/cost.
 LLM-as-judge can supplement but not replace deterministic assertions/human-reviewed gold cases.
 
+## M7 implementation decision
+
+M7 implements `RP-0601..RP-0606` without LangChain or an agent framework. The framework-light
+contract, policy, prompt/schema loader and evaluator live under `packages/ai_core`; adapters remain
+under `adapters/llm`; Django resolves tenant policy/context and appends safe evidence. The default
+test/demo provider is `deterministic-evidence-synthesizer-v1` and performs no network access.
+
+The hosted adapter pins `openai==3.6.0` and the immutable model snapshot
+`gpt-5.4-mini-2026-03-17`. It uses the Responses API with strict JSON Schema, `store=false`, no
+tools, disabled truncation, an explicit maximum output, default service tier, separate SDK
+connect/read timeouts and SDK retries disabled in favor of the request's bounded retry policy.
+Pricing is injected as versioned reviewed configuration; no mutable or invented production price
+is hard-coded. Provider configuration must state training-use review, retention mode/duration and
+region. `store=false` is recorded only as response-storage disabled and is never called zero
+retention.
+
+Hosted routing additionally requires the organization's kill switch, an immutable effective
+policy, exact provider/model/content/region compatibility, current reviewed terms and size/token/
+cost limits. `local_only` never calls a hosted provider. `hosted_redacted` applies the versioned
+deterministic defense-in-depth redactor before size/token checks. Any denial or provider/schema
+failure yields missing LLM evidence with a stable status; deterministic and retrieval evidence
+remain intact.
+
+The frozen M7 evaluation is documented in `36_M7_LLM_EVALUATION.md`. It validates the deterministic
+contract harness only. Hosted-model usefulness, provider latency/cost, contractual retention and
+regional behavior are not yet measured because no hosted provider was called.
+
 
 ---
 
@@ -2145,6 +2281,21 @@ code and never download on a web/worker request. Provider/model mismatch or outa
 falls back to scoped deterministic evidence. Raw queries/source are not logged or persisted as
 retrieval traces in M6; the response retains only a query SHA-256 and cited source/chunk IDs.
 
+## M7 hosted-LLM boundary
+
+The organization-level hosted-LLM kill switch and immutable effective policy are evaluated before
+any hosted adapter call. Missing policy, stale terms review, unknown training/retention facts,
+unapproved provider/model/content class/region, an unavailable required response-storage control,
+oversized context or a cost/token violation denies transmission. Repository overrides must belong to the same organization
+and are protected by composite database constraints.
+
+Repository text is encoded inside a versioned data envelope and cannot select providers, change
+policy, enable tools, widen budgets or alter authorization. The OpenAI adapter exposes no tools and
+does not execute model output. Redaction is bounded and versioned but is not proof that source is
+safe to transmit. Persisted evidence excludes prompt/context, provider raw responses, secret values,
+hidden reasoning and arbitrary error text; application logging must maintain the same exclusion.
+The deterministic fake remains the only enabled-by-default M7 path.
+
 
 ---
 
@@ -2228,6 +2379,23 @@ ablations have equal K=3 aggregate metrics, so it validates the harness but does
 semantic/reranker superiority. The recorded local in-memory latency excludes database and real
 transformer time; representative PostgreSQL index size/latency remain not yet measured.
 
+## M7 LLM evidence
+
+Unit tests cover typed requests/responses/errors, deterministic fake stability, strict JSON and
+duplicate/extra-field rejection, citation scope, insufficient evidence, cancellation, budget
+preflight, prompt-injection serialization, fail-closed privacy routes, deterministic redaction and
+the OpenAI Responses request shape/retry bound. Django integration tests cover effective
+organization/repository policy, cross-tenant denial, idempotent append-only safe evidence,
+provider failure and preservation of deterministic evidence.
+
+The committed six-case CC0 synthetic fixture includes four valid cases and two invalid negative
+controls. Its deterministic results are schema validity 1.0, negative-control rejection 1.0,
+citation support 1.0 over five claims, unsupported-claim rate 0.0, exact suggested-check match 1.0,
+prompt-injection resilience 1.0 and five-run output stability 1.0. These measurements validate
+only the fake-provider/schema/evaluator harness. Local in-process latency excludes database, queue,
+network and provider time; hosted quality, latency and billed cost are not measured. Exact evidence
+and limitations are in `36_M7_LLM_EVALUATION.md`.
+
 
 ---
 
@@ -2274,6 +2442,13 @@ frozen relevance fixture/hash -> raw rankings/metrics/latency limitations -> act
 Profiles build beside active rows and switch transactionally only after completeness and scope
 checks. The real reranker is not active because only a deterministic synthetic fake was evaluated;
 M13 can register this evidence without changing that historical decision.
+
+M7 adds immutable privacy policy ID/version/hash -> prompt/schema semantic versions and content
+hashes -> provider/model/adapter/SDK identity -> cited source evidence IDs -> strict structured
+suggestion -> usage/cost/latency -> frozen fixture/evaluation root hash. Hosted pricing and provider
+terms are external reviewed inputs rather than mutable constants. The deterministic fake remains
+the default because the frozen synthetic suite does not measure hosted-model quality; later MLflow
+registration must preserve that decision and the original raw artifact.
 
 
 ---
@@ -2943,7 +3118,7 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7 verified 2026-09-01
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -3017,7 +3192,8 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 
 Official compatibility/release evidence: [NumPy](https://numpy.org/news/), [pandas](https://pandas.pydata.org/docs/whatsnew/), [scikit-learn](https://scikit-learn.org/stable/whats_new.html), [XGBoost](https://xgboost.readthedocs.io/en/stable/changes/index.html), [PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md), [Transformers](https://huggingface.co/docs/transformers/installation), [sentence-transformers](https://sbert.net/docs/installation.html), [LangChain](https://docs.langchain.com/oss/python/versioning), [MLflow](https://mlflow.org/releases/), [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-python/releases), [FastAPI](https://fastapi.tiangolo.com/deployment/versions/), [Ollama](https://github.com/ollama/ollama/releases), [vLLM](https://github.com/vllm-project/vllm/releases).
 
-The OpenAI Python SDK is milestone-resolved rather than assigned an invented pin. Official OpenAI documentation establishes the `openai` package and Responses API pattern but does not publish the package's current exact version. RP-0602 must reverify, lock and record the exact SDK version with the adapter/model configuration. [Official SDK documentation](https://developers.openai.com/api/docs/libraries).
+The OpenAI Python SDK was milestone-resolved by RP-0602 and is recorded in the verified M7 table
+below. The earlier compatibility snapshot intentionally had no speculative SDK pin.
 
 ## M5 classical-ML pins — verified and locked 2026-08-30
 
@@ -3053,6 +3229,21 @@ fetched implicitly. Production adapters require a pre-provisioned local director
 safetensors checksum and `trust_remote_code=False`; the default test/demo path uses named
 deterministic fakes. This validates dependency resolution and contract wiring, not real-model
 quality or representative latency.
+
+## M7 hosted-LLM pins — verified and locked 2026-09-01
+
+| Package/configuration | Exact pin | Official evidence / use |
+|---|---:|---|
+| OpenAI Python SDK | `openai==3.6.0` | The exact [PyPI release](https://pypi.org/project/openai/3.6.0/) supports Python 3.8+ and was resolved with CPython 3.13.15. The official [SDK documentation](https://developers.openai.com/api/docs/libraries) identifies the `openai` package and Responses API client. |
+| OpenAI model snapshot | `gpt-5.4-mini-2026-03-17` | The official [GPT-5.4 mini model page](https://developers.openai.com/api/docs/models/gpt-5.4-mini) names this immutable snapshot and documents Responses plus structured-output support. |
+| API pattern | Responses API with strict JSON Schema | The official [create response reference](https://developers.openai.com/api/reference/resources/responses/methods/create) documents `store`, strict JSON-schema text output, `max_output_tokens`, tools and usage metadata used by the adapter. |
+
+The SDK lives in the optional `ai` group; LangChain/LangChain OpenAI were not added because the
+small provider adapter does not need their abstraction/runtime surface. The adapter fixes the model
+snapshot, disables provider-side response storage, exposes no tools, rejects invalid output and
+uses explicitly reviewed external pricing/retention/training/region configuration. No API call was
+made during M7 verification, so hosted quality, latency, billed cost, retention and regional
+behavior remain not yet validated.
 
 ## Dependency and image management
 
@@ -3519,6 +3710,160 @@ a deterministic versioned reciprocal-rank fusion over tenant-filtered candidate 
 both component ranks/scores. The frozen synthetic fixture showed no aggregate improvement from the
 fake semantic/reranked variants, so I did not claim superiority or enable the real reranker without
 representative evidence.
+
+
+---
+
+# SOURCE FILE: `docs/36_M7_LLM_EVALUATION.md`
+
+# 36 — M7 LLM Evaluation
+
+## Decision
+
+M7 validates the evidence-grounded LLM contract, privacy gate, strict parser, safe persistence and
+deterministic provider path. The deterministic fake remains the default. No hosted provider was
+called, so this report does not promote or claim the usefulness, latency, cost, retention or
+regional behavior of the OpenAI configuration.
+
+## Frozen configuration
+
+| Item | Exact identity |
+|---|---|
+| Evaluation schema | `m7-llm-eval-v1` |
+| Fixture | `tests/fixtures/llm/m7_grounding_v1.json` |
+| Fixture license | `CC0-1.0`; explicitly synthetic |
+| Fixture SHA-256 | `e7a3a35c38e5fae9fc9f7c76be4136a8fcaa6eb76ef45f265cdc2a96682a213a` |
+| Prompt | `change-analysis-prompt-v1` |
+| Prompt SHA-256 | `de5399fe7640da726411cfcd0dadad0e5e58b6423202590458e35a95a82a0374` |
+| Output schema | `analysis-suggestion-v1` |
+| Schema SHA-256 | `9fcf0e4be678643081726e579e2ed6df5ac17a45c5598c0c6c23ea0151a5f296` |
+| Evaluated provider | `deterministic_fake` |
+| Evaluated model | `deterministic-evidence-synthesizer-v1` |
+| Artifact | `artifacts/evaluation/m7_llm_eval_v1.json` |
+| Artifact root SHA-256 | `5e4f7abc185842fc914b58872ca42971bef4641d6cc81d04ab7dce6564c3eca4` |
+
+The six cases contain four valid structured suggestions and two negative controls: an unknown
+citation and an authority-like extra field. Valid cases exercise grounded migration evidence,
+empty insufficient evidence, hostile prompt-injection text and conflicting evidence. Suggested
+check usefulness uses exact source-controlled gold values rather than model self-grading.
+
+## Measurements
+
+| Metric | Result | Denominator/meaning |
+|---|---:|---|
+| Schema validity | `1.0` | 4/4 valid cases accepted |
+| Negative-control rejection | `1.0` | 2/2 invalid cases rejected |
+| Citation support | `1.0` | 5/5 evidence-bearing claims use allowed IDs |
+| Unsupported-claim rate | `0.0` | 0/5 evidence-bearing claims unsupported |
+| Suggested-check exact match | `1.0` | 3/3 cases with a gold requested check |
+| Prompt-injection resilience | `1.0` | 1/1 hostile-text case stays within its fixed suggestion |
+| Stability | `1.0` | every valid result identical over five repeats |
+| Fake input usage | `3401` | conservative byte-count proxy, not provider-token billing |
+| Fake output usage | `2481` | conservative byte-count proxy, not provider-token billing |
+| Cost | `0` micro-USD | deterministic fake only |
+
+One hundred local full-fixture repetitions on CPython 3.13.15/Windows recorded median `1.8031 ms`,
+p95 `3.2425 ms` and minimum `1.4835 ms`. These timings cover only in-process fake-provider parsing
+and evaluation. They exclude Django persistence, PostgreSQL, queues, provider/network latency and
+real model inference and must not be used as a product latency claim.
+
+## Failure and security evidence
+
+- Strict parsing rejects duplicate/unknown keys, malformed types, invalid enums, over-bound values,
+  non-finite values and evidence IDs outside the request context.
+- Provider timeout/retry, cancellation and token/cost bounds are explicit. The OpenAI SDK's built-in
+  retries are disabled so one bounded policy controls retry behavior.
+- Hosted routing denies missing/incompatible policy and does not call the provider. Local-only
+  routing cannot use a hosted provider. Redaction is versioned defense-in-depth, not permission.
+- Tenant scope is resolved server-side. Composite constraints reject policy/repository mismatch;
+  cross-tenant context IDs are denied before provider use.
+- Successful and failed evidence rows exclude source/prompt text, raw provider responses, hidden
+  reasoning, credentials and arbitrary exception strings. Existing deterministic evidence remains.
+
+## Reproduce
+
+```text
+uv sync --frozen --group dev --group ml --group ai
+uv run python -m eng.evaluate_m7_llm --check
+uv run pytest tests/unit/test_llm_core.py tests/unit/test_openai_adapter.py
+uv run pytest tests/integration/test_llm_evidence_persistence.py
+```
+
+## Limitations and next gate
+
+All evidence and outputs are synthetic. No customer/public source was transmitted; no model weights
+were downloaded; no paid API was called. Before hosted activation, an organization must approve
+current contractual training/retention/region/storage facts and versioned pricing, and a separately
+authorized evaluation must measure usefulness, failure behavior, real latency and billed cost on
+appropriately licensed data. M8 may consume only these strict suggestions to create reviewable test
+proposals; M7 itself does not write files or execute tests.
+
+
+---
+
+# SOURCE FILE: `docs/37_M7_OWNER_LEARNING_NOTE.md`
+
+# 37 — M7 Owner Learning Note
+
+## 1. Concept implemented
+
+M7 implements evidence-grounded advisory LLM analysis: a provider-neutral typed contract, strict
+versioned JSON Schema, deterministic fake, one pinned OpenAI Responses adapter, immutable privacy
+routing, safe append-only evidence and a frozen deterministic evaluation.
+
+## 2. Why ReleaseProof uses it
+
+Deterministic features, risk scores and retrieved history are useful but fragmented. The LLM layer
+may synthesize those facts into reviewer-friendly risks, uncertain hypotheses and proposed checks.
+It remains advisory: it cannot change tenant scope, deterministic recommendation, tool policy,
+sandbox permissions or evidence already recorded.
+
+## 3. Algorithm and data assumptions
+
+- Every evidence-bearing claim must cite an ID in the server-built request context.
+- A strict schema catches structural and citation errors; it does not prove a claim is semantically
+  true, so unsupported-claim evaluation and human review still matter.
+- Repository content is hostile data, never trusted instructions. Privacy policy is evaluated
+  outside the model before transmission.
+- Redaction can miss secrets and is only defense-in-depth. Hosted routing additionally requires
+  explicit contractual training, retention, region and storage facts.
+- The frozen fixture is synthetic. Perfect fake-provider metrics validate code paths, not hosted
+  model quality or customer outcomes.
+
+## 4. Key code paths
+
+- `packages/ai_core/contracts.py`: request/response/error and suggestion types.
+- `packages/ai_core/schema.py`: strict parser and evidence-reference validation.
+- `packages/ai_core/prompting.py`, `prompts/`, `schemas/`: versioned content and hashes.
+- `packages/ai_core/policy.py`: fail-closed route decision and redaction.
+- `adapters/llm/fake.py`: deterministic, network-free provider.
+- `adapters/llm/openai_responses.py`: exact hosted request, budgets, timeouts and retry behavior.
+- `apps/web/organizations/models.py`: immutable hosted policy.
+- `apps/web/analysis/llm_evidence.py`: tenant-scoped context, routing and safe evidence append.
+- `eng/evaluate_m7_llm.py`: frozen deterministic evaluation and artifact verification.
+
+## 5. Exact experiment and tests to rerun
+
+```text
+uv run python -m eng.evaluate_m7_llm --check
+uv run pytest tests/unit/test_llm_core.py tests/unit/test_openai_adapter.py tests/unit/test_provider_fakes.py
+uv run pytest tests/integration/test_llm_evidence_persistence.py
+uv run python eng/validate.py
+```
+
+The evaluation artifact must keep root hash
+`5e4f7abc185842fc914b58872ca42971bef4641d6cc81d04ab7dce6564c3eca4` unless the reviewed fixture,
+prompt, schema or evaluator intentionally changes and the report is regenerated.
+
+## 6. Likely interview question
+
+**Question:** Why is strict structured output plus citations still not enough to trust an LLM?
+
+**Answer:** Schema validation proves shape, allowed vocabulary and citation membership, not that the
+cited evidence entails the statement. ReleaseProof therefore keeps deterministic evidence
+authoritative, measures citation support and unsupported claims on frozen cases, shows uncertainty,
+rejects invalid outputs and requires a human reviewer. Privacy and tenant policy are enforced before
+the model call and never delegated to the model.
 
 
 ---

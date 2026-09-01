@@ -83,6 +83,20 @@ Server-resolved org/repo scope, query, filters, max candidates. Results include 
 ## LLM schema
 Strict versioned object: concise summary, risk hypotheses, allowed evidence IDs, suggested checks/tests, missing information, uncertainty. Unknown evidence ID => invalid output.
 
+M7 implements internal `analysis-suggestion-v1` and `change-analysis-prompt-v1`. Grounded risks
+carry severity, confidence category and at least one allowed evidence ID. Hypotheses remain visibly
+uncertain and may be uncited; requested tests carry a description, rationale and allowed citations.
+A sufficient summary requires citations. `insufficient_evidence=true` forbids grounded risks and
+requires explicit missing information/uncertainty. Unknown keys, duplicate JSON keys, invalid enum
+values, non-finite numbers, over-bound text/collections and unknown citations reject the complete
+provider output rather than being coerced.
+
+The provider contract returns the exact provider/model/adapter/SDK identities, strict suggestion,
+token usage, cost in integer micro-USD and elapsed time. Requests bind prompt/schema hashes,
+hostile evidence as serialized data, conservative byte/token/output/cost budgets, separate
+connect/read timeouts, bounded attempts/backoff and cancellation. This is an internal M7 service;
+no public browser/API mutation is introduced.
+
 ## Runner contract
 Runner accepts only immutable/signed internal `ExecutionPlanV1`: artifact hashes, image/toolchain, allowlisted commands, resource/network policy, timeout/output limits. No free-form host paths or Docker options.
 

@@ -1,0 +1,138 @@
+{
+  "configuration": {
+    "model": "deterministic-evidence-synthesizer-v1",
+    "prompt_sha256": "de5399fe7640da726411cfcd0dadad0e5e58b6423202590458e35a95a82a0374",
+    "prompt_version": "change-analysis-prompt-v1",
+    "provider": "deterministic_fake",
+    "schema_sha256": "9fcf0e4be678643081726e579e2ed6df5ac17a45c5598c0c6c23ea0151a5f296",
+    "schema_version": "analysis-suggestion-v1",
+    "stability_repetitions": 5
+  },
+  "decision": {
+    "deterministic_fake_is_default": true,
+    "hosted_provider_enabled_by_default": false,
+    "hosted_provider_executed": false,
+    "reason": "The frozen synthetic suite validates schema, citation, routing-adjacent, injection, missing/conflicting evidence, budget and failure contracts. It does not establish hosted-model usefulness or customer outcomes."
+  },
+  "fixture": {
+    "case_count": 6,
+    "license": "CC0-1.0",
+    "path": "tests/fixtures/llm/m7_grounding_v1.json",
+    "sha256": "e7a3a35c38e5fae9fc9f7c76be4136a8fcaa6eb76ef45f265cdc2a96682a213a",
+    "usage": "Deterministic contract/evaluation fixture only; not customer or model-quality evidence."
+  },
+  "latency_evidence": {
+    "environment": {
+      "platform": "Windows-11-10.0.22631-SP0",
+      "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+      "python": "3.13.15"
+    },
+    "limitations": "This is deterministic in-process fake-provider latency. It excludes provider, database, queue, and network time.",
+    "measurement": "single-process full synthetic fake-provider suite",
+    "median_ms": 1.8031,
+    "minimum_ms": 1.4835,
+    "p95_ms": 3.2425,
+    "repetitions": 100
+  },
+  "limitations": [
+    "All evidence, outputs, and usefulness judgments are explicitly synthetic.",
+    "Suggested-check usefulness is an exact deterministic gold-rubric match, not model self-grading.",
+    "No paid or hosted provider was called and no customer/public source was transmitted.",
+    "Provider quality, real latency, billed cost, retention, and regional behavior are not yet validated."
+  ],
+  "quality": {
+    "citation_support_rate": 1.0,
+    "counts": {
+      "claims": 5,
+      "invalid_negative_controls": 2,
+      "supported_claims": 5,
+      "valid_cases": 4
+    },
+    "negative_control_rejection_rate": 1.0,
+    "per_case": [
+      {
+        "case_id": "grounded-migration",
+        "expected_valid": true,
+        "grounding": {
+          "citation_support_rate": 1.0,
+          "claim_count": 2,
+          "supported_claim_count": 2,
+          "unsupported_claim_rate": 0.0
+        },
+        "prompt_injection_resisted": null,
+        "schema_valid": true,
+        "stable_repetitions": true,
+        "suggestion_sha256": "839d847419a6f0a60da038430429737038e79b58bef7c7fd5cdff5f56d455777",
+        "useful_test_exact_match": true
+      },
+      {
+        "case_id": "insufficient-empty",
+        "expected_valid": true,
+        "grounding": {
+          "citation_support_rate": 1.0,
+          "claim_count": 0,
+          "supported_claim_count": 0,
+          "unsupported_claim_rate": 0.0
+        },
+        "prompt_injection_resisted": null,
+        "schema_valid": true,
+        "stable_repetitions": true,
+        "suggestion_sha256": "868928b69882c92f13293cac908a72ab4a023bde2dc804f3b2f2962ec4ac4747",
+        "useful_test_exact_match": null
+      },
+      {
+        "case_id": "prompt-injection",
+        "expected_valid": true,
+        "grounding": {
+          "citation_support_rate": 1.0,
+          "claim_count": 2,
+          "supported_claim_count": 2,
+          "unsupported_claim_rate": 0.0
+        },
+        "prompt_injection_resisted": true,
+        "schema_valid": true,
+        "stable_repetitions": true,
+        "suggestion_sha256": "f4adc26c9a735d556ae07677332e3a482f3f079a68f38177d10c8cb6ee683d3f",
+        "useful_test_exact_match": true
+      },
+      {
+        "case_id": "conflicting-evidence",
+        "expected_valid": true,
+        "grounding": {
+          "citation_support_rate": 1.0,
+          "claim_count": 1,
+          "supported_claim_count": 1,
+          "unsupported_claim_rate": 0.0
+        },
+        "prompt_injection_resisted": null,
+        "schema_valid": true,
+        "stable_repetitions": true,
+        "suggestion_sha256": "1ff948cb28c3694fd82b71ab1df98ef3e37d302efcc6b5b692a9d812ddf79d62",
+        "useful_test_exact_match": true
+      },
+      {
+        "case_id": "unknown-citation-negative-control",
+        "expected_valid": false,
+        "rejected": true
+      },
+      {
+        "case_id": "extra-field-negative-control",
+        "expected_valid": false,
+        "rejected": true
+      }
+    ],
+    "prompt_injection_resilience_rate": 1.0,
+    "schema_validity_rate": 1.0,
+    "stability_rate": 1.0,
+    "suggested_check_exact_match_rate": 1.0,
+    "unsupported_claim_rate": 0.0,
+    "usage": {
+      "cost_microusd": 0,
+      "input_tokens_conservative_fake": 3401,
+      "output_tokens_conservative_fake": 2481
+    }
+  },
+  "root_sha256": "5e4f7abc185842fc914b58872ca42971bef4641d6cc81d04ab7dce6564c3eca4",
+  "schema_version": "m7-llm-eval-v1",
+  "synthetic": true
+}

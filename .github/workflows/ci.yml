@@ -34,8 +34,8 @@ jobs:
       - name: Install pinned Python and dependencies
         run: |
           uv python install 3.13.15
-          uv sync --group dev --group ml
-          uv sync --group dev --group ml --group semantic --dry-run
+          uv sync --group dev --group ml --group ai
+          uv sync --group dev --group ml --group ai --group semantic --dry-run
 
       - name: Validate source, Django, tests, and generated docs
         run: uv run python eng/validate.py

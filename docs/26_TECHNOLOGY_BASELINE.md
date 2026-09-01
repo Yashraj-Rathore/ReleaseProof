@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7 verified 2026-09-01
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -72,7 +72,8 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 
 Official compatibility/release evidence: [NumPy](https://numpy.org/news/), [pandas](https://pandas.pydata.org/docs/whatsnew/), [scikit-learn](https://scikit-learn.org/stable/whats_new.html), [XGBoost](https://xgboost.readthedocs.io/en/stable/changes/index.html), [PyTorch](https://github.com/pytorch/pytorch/blob/main/RELEASE.md), [Transformers](https://huggingface.co/docs/transformers/installation), [sentence-transformers](https://sbert.net/docs/installation.html), [LangChain](https://docs.langchain.com/oss/python/versioning), [MLflow](https://mlflow.org/releases/), [OpenTelemetry](https://github.com/open-telemetry/opentelemetry-python/releases), [FastAPI](https://fastapi.tiangolo.com/deployment/versions/), [Ollama](https://github.com/ollama/ollama/releases), [vLLM](https://github.com/vllm-project/vllm/releases).
 
-The OpenAI Python SDK is milestone-resolved rather than assigned an invented pin. Official OpenAI documentation establishes the `openai` package and Responses API pattern but does not publish the package's current exact version. RP-0602 must reverify, lock and record the exact SDK version with the adapter/model configuration. [Official SDK documentation](https://developers.openai.com/api/docs/libraries).
+The OpenAI Python SDK was milestone-resolved by RP-0602 and is recorded in the verified M7 table
+below. The earlier compatibility snapshot intentionally had no speculative SDK pin.
 
 ## M5 classical-ML pins — verified and locked 2026-08-30
 
@@ -108,6 +109,21 @@ fetched implicitly. Production adapters require a pre-provisioned local director
 safetensors checksum and `trust_remote_code=False`; the default test/demo path uses named
 deterministic fakes. This validates dependency resolution and contract wiring, not real-model
 quality or representative latency.
+
+## M7 hosted-LLM pins — verified and locked 2026-09-01
+
+| Package/configuration | Exact pin | Official evidence / use |
+|---|---:|---|
+| OpenAI Python SDK | `openai==3.6.0` | The exact [PyPI release](https://pypi.org/project/openai/3.6.0/) supports Python 3.8+ and was resolved with CPython 3.13.15. The official [SDK documentation](https://developers.openai.com/api/docs/libraries) identifies the `openai` package and Responses API client. |
+| OpenAI model snapshot | `gpt-5.4-mini-2026-03-17` | The official [GPT-5.4 mini model page](https://developers.openai.com/api/docs/models/gpt-5.4-mini) names this immutable snapshot and documents Responses plus structured-output support. |
+| API pattern | Responses API with strict JSON Schema | The official [create response reference](https://developers.openai.com/api/reference/resources/responses/methods/create) documents `store`, strict JSON-schema text output, `max_output_tokens`, tools and usage metadata used by the adapter. |
+
+The SDK lives in the optional `ai` group; LangChain/LangChain OpenAI were not added because the
+small provider adapter does not need their abstraction/runtime surface. The adapter fixes the model
+snapshot, disables provider-side response storage, exposes no tools, rejects invalid output and
+uses explicitly reviewed external pricing/retention/training/region configuration. No API call was
+made during M7 verification, so hosted quality, latency, billed cost, retention and regional
+behavior remain not yet validated.
 
 ## Dependency and image management
 

@@ -1,5 +1,5 @@
 """LLM provider adapters."""
 
-from adapters.llm.fake import FakeLLMProvider
+from adapters.llm.fake import FAKE_PROVIDER_CONFIGURATION, FakeLLMProvider
 
-__all__ = ("FakeLLMProvider",)
+__all__ = ("FAKE_PROVIDER_CONFIGURATION", "FakeLLMProvider")

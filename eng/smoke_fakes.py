@@ -9,7 +9,7 @@ import json
 from adapters.github import FakeGitHubProvider
 from adapters.llm import FakeLLMProvider
 from adapters.object_storage import FakeObjectStorage
-from packages.ai_core import LLMRequest, LLMSuggestion
+from packages.ai_core import ContentClass, EvidenceContext, LLMBudget, build_analysis_request
 from packages.github_contracts import ChangedFile, PullRequestSnapshot
 
 
@@ -25,15 +25,29 @@ def run_smoke() -> dict[str, object]:
     github = FakeGitHubProvider([snapshot])
     resolved_snapshot = github.get_pull_request("releaseproof/fixture", 1)
 
-    suggestion = LLMSuggestion(
-        summary="Deterministic fake suggestion; no model was called.",
-        risk_hypotheses=("Pricing behavior changed.",),
-        requested_tests=("Exercise rounding at the fixture boundary.",),
-        cited_evidence_ids=("evidence:m1:fixture",),
-    )
-    llm = FakeLLMProvider(suggestion)
-    resolved_suggestion = llm.suggest(
-        LLMRequest(change_id="change:m1:fixture", evidence_ids=("evidence:m1:fixture",))
+    llm = FakeLLMProvider()
+    response = llm.analyze_change(
+        build_analysis_request(
+            change_id="change:m1:fixture",
+            evidence=(
+                EvidenceContext(
+                    evidence_id="evidence:m1:fixture",
+                    content_class=ContentClass.DETERMINISTIC_EVIDENCE,
+                    content="The fixture pricing boundary changed.",
+                    source_reference="fixture:evidence:m1",
+                ),
+            ),
+            budget=LLMBudget(
+                max_input_bytes=16_384,
+                max_input_tokens=16_384,
+                max_output_tokens=1_024,
+                max_cost_microusd=100_000,
+                connect_timeout_seconds=5.0,
+                read_timeout_seconds=30.0,
+                max_attempts=2,
+                retry_backoff_seconds=0.5,
+            ),
+        )
     )
 
     payload = b"releaseproof-m1-fixture"
@@ -49,8 +63,8 @@ def run_smoke() -> dict[str, object]:
             "repository": resolved_snapshot.repository,
         },
         "llm": {
-            "cited_evidence_ids": resolved_suggestion.cited_evidence_ids,
-            "summary": resolved_suggestion.summary,
+            "cited_evidence_ids": response.suggestion.cited_evidence_ids,
+            "summary": response.suggestion.summary,
         },
         "object_storage": {
             "bytes": len(storage.get(metadata.key)),

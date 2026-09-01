@@ -8,7 +8,7 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from apps.web.organizations.models import Membership, Organization
+from apps.web.organizations.models import HostedLLMPolicy, Membership, Organization
 
 
 class TenantScopedAdminMixin(admin.ModelAdmin):  # type: ignore[type-arg]
@@ -63,3 +63,54 @@ class OrganizationAdmin(TenantScopedAdminMixin):
 @admin.register(Membership)
 class MembershipAdmin(TenantScopedAdminMixin):
     list_display = ("public_id", "organization", "user", "role", "lifecycle")
+
+
+@admin.register(HostedLLMPolicy)
+class HostedLLMPolicyAdmin(TenantScopedAdminMixin):
+    list_display = (
+        "public_id",
+        "organization",
+        "repository",
+        "version",
+        "routing_mode",
+    )
+    readonly_fields = (
+        "public_id",
+        "organization",
+        "repository",
+        "version",
+        "schema_version",
+        "routing_mode",
+        "allowed_providers",
+        "allowed_models",
+        "allowed_content_classes",
+        "max_transmitted_bytes",
+        "max_input_tokens",
+        "max_output_tokens",
+        "max_cost_microusd",
+        "redaction_version",
+        "training_use_mode",
+        "terms_reviewed_on",
+        "retention_mode",
+        "retention_days",
+        "allowed_regions",
+        "response_storage_disabled",
+        "approved_by_role",
+        "connect_timeout_seconds",
+        "read_timeout_seconds",
+        "max_attempts",
+        "retry_backoff_seconds",
+        "created_at",
+    )
+
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        del request
+        return False
+
+    def has_delete_permission(
+        self,
+        request: HttpRequest,
+        obj: object | None = None,
+    ) -> bool:
+        del request, obj
+        return False

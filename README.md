@@ -262,3 +262,27 @@ uv sync --frozen --group dev --group ml
 uv run python -m eng.evaluate_m6_retrieval --check
 uv run pytest tests/unit/test_retrieval_core.py tests/integration/test_retrieval_persistence.py tests/security/test_retrieval_tenancy.py
 ```
+
+## M7 evidence-grounded LLM analysis
+
+M7 implements `RP-0601..RP-0606`: provider-neutral typed contracts, a deterministic fake, a pinned
+OpenAI Responses adapter, immutable tenant privacy policy, source-controlled prompt/schema hashes,
+strict citation validation, safe append-only LLM evidence and a frozen synthetic evaluation. LLM
+output is advisory and cannot replace deterministic risk/retrieval evidence or authorize tools,
+file writes, generated-test acceptance or execution.
+
+The optional `ai` group pins `openai==3.6.0`; the hosted adapter fixes
+`gpt-5.4-mini-2026-03-17`, `store=false`, strict JSON Schema, no tools and bounded timeout/retry/
+token/cost behavior. It is disabled unless an organization and immutable effective policy permit
+the exact provider/model/content/region and reviewed training/retention/storage configuration. The
+validated default is the network-free fake; M7 made no hosted API call and makes no hosted quality,
+latency, cost or zero-retention claim.
+
+```text
+uv sync --frozen --group dev --group ml --group ai
+uv run python -m eng.evaluate_m7_llm --check
+uv run pytest tests/unit/test_llm_core.py tests/unit/test_openai_adapter.py tests/integration/test_llm_evidence_persistence.py
+```
+
+See `docs/36_M7_LLM_EVALUATION.md` for exact synthetic measurements and limitations, and
+`docs/37_M7_OWNER_LEARNING_NOTE.md` for the owner-defensible explanation.

@@ -55,6 +55,17 @@
   deterministic fakes; exact Hugging Face revisions, licenses, dimensions and safetensors hashes.
 - A frozen CC0 synthetic retrieval relevance set, raw per-query Recall@K/MRR/nDCG ablations,
   bounded latency evidence, failure modes, activation decision and M6 Owner Learning Note.
+- M7 typed advisory-LLM requests/responses/errors, deterministic fake, strict cited suggestion
+  schema and versioned source-controlled prompt/schema content hashes.
+- Immutable organization/repository hosted-LLM policy with fail-closed provider/model/content/
+  region/training/retention/storage routing, bounded redaction and database tenant/immutability
+  enforcement.
+- A pinned OpenAI Responses adapter with strict JSON Schema, disabled response storage, no tools,
+  explicit output/cost/timeout/retry bounds and safe external pricing/contract configuration.
+- Tenant-scoped idempotent append-only LLM evidence that preserves deterministic evidence and never
+  persists prompt/source text, raw provider output, hidden reasoning, secrets or arbitrary errors.
+- A frozen six-case CC0 synthetic grounding suite, raw evaluation artifact and M7 Owner Learning
+  Note covering schema/citation/unsupported-claim/stability/injection/cost/latency evidence.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -85,6 +96,9 @@
   group without permitting implicit model downloads or changing the later M11 training decision.
 - Kept the real M6 cross-encoder disabled because the synthetic fake-provider ablation showed no
   aggregate retrieval improvement and cannot establish representative value/latency.
+- Reverified and locked `openai==3.6.0` in the optional `ai` group with immutable model snapshot
+  `gpt-5.4-mini-2026-03-17`; omitted LangChain because the bounded adapter needs no additional
+  framework, and kept hosted routing disabled without an explicit compatible tenant policy.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -101,3 +115,6 @@
 - M6 evidence is recorded in `PROJECT_STATUS.md` and docs/34; retrieval figures are synthetic
   harness measurements, real weights were not executed, and no customer/public quality claim is
   made.
+- M7 evidence is recorded in `PROJECT_STATUS.md` and docs/36; its perfect frozen-fixture figures
+  validate only the deterministic fake/schema harness. No hosted provider/customer source was
+  contacted and no hosted quality, real latency, billed cost or zero-retention claim is made.

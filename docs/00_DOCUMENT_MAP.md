@@ -37,5 +37,7 @@
 | `33_M5_OWNER_LEARNING_NOTE.md` | owner-defensible M5 concepts, assumptions and rerun path |
 | `34_M6_RETRIEVAL_EVALUATION.md` | exact retrieval configuration, frozen measurements and activation decision |
 | `35_M6_OWNER_LEARNING_NOTE.md` | owner-defensible M6 concepts, assumptions and rerun path |
+| `36_M7_LLM_EVALUATION.md` | strict-schema grounding evaluation, configuration, measurements and limitations |
+| `37_M7_OWNER_LEARNING_NOTE.md` | owner-defensible M7 contracts, privacy routing and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

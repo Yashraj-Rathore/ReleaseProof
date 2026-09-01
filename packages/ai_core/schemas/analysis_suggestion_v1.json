@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "hypotheses": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {"enum": ["low", "medium", "high"], "type": "string"},
+          "evidence_ids": {
+            "items": {"maxLength": 160, "minLength": 1, "type": "string"},
+            "maxItems": 50,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "severity": {"enum": ["low", "medium", "high", "critical"], "type": "string"},
+          "statement": {"maxLength": 800, "minLength": 1, "type": "string"},
+          "uncertainty": {"maxLength": 500, "minLength": 1, "type": "string"}
+        },
+        "required": ["statement", "severity", "confidence", "evidence_ids", "uncertainty"],
+        "type": "object"
+      },
+      "maxItems": 20,
+      "type": "array"
+    },
+    "insufficient_evidence": {"type": "boolean"},
+    "missing_information": {
+      "items": {"maxLength": 500, "minLength": 1, "type": "string"},
+      "maxItems": 20,
+      "type": "array"
+    },
+    "requested_tests": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "description": {"maxLength": 800, "minLength": 1, "type": "string"},
+          "evidence_ids": {
+            "items": {"maxLength": 160, "minLength": 1, "type": "string"},
+            "maxItems": 50,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "rationale": {"maxLength": 800, "minLength": 1, "type": "string"}
+        },
+        "required": ["description", "rationale", "evidence_ids"],
+        "type": "object"
+      },
+      "maxItems": 20,
+      "type": "array"
+    },
+    "risks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "confidence": {"enum": ["low", "medium", "high"], "type": "string"},
+          "evidence_ids": {
+            "items": {"maxLength": 160, "minLength": 1, "type": "string"},
+            "maxItems": 50,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "severity": {"enum": ["low", "medium", "high", "critical"], "type": "string"},
+          "statement": {"maxLength": 800, "minLength": 1, "type": "string"}
+        },
+        "required": ["statement", "severity", "confidence", "evidence_ids"],
+        "type": "object"
+      },
+      "maxItems": 20,
+      "type": "array"
+    },
+    "summary": {"maxLength": 2000, "minLength": 1, "type": "string"},
+    "summary_evidence_ids": {
+      "items": {"maxLength": 160, "minLength": 1, "type": "string"},
+      "maxItems": 50,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "uncertainty": {"maxLength": 1000, "minLength": 1, "type": "string"}
+  },
+  "required": [
+    "summary",
+    "summary_evidence_ids",
+    "risks",
+    "hypotheses",
+    "requested_tests",
+    "missing_information",
+    "uncertainty",
+    "insufficient_evidence"
+  ],
+  "title": "AnalysisSuggestionV1",
+  "type": "object"
+}
