@@ -11,6 +11,10 @@ from dataclasses import replace
 
 from packages.execution_contracts import (
     CONTROLLED_FIXTURE_TREE_SHA256,
+    DIFFERENTIAL_FIXTURE_BUNDLE_SHA256,
+    DIFFERENTIAL_RUNNER_VERSION,
+    DifferentialPlanV1,
+    DifferentialResultV1,
     ExecutionContractError,
     ExecutionOutcome,
     ExecutionPlanV1,
@@ -18,6 +22,7 @@ from packages.execution_contracts import (
     FixtureExecutionInputV1,
     HostProfile,
     SafeOutputV1,
+    parse_differential_result_json,
     parse_execution_result_json,
     verify_payload_signature,
 )
@@ -105,7 +110,9 @@ def _docker(*args: str, timeout: int = 10) -> subprocess.CompletedProcess[bytes]
         raise RunnerRejectedError("docker_unavailable") from error
 
 
-def _validate_host(plan: ExecutionPlanV1, *, allow_ephemeral_ci_fixture: bool) -> None:
+def _validate_host(
+    plan: ExecutionPlanV1 | DifferentialPlanV1, *, allow_ephemeral_ci_fixture: bool
+) -> None:
     info = _docker("info", "--format", "{{json .}}")
     if info.returncode != 0:
         raise RunnerRejectedError("docker_unavailable")
@@ -130,7 +137,7 @@ def _validate_host(plan: ExecutionPlanV1, *, allow_ephemeral_ci_fixture: bool) -
         raise RunnerRejectedError("ci_fixture_profile_not_enabled")
 
 
-def _create_arguments(plan: ExecutionPlanV1, *, name: str) -> tuple[str, ...]:
+def _create_arguments(plan: ExecutionPlanV1 | DifferentialPlanV1, *, name: str) -> tuple[str, ...]:
     limits = plan.resources
     image_id = plan.image.split("@", maxsplit=1)[1]
     arguments = [
@@ -181,7 +188,9 @@ def _create_arguments(plan: ExecutionPlanV1, *, name: str) -> tuple[str, ...]:
 
 
 def docker_create_arguments(
-    plan: ExecutionPlanV1, *, name: str = "releaseproof-contract-test"
+    plan: ExecutionPlanV1 | DifferentialPlanV1,
+    *,
+    name: str = "releaseproof-contract-test",
 ) -> tuple[str, ...]:
     """Expose deterministic arguments for policy/evaluation tests without executing Docker."""
 
@@ -324,4 +333,110 @@ def run_fixture_plan(
             cleanup_succeeded = removed.returncode == 0
     if result is None:
         raise RunnerRejectedError("runner_result_missing")
+    return replace(result, cleanup_succeeded=cleanup_succeeded)
+
+
+def run_differential_plan(
+    *,
+    plan: DifferentialPlanV1,
+    execution_input: FixtureExecutionInputV1,
+    plan_signature: str,
+    signing_key: bytes,
+    attempt: int = 1,
+    allow_ephemeral_ci_fixture: bool = False,
+) -> DifferentialResultV1:
+    """Run one exact base/candidate workload and bounded mutation set in the fixture sandbox."""
+
+    if type(attempt) is not int or not 1 <= attempt <= 20:
+        raise RunnerRejectedError("attempt_invalid")
+    if not verify_payload_signature(
+        plan.canonical_bytes(), signature=plan_signature, key=signing_key
+    ):
+        raise RunnerRejectedError("differential_plan_signature_invalid")
+    if execution_input.proposal_hash != plan.proposal_hash:
+        raise RunnerRejectedError("proposal_hash_mismatch")
+    if execution_input.input_sha256 != plan.proposal_input_sha256:
+        raise RunnerRejectedError("proposal_input_hash_mismatch")
+    _validate_host(plan, allow_ephemeral_ci_fixture=allow_ephemeral_ci_fixture)
+    inspect_image = _docker(
+        "image",
+        "inspect",
+        plan.image.split("@", maxsplit=1)[1],
+        "--format",
+        "{{json .Config.Labels}}",
+    )
+    if inspect_image.returncode != 0:
+        raise RunnerRejectedError("image_digest_unavailable")
+    try:
+        labels = json.loads(inspect_image.stdout)
+    except (TypeError, json.JSONDecodeError) as error:
+        raise RunnerRejectedError("image_labels_invalid") from error
+    if not isinstance(labels, dict) or (
+        labels.get("org.releaseproof.differential-bundle-sha256")
+        != DIFFERENTIAL_FIXTURE_BUNDLE_SHA256
+        or labels.get("org.releaseproof.differential-runner-version") != DIFFERENTIAL_RUNNER_VERSION
+    ):
+        raise RunnerRejectedError("differential_image_labels_invalid")
+
+    name = f"releaseproof-m10-{uuid.uuid4().hex}"
+    created = False
+    cleanup_succeeded = False
+    result: DifferentialResultV1 | None = None
+    try:
+        created_result = _docker(*_create_arguments(plan, name=name))
+        if created_result.returncode != 0:
+            raise RunnerRejectedError("container_create_failed")
+        created = True
+        _verify_container_security(name)
+        payload = json.dumps(
+            {
+                "attempt": attempt,
+                "differential_plan": plan.as_dict(),
+                "input": execution_input.as_dict(),
+            },
+            allow_nan=False,
+            ensure_ascii=True,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("ascii")
+        executable = shutil.which("docker")
+        if executable is None:
+            raise RunnerRejectedError("docker_unavailable")
+        try:
+            completed = subprocess.run(  # noqa: S603
+                (executable, "start", "--attach", "--interactive", name),
+                input=payload,
+                check=False,
+                capture_output=True,
+                timeout=(4 + len(plan.mutation_ids)) * plan.resources.wall_time_seconds + 5,
+            )
+        except subprocess.TimeoutExpired as error:
+            _docker("kill", name)
+            raise RunnerRejectedError("differential_runner_timeout") from error
+        if len(completed.stdout) > 393_216:
+            raise RunnerRejectedError("runner_output_too_large")
+        try:
+            result = parse_differential_result_json(completed.stdout.decode("utf-8"))
+        except (UnicodeDecodeError, ExecutionContractError) as error:
+            category = _classify_runner_failure(completed)
+            diagnostic = None
+            if allow_ephemeral_ci_fixture:
+                diagnostic = _safe_ephemeral_ci_diagnostic(completed.stderr)
+            raise RunnerRejectedError(
+                f"differential_result_invalid_{category}",
+                ephemeral_ci_diagnostic=diagnostic,
+            ) from error
+        if (
+            result.plan_sha256 != plan.plan_sha256
+            or result.image != plan.image
+            or result.attempt != attempt
+            or tuple(item.mutation_id for item in result.mutations) != plan.mutation_ids
+        ):
+            raise RunnerRejectedError("differential_result_binding_invalid")
+    finally:
+        if created:
+            removed = _docker("rm", "--force", name)
+            cleanup_succeeded = removed.returncode == 0
+    if result is None:
+        raise RunnerRejectedError("differential_result_missing")
     return replace(result, cleanup_succeeded=cleanup_succeeded)

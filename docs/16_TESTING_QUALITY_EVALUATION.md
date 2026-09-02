@@ -119,3 +119,17 @@ credential/host/socket/network/metadata denial, cgroup/tmpfs quotas, timeout/kil
 signature rejection and cleanup. Passing is evidence only for those known probes and fixture; it
 does not establish absence of every escape or support arbitrary external repositories. Exact scope
 and rerun commands are in docs/41.
+
+## M10 differential, mutation and fusion evidence
+
+Unit tests cover strict plan/result parsing, exact base/candidate/bundle identity, parity controls,
+explicit nondeterminism masks, identical/no-invention, planted differences, timeout UNKNOWN,
+base-failure non-attribution, mutation accounting and every recommendation branch. Django tests
+cover the exact M9-approval chain, result signatures/bindings, idempotency, evidence lineage,
+LLM-inability to override deterministic HOLD, cross-tenant database rejection and raw immutability.
+
+The committed CC0 fixture has four differential cases and four recommendation-policy cases; all
+pass deterministically. Its two controlled mutations yield one killed and one survived (50%). The
+score is deliberately reported with its tiny synthetic/non-exhaustive limitation. The sandbox
+suite separately executes regression, identical and timeout variants in the digest-selected image
+and repeats M9 isolation checks on disposable Linux CI. Exact evidence is in docs/43.

@@ -1,17 +1,44 @@
 # Project Status
 
-**Current state: M9 fixture-only isolated runner implemented and CI-validated on 2026-09-02.**
+**Current state: M10 differential/mutation verification implemented and locally validated on 2026-09-02; live CI evidence for this revision is pending.**
 
-The repository now has the signed RP-0801 threat review and accepted ADR-018, strict plan/input/
-result contracts, a separate audited human execution approval, append-only tenant-bound result
-evidence and a hardened Docker CLI runner for the exact source-controlled fictional fixture. The
-durable profile requires a dedicated rootless disposable Linux host. External/customer repository
-execution remains disabled; M9 is not a universal sandbox or production-readiness claim.
+The repository now chains strict M10 base/candidate plans to an exact separately approved M9 plan,
+replays one frozen workload under parity, compares selected HTTP/state/event evidence with explicit
+masks, evaluates two controlled mutants and persists an immutable `recommendation-fusion-v1`
+decision. The accepted ADR-018 fixture-only boundary is unchanged. External/customer repository
+execution remains disabled; this is not a universal sandbox or production-readiness claim.
 
 ## Next action
 
-Begin M10 (`RP-0901..RP-0905`) differential/mutation work while preserving the same fixture-only
-scope and exact base/candidate parity.
+After M10 CI evidence is recorded, begin M11 (`RP-1001..RP-1006`) semantic-model work from the
+unchanged M4/M5 dataset and promotion gates. Do not widen fixture execution or begin M12 agent work.
+
+## M10 evidence
+
+- `releaseproof.differential-plan.v1` binds the exact M9 plan/approval/proposal/input, controlled
+  base and candidate revision checksums, image digest, shared resources/environment/workload,
+  mask policy and bounded mutation set. Unknown revision/mask/mutation identities fail closed.
+- The image-bundled synthetic fixture provides an identical candidate, a planted tax regression,
+  a probe timeout, a removed-validation mutant and a forced-tax mutant. Base and candidate receive
+  the same approved generated-test input and run in the same disposable container policy.
+- `releaseproof.differential-result.v1` records test/probe outcomes, bounded output, selected HTTP
+  status/schema/body, state/events, descriptive timing, explicit differences, mutation outcomes,
+  limitations, isolation checks and exact plan/result hashes. Masked request/update identifiers do
+  not create differences; latency does not trigger a regression decision.
+- Immutable `DifferentialPlan`, `DifferentialRun` and `RecommendationDecision` rows have composite
+  tenant relationships, append-only database triggers, idempotent writes and exact lineage back to
+  the M9 approval and pull-request snapshot.
+- The frozen CC0 evaluator passes identical/no-invention, planted-regression, timeout/UNKNOWN and
+  base-failure/non-attribution cases. The bounded mutation result is 1 killed and 1 survived (50%);
+  it is explicitly not exhaustive or a production-defect claim.
+- `recommendation-fusion-v1` evaluates SHIP, REVIEW, HOLD and UNKNOWN branches. Mandatory missing/
+  failed evidence is UNKNOWN; deterministic HOLD outranks an LLM SHIP suggestion; every decision
+  is advisory-only with `auto_merge=false`.
+- Canonical local validation passed **153 tests** with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 190 source
+  files, Django, migration drift, generated docs/inventory and M4-M10 evaluators passed. The
+  Docker-marked suite and authoritative PostgreSQL constraints will be validated by GitHub Actions
+  for the pushed revision; no such remote result is claimed yet. Exact evidence is in docs/43/44.
 
 ## M9 evidence
 
@@ -31,13 +58,14 @@ scope and exact base/candidate parity.
   result ingest authenticates exact plan/image/attempt, reuses identical duplicates, rejects
   conflicts and records late evidence as stale.
 - The frozen CC0 contract/policy artifact passes all ten declared controls and has file SHA-256
-  `c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759` before final
-  documentation synchronization. It is non-live synthetic evidence; the sandbox-marked CI suite
+  `c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759`. It is non-live synthetic
+  evidence; the sandbox-marked CI suite
   separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
 - The local deterministic suite passed **143 tests**, with one PostgreSQL physical-index assertion
   skipped and live S3/sandbox tests deselected. Ruff, strict mypy (183 source files), Django and M9
-  focused checks passed. GitHub Actions run `33639377865` on commit `b8a866b` then passed the
-  authoritative PostgreSQL, live Docker sentinel and SeaweedFS contract gates.
+  focused checks passed. GitHub Actions run `33639835178` on final M9 commit `ab59029` passed the
+  canonical, authoritative PostgreSQL, Compose, pinned-image, live Docker sentinel, SeaweedFS and
+  teardown gates.
 - M9 adds no Python dependency, mines no data, calls no hosted/paid provider and executes no
   customer repository. Exact threat, evaluation and learning evidence is in docs/40, docs/41 and
   docs/42.
@@ -276,8 +304,8 @@ and its remote M2 result is tracked in GitHub Actions.
 | M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
 | M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
 | M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
-| M9 sandbox | Not started |
-| M10 differential | Not started |
+| M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
+| M10 differential | Implemented - RP-0901..RP-0905; local validation passed, live CI pending |
 | M11 PyTorch/HF | Not started |
 | M12 LangGraph | Not started |
 | M13 MLflow/governance | Not started |

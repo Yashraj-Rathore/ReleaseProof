@@ -298,7 +298,17 @@ supersedes the old one.
 Reviewer mutations use session authentication, CSRF and server-derived organization scope. A
 human may accept a statically valid proposal for export, reject it, edit it into a new draft, or
 download its inert patch. Acceptance does not commit, enqueue, authorize or execute anything. M9
-still owns its separate threat review, immutable execution plan, execution approval and sandbox.
+separately owns its threat review, immutable execution plan, execution approval and sandbox.
+
+```text
+uv run python -m eng.evaluate_m8_proposals --check
+uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+```
+
+The frozen 11-case CC0 suite has two valid controls and nine adversarial invalid controls. It
+records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0 and five-run stability
+1.0. These synthetic results validate the contract/static-filter harness only; no generated test
+was run and usefulness on real repositories is not measured. See docs/38 and docs/39.
 
 ## M9 fixture-only sandbox runner
 
@@ -316,11 +326,41 @@ isolate arbitrary hostile customer repositories. See docs/40, ADR-018 and docs/4
 
 ```text
 uv sync --frozen --group dev --group ml --group ai
-uv run python -m eng.evaluate_m8_proposals --check
-uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+uv run python -m eng.evaluate_m9_runner --check
+uv run pytest tests/unit/test_execution_contracts.py tests/integration/test_execution_workflow.py
+docker build -f runner/fixture_image/Dockerfile -t releaseproof-fixture-runner:m9 .
+RUN_SANDBOX_INTEGRATION=1 uv run pytest -m sandbox tests/sandbox
 ```
 
-The frozen 11-case CC0 suite has two valid controls and nine adversarial invalid controls. It
-records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0 and five-run stability
-1.0. These synthetic results validate the contract/static-filter harness only; no generated test
-was run and usefulness on real repositories is not measured. See docs/38 and docs/39.
+GitHub Actions run `33639835178` for commit `ab59029` passed the canonical source/Django checks,
+authoritative PostgreSQL contracts, pinned image build, live sandbox sentinels, bounded SeaweedFS
+contract and teardown. This validates the known fixture path only; external/customer repository
+execution remains disabled.
+
+## M10 differential and mutation verification
+
+M10 implements `RP-0901..RP-0905` without widening ADR-018. A signed
+`releaseproof.differential-plan.v1` chains to the exact M9 execution plan and approval, then binds
+the controlled base/candidate revision checksums, digest-pinned image, identical generated test,
+workload, environment, resource policy, explicit nondeterminism masks and two-item mutation set.
+The sandbox replays the same test and in-process HTTP-handler probe against both revisions, records
+selected status/schema/body/state/events plus descriptive timings, and reports candidate timeout as
+UNKNOWN and base failure as non-attributable.
+
+`recommendation-fusion-v1` combines risk, retrieval, generated-test, execution, differential and
+mutation facts into advisory-only SHIP/REVIEW/HOLD/UNKNOWN evidence. Missing or failed mandatory
+components produce UNKNOWN, low/surviving mutation evidence produces REVIEW, and deterministic
+HOLD facts take precedence over an LLM SHIP suggestion. Decisions are immutable and preserve exact
+policy/input/result hashes; they cannot merge or deploy.
+
+```text
+uv run python -m eng.evaluate_m10_differential --check
+uv run pytest tests/unit/test_differential_contracts.py tests/unit/test_recommendation_policy.py tests/integration/test_differential_workflow.py
+docker build -f runner/fixture_image/Dockerfile -t releaseproof-fixture-runner:m9 .
+RUN_SANDBOX_INTEGRATION=1 uv run pytest -m sandbox tests/sandbox
+```
+
+The committed CC0 evaluation covers identical, planted-regression, candidate-timeout and
+base-failure cases plus all four recommendation outcomes. The mutation slice kills one of two
+controlled mutants (50%); that is harness evidence, not repository-wide mutation coverage or a
+customer-quality claim. See docs/43 and docs/44.

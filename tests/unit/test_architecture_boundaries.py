@@ -28,6 +28,7 @@ CANONICAL_PACKAGES = {
     "github_contracts",
     "ml_core",
     "observability",
+    "recommendation_core",
     "retrieval_core",
 }
 FORBIDDEN_CORE_IMPORTS = {"celery", "django"}

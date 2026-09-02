@@ -18,7 +18,7 @@ Docker reports rootless mode.
 
 ## Live CI evidence
 
-GitHub Actions run `33639377865` for commit `b8a866b` passed on 2026-09-02. It completed the
+GitHub Actions run `33639835178` for final M9 commit `ab59029` passed on 2026-09-02. It completed the
 canonical source/Django/evaluation validator, Compose configuration and startup, authoritative
 PostgreSQL contracts, pinned runner-image build, live sandbox sentinels, the bounded SeaweedFS
 object contract and infrastructure teardown. This is the authoritative live M9 evidence because

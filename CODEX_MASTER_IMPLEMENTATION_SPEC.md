@@ -310,7 +310,17 @@ supersedes the old one.
 Reviewer mutations use session authentication, CSRF and server-derived organization scope. A
 human may accept a statically valid proposal for export, reject it, edit it into a new draft, or
 download its inert patch. Acceptance does not commit, enqueue, authorize or execute anything. M9
-still owns its separate threat review, immutable execution plan, execution approval and sandbox.
+separately owns its threat review, immutable execution plan, execution approval and sandbox.
+
+```text
+uv run python -m eng.evaluate_m8_proposals --check
+uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+```
+
+The frozen 11-case CC0 suite has two valid controls and nine adversarial invalid controls. It
+records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0 and five-run stability
+1.0. These synthetic results validate the contract/static-filter harness only; no generated test
+was run and usefulness on real repositories is not measured. See docs/38 and docs/39.
 
 ## M9 fixture-only sandbox runner
 
@@ -328,14 +338,44 @@ isolate arbitrary hostile customer repositories. See docs/40, ADR-018 and docs/4
 
 ```text
 uv sync --frozen --group dev --group ml --group ai
-uv run python -m eng.evaluate_m8_proposals --check
-uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+uv run python -m eng.evaluate_m9_runner --check
+uv run pytest tests/unit/test_execution_contracts.py tests/integration/test_execution_workflow.py
+docker build -f runner/fixture_image/Dockerfile -t releaseproof-fixture-runner:m9 .
+RUN_SANDBOX_INTEGRATION=1 uv run pytest -m sandbox tests/sandbox
 ```
 
-The frozen 11-case CC0 suite has two valid controls and nine adversarial invalid controls. It
-records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0 and five-run stability
-1.0. These synthetic results validate the contract/static-filter harness only; no generated test
-was run and usefulness on real repositories is not measured. See docs/38 and docs/39.
+GitHub Actions run `33639835178` for commit `ab59029` passed the canonical source/Django checks,
+authoritative PostgreSQL contracts, pinned image build, live sandbox sentinels, bounded SeaweedFS
+contract and teardown. This validates the known fixture path only; external/customer repository
+execution remains disabled.
+
+## M10 differential and mutation verification
+
+M10 implements `RP-0901..RP-0905` without widening ADR-018. A signed
+`releaseproof.differential-plan.v1` chains to the exact M9 execution plan and approval, then binds
+the controlled base/candidate revision checksums, digest-pinned image, identical generated test,
+workload, environment, resource policy, explicit nondeterminism masks and two-item mutation set.
+The sandbox replays the same test and in-process HTTP-handler probe against both revisions, records
+selected status/schema/body/state/events plus descriptive timings, and reports candidate timeout as
+UNKNOWN and base failure as non-attributable.
+
+`recommendation-fusion-v1` combines risk, retrieval, generated-test, execution, differential and
+mutation facts into advisory-only SHIP/REVIEW/HOLD/UNKNOWN evidence. Missing or failed mandatory
+components produce UNKNOWN, low/surviving mutation evidence produces REVIEW, and deterministic
+HOLD facts take precedence over an LLM SHIP suggestion. Decisions are immutable and preserve exact
+policy/input/result hashes; they cannot merge or deploy.
+
+```text
+uv run python -m eng.evaluate_m10_differential --check
+uv run pytest tests/unit/test_differential_contracts.py tests/unit/test_recommendation_policy.py tests/integration/test_differential_workflow.py
+docker build -f runner/fixture_image/Dockerfile -t releaseproof-fixture-runner:m9 .
+RUN_SANDBOX_INTEGRATION=1 uv run pytest -m sandbox tests/sandbox
+```
+
+The committed CC0 evaluation covers identical, planted-regression, candidate-timeout and
+base-failure cases plus all four recommendation outcomes. The mutation slice kills one of two
+controlled mutants (50%); that is harness evidence, not repository-wide mutation coverage or a
+customer-quality claim. See docs/43 and docs/44.
 
 
 ---
@@ -670,18 +710,45 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M9 fixture-only isolated runner implemented and CI-validated on 2026-09-02.**
+**Current state: M10 differential/mutation verification implemented and locally validated on 2026-09-02; live CI evidence for this revision is pending.**
 
-The repository now has the signed RP-0801 threat review and accepted ADR-018, strict plan/input/
-result contracts, a separate audited human execution approval, append-only tenant-bound result
-evidence and a hardened Docker CLI runner for the exact source-controlled fictional fixture. The
-durable profile requires a dedicated rootless disposable Linux host. External/customer repository
-execution remains disabled; M9 is not a universal sandbox or production-readiness claim.
+The repository now chains strict M10 base/candidate plans to an exact separately approved M9 plan,
+replays one frozen workload under parity, compares selected HTTP/state/event evidence with explicit
+masks, evaluates two controlled mutants and persists an immutable `recommendation-fusion-v1`
+decision. The accepted ADR-018 fixture-only boundary is unchanged. External/customer repository
+execution remains disabled; this is not a universal sandbox or production-readiness claim.
 
 ## Next action
 
-Begin M10 (`RP-0901..RP-0905`) differential/mutation work while preserving the same fixture-only
-scope and exact base/candidate parity.
+After M10 CI evidence is recorded, begin M11 (`RP-1001..RP-1006`) semantic-model work from the
+unchanged M4/M5 dataset and promotion gates. Do not widen fixture execution or begin M12 agent work.
+
+## M10 evidence
+
+- `releaseproof.differential-plan.v1` binds the exact M9 plan/approval/proposal/input, controlled
+  base and candidate revision checksums, image digest, shared resources/environment/workload,
+  mask policy and bounded mutation set. Unknown revision/mask/mutation identities fail closed.
+- The image-bundled synthetic fixture provides an identical candidate, a planted tax regression,
+  a probe timeout, a removed-validation mutant and a forced-tax mutant. Base and candidate receive
+  the same approved generated-test input and run in the same disposable container policy.
+- `releaseproof.differential-result.v1` records test/probe outcomes, bounded output, selected HTTP
+  status/schema/body, state/events, descriptive timing, explicit differences, mutation outcomes,
+  limitations, isolation checks and exact plan/result hashes. Masked request/update identifiers do
+  not create differences; latency does not trigger a regression decision.
+- Immutable `DifferentialPlan`, `DifferentialRun` and `RecommendationDecision` rows have composite
+  tenant relationships, append-only database triggers, idempotent writes and exact lineage back to
+  the M9 approval and pull-request snapshot.
+- The frozen CC0 evaluator passes identical/no-invention, planted-regression, timeout/UNKNOWN and
+  base-failure/non-attribution cases. The bounded mutation result is 1 killed and 1 survived (50%);
+  it is explicitly not exhaustive or a production-defect claim.
+- `recommendation-fusion-v1` evaluates SHIP, REVIEW, HOLD and UNKNOWN branches. Mandatory missing/
+  failed evidence is UNKNOWN; deterministic HOLD outranks an LLM SHIP suggestion; every decision
+  is advisory-only with `auto_merge=false`.
+- Canonical local validation passed **153 tests** with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 190 source
+  files, Django, migration drift, generated docs/inventory and M4-M10 evaluators passed. The
+  Docker-marked suite and authoritative PostgreSQL constraints will be validated by GitHub Actions
+  for the pushed revision; no such remote result is claimed yet. Exact evidence is in docs/43/44.
 
 ## M9 evidence
 
@@ -701,13 +768,14 @@ scope and exact base/candidate parity.
   result ingest authenticates exact plan/image/attempt, reuses identical duplicates, rejects
   conflicts and records late evidence as stale.
 - The frozen CC0 contract/policy artifact passes all ten declared controls and has file SHA-256
-  `c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759` before final
-  documentation synchronization. It is non-live synthetic evidence; the sandbox-marked CI suite
+  `c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759`. It is non-live synthetic
+  evidence; the sandbox-marked CI suite
   separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
 - The local deterministic suite passed **143 tests**, with one PostgreSQL physical-index assertion
   skipped and live S3/sandbox tests deselected. Ruff, strict mypy (183 source files), Django and M9
-  focused checks passed. GitHub Actions run `33639377865` on commit `b8a866b` then passed the
-  authoritative PostgreSQL, live Docker sentinel and SeaweedFS contract gates.
+  focused checks passed. GitHub Actions run `33639835178` on final M9 commit `ab59029` passed the
+  canonical, authoritative PostgreSQL, Compose, pinned-image, live Docker sentinel, SeaweedFS and
+  teardown gates.
 - M9 adds no Python dependency, mines no data, calls no hosted/paid provider and executes no
   customer repository. Exact threat, evaluation and learning evidence is in docs/40, docs/41 and
   docs/42.
@@ -946,8 +1014,8 @@ and its remote M2 result is tracked in GitHub Actions.
 | M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
 | M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
 | M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
-| M9 sandbox | Not started |
-| M10 differential | Not started |
+| M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
+| M10 differential | Implemented - RP-0901..RP-0905; local validation passed, live CI pending |
 | M11 PyTorch/HF | Not started |
 | M12 LangGraph | Not started |
 | M13 MLflow/governance | Not started |
@@ -1048,6 +1116,18 @@ and its remote M2 result is tracked in GitHub Actions.
 - Frozen synthetic M9 policy evidence plus an explicit live CI sandbox suite for credential/host/
   socket/network/metadata/resource/timeout/output/signature/cleanup sentinels and an Owner Learning
   Note.
+- M10 strict differential plan/result contracts chained to the separate M9 approval, with exact
+  controlled base/candidate/bundle identities, one parity workload, explicit nondeterminism masks,
+  comparable test/HTTP/state/event evidence and fail-closed timeout/base-failure semantics.
+- A two-mutant synthetic fixture slice with explicit kill/survive/inconclusive accounting and
+  limitations, executed only inside the unchanged ADR-018 sandbox boundary.
+- Immutable tenant-bound differential plans/runs and `recommendation-fusion-v1` decisions with
+  composite database integrity, idempotency, exact evidence/policy hashes and raw-mutation denial.
+- A deterministic advisory fusion policy across risk, retrieval, generated tests, execution,
+  differential and mutation evidence; missing mandatory facts produce UNKNOWN and no LLM
+  suggestion can override deterministic HOLD.
+- A frozen four-case differential/four-case policy evaluation, live M10 sandbox test path and M10
+  Owner Learning Note; no new dependency, model, provider call or external execution scope.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -1244,6 +1324,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `40_M9_RUNNER_THREAT_REVIEW.md` | ranked runner threats, host assumptions, controls and RP-0801 signoff |
 | `41_M9_RUNNER_EVALUATION.md` | deterministic policy evidence, live sentinel scope and limitations |
 | `42_M9_OWNER_LEARNING_NOTE.md` | owner-defensible M9 trust boundary, contracts and rerun path |
+| `43_M10_DIFFERENTIAL_EVALUATION.md` | differential/mutation/fusion fixture results and limitations |
+| `44_M10_OWNER_LEARNING_NOTE.md` | owner-defensible M10 parity, comparison, mutation and policy explanation |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1461,6 +1543,14 @@ repeats the exact snapshot/proposal/plan hashes. Runs are append-only and idempo
 runner/image/plan identity, outcome, timing, bounded output hashes/excerpts, isolation checks,
 timeout/kill, cleanup and stale-at-recording state.
 
+### DifferentialPlan / DifferentialRun / RecommendationDecision
+The M10 plan is immutable and points to one exact M9 plan and its separate human approval. It binds
+controlled base/candidate revision checksums, the same image/environment/resource/workload policy,
+the nondeterminism-mask version and bounded mutation set. The result stores comparable test/probe/
+HTTP/state/event facts, bounded output, mutation outcomes and limitations. A recommendation row
+binds the snapshot, differential run, exact fusion-policy version, input hash and decision hash;
+historical decisions are never rewritten when a later policy is introduced.
+
 ### DeploymentOutcome
 Optional feedback taxonomy (`no_issue`, `revert`, `hotfix`, `incident`, `manual_label`, `unknown`), source/confidence/observation window and org-training eligibility.
 
@@ -1599,6 +1689,19 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
 - Audits store only opaque IDs, hashes, outcome, attempt and staleness—not patches, source, secrets
   or output excerpts.
 
+## M10 differential and recommendation evidence implementation
+
+- `DifferentialPlan` is one-to-one with the source execution plan and repeats its exact approval,
+  tenant, snapshot, proposal/input hash and image bindings through the strict payload.
+- `DifferentialRun` is append-only/idempotent by tenant key and plan attempt. It records the strict
+  result hash, outcome, killed/eligible mutation counts and whether the source plan was stale when
+  evidence arrived.
+- `RecommendationDecision` is append-only per differential run and policy version. Its payload is
+  reconstructed and re-evaluated during validation; advisory-only and `auto_merge=false` are
+  invariants, not UI conventions.
+- Composite foreign keys/triggers reject cross-tenant plan, approval, run and snapshot rebinding.
+  Database triggers reject raw update/delete of all three M10 record types.
+
 
 ---
 
@@ -1682,6 +1785,25 @@ baseline active with an explicit fallback reason.
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
 `RiskModelResponseV1`: exact model artifact/checksum, raw score, calibrated probability nullable, band, explanation, latency metadata.
 Feature mismatch is rejected.
+
+## M10 differential and recommendation contracts
+
+`releaseproof.differential-plan.v1` references one exact approved M9 plan and binds both controlled
+revision checksums, the candidate variant, proposal/input hash, image, resource/host/environment/
+network/mount policy, `releaseproof.fixture-workload.v1`, `releaseproof.fixture-mask.v1` and
+`releaseproof.fixture-mutations.v1`. Unknown fields, revisions, masks, mutations or hashes reject
+the plan.
+
+`releaseproof.differential-result.v1` records comparable base/candidate test and probe outcomes,
+exit facts, bounded output hashes/excerpts, selected HTTP status/schema/body, selected state/events,
+descriptive timings, explicit difference codes, mutation kill/survive/inconclusive results,
+isolation/cleanup facts and limitations. A timeout is UNKNOWN; a base failure is non-attributable.
+
+`recommendation-fusion-v1` consumes explicit status/fact/evidence references for model risk,
+retrieval, generated tests, execution, differential and mutation evidence. It produces immutable
+advisory SHIP/REVIEW/HOLD/UNKNOWN plus reason codes and exact input/decision hashes. Its precedence
+is deterministic HOLD, mandatory-evidence UNKNOWN, review conditions, then SHIP. LLM suggestions
+are recorded input but cannot override any deterministic HOLD. No contract authorizes merge/deploy.
 
 ## Retrieval contract
 Server-resolved org/repo scope, query, filters, max candidates. Results include document/chunk source/version, lexical/vector/fusion/rerank scores and safe excerpt.
@@ -2382,8 +2504,32 @@ Run same bounded workload against exact base and candidate with same toolchain/p
 - repeated latency/resource observations only with measurement caveats.
 A difference is evidence, not automatically a defect.
 
+### M10 implemented boundary
+
+M10 remains inside ADR-018: only the source-controlled synthetic bundle can run. The signed plan is
+chained to an exact separately approved M9 plan and selects a finite image-bundled base/candidate
+revision. Base and candidate receive the same generated test, handler-probe workload, Python image,
+environment, network/mount policy and resource ceilings. The initial HTTP observation calls a
+fixture handler contract in-process and opens no socket.
+
+Comparison uses selected test outcome, HTTP status/schema/body, state and events. Paths
+`http.headers.x-request-id` and `state.updated_at` are explicitly excluded by
+`releaseproof.fixture-mask.v1`; latency is stored as descriptive evidence and is not a gate. A
+candidate timeout is UNKNOWN, while a base failure is reported as non-attributable.
+
 ## Mutation testing
 Controlled mutations only on fixture/explicitly configured paths initially. Mutation survival means test weakness may exist; it is not proof of a production bug.
+
+`releaseproof.fixture-mutations.v1` contains exactly two image-bundled source overlays. The focused
+generated test kills the forced-tax mutant and does not kill the removed-negative-guard mutant.
+The resulting 1/2 score validates kill/survive accounting only; it is not exhaustive coverage.
+
+## Recommendation fusion
+
+`recommendation-fusion-v1` requires explicit model-risk, retrieval, generated-test, execution,
+differential and mutation component status. A deterministic regression/failure HOLD wins over all
+other inputs including an LLM SHIP suggestion. Missing/failed mandatory evidence yields UNKNOWN;
+review-worthy available evidence yields REVIEW. SHIP remains advisory and never merges/deploys.
 
 ## Failure semantics
 Runner unavailable/timeout/install failure => UNKNOWN/REVIEW evidence, never pass. If base also fails, candidate cannot be blamed solely by that check.
@@ -2554,8 +2700,9 @@ The controlled adapter rejects traversal, arbitrary target files, source-file mo
 unexpected commands/imports, dunder introspection and obvious file/process/network capabilities.
 Static AST filtering cannot make hostile code safe, so M8 deliberately has no execution path,
 repository credential, patch application, runner call or execution approval. Audit metadata keeps
-hash/version/lifecycle facts and excludes patch/source content. M9 must complete its independent
-threat review and isolation signoff before execution exists.
+hash/version/lifecycle facts and excludes patch/source content. M9 completed its independent
+threat review and isolation signoff before the separate fixture-only execution path became
+available.
 
 ## M9 sandbox boundary
 
@@ -2567,6 +2714,19 @@ non-root with a read-only root, no capabilities and no-new-privileges, and are f
 each attempt. Live sentinels cover parent secrets, socket/mount, metadata/network, cgroup/tmpfs,
 timeout/kill/output and cleanup. These controls reduce risk for the source-controlled fixture and
 are not a universal container-isolation claim.
+
+## M10 differential/recommendation controls
+
+M10 adds no execution backend, network path or provider. Signed contracts accept only a finite
+checksum-bound synthetic base/candidate/mutation bundle inside the M9 image and preserve the same
+no-network/no-mount/non-root/resource controls. Result parsers bound output and reject unknown
+schema fields. Explicit masks apply only to two declared nondeterministic display fields and cannot
+hide test outcome, HTTP status/schema/body, selected state or selected events.
+
+Differential plans chain to the separate M9 approval and become stale with that source plan.
+Composite database constraints prevent tenant/approval/snapshot rebinding. Recommendation inputs
+must cite same-tenant persisted evidence; deterministic HOLD has highest precedence, incomplete
+mandatory evidence becomes UNKNOWN, and `auto_merge=false` is validated and persisted.
 
 
 ---
@@ -2695,6 +2855,20 @@ signature rejection and cleanup. Passing is evidence only for those known probes
 does not establish absence of every escape or support arbitrary external repositories. Exact scope
 and rerun commands are in docs/41.
 
+## M10 differential, mutation and fusion evidence
+
+Unit tests cover strict plan/result parsing, exact base/candidate/bundle identity, parity controls,
+explicit nondeterminism masks, identical/no-invention, planted differences, timeout UNKNOWN,
+base-failure non-attribution, mutation accounting and every recommendation branch. Django tests
+cover the exact M9-approval chain, result signatures/bindings, idempotency, evidence lineage,
+LLM-inability to override deterministic HOLD, cross-tenant database rejection and raw immutability.
+
+The committed CC0 fixture has four differential cases and four recommendation-policy cases; all
+pass deterministically. Its two controlled mutations yield one killed and one survived (50%). The
+score is deliberately reported with its tiny synthetic/non-exhaustive limitation. The sandbox
+suite separately executes regression, identical and timeout variants in the digest-selected image
+and repeats M9 isolation checks on disposable Linux CI. Exact evidence is in docs/43.
+
 
 ---
 
@@ -2755,6 +2929,13 @@ append-only human lifecycle/audit events -> bounded export. The frozen synthetic
 evaluation checksum are preserved beside that chain. Acceptance is not model promotion or
 execution authorization; future M9 evidence must name the exact exported proposal and a separate
 execution-plan hash without rewriting M8 history.
+
+M9/M10 extend that chain with exact execution plan + separate human approval + signed bounded run
+result + differential plan + controlled base/candidate revisions + workload/mask/mutation versions
++ signed result + immutable `recommendation-fusion-v1` input/decision hashes. A later recommendation
+policy must create a new decision version; it cannot rewrite historical M10 decisions. The fixture
+evaluation and live CI evidence remain distinct, and neither promotes arbitrary repository
+execution.
 
 
 ---
@@ -3583,6 +3764,16 @@ index resolved from Docker Hub on 2026-09-02. The built runner itself is selecte
 image ID and must carry labels matching runner version `releaseproof-fixture-runner-v1` and frozen
 fixture-tree hash `70b1ebeb3d2257fa88667f06d8df3690de118dd277ec993f805d1851c17b4673`.
 Mutable tags are not accepted in an execution plan.
+
+## M10 dependency/image decision — verified 2026-09-02
+
+M10 adds no package. Strict contracts, comparison, mutation accounting, policy fusion and fixture
+process control use the Python standard library plus existing Django persistence and pytest in the
+runner image. The M9 image gains a second exact label for
+`releaseproof-differential-runner-v1` and frozen executable-bundle SHA-256
+`8e3554c97d41207213554f092e2bcb439560164ae0fcb744c5b56e6adf81f87e`; M9's original fixture hash
+and runner identity remain unchanged. No mutation framework, HTTP client/server, LLM SDK call or
+additional container/runtime dependency is needed for this bounded slice.
 
 ## Dependency and image management
 
@@ -4439,7 +4630,7 @@ Docker reports rootless mode.
 
 ## Live CI evidence
 
-GitHub Actions run `33639377865` for commit `b8a866b` passed on 2026-09-02. It completed the
+GitHub Actions run `33639835178` for final M9 commit `ab59029` passed on 2026-09-02. It completed the
 canonical source/Django/evaluation validator, Compose configuration and startup, authoritative
 PostgreSQL contracts, pinned runner-image build, live sandbox sentinels, the bounded SeaweedFS
 object contract and infrastructure teardown. This is the authoritative live M9 evidence because
@@ -4509,6 +4700,145 @@ Containers share the host kernel; a runtime or kernel escape can cross the bound
 therefore narrows M9 to a frozen fictional fixture on a dedicated rootless disposable host, layers
 seccomp/LSM/capability/network/resource controls, and keeps external repositories disabled until a
 stronger backend receives its own threat review and accepted ADR.
+
+
+---
+
+# SOURCE FILE: `docs/43_M10_DIFFERENTIAL_EVALUATION.md`
+
+# 43 — M10 Differential, Mutation and Fusion Evaluation
+
+## Scope and configuration
+
+This evidence covers `RP-0901..RP-0905` for the source-controlled fictional fixture only. It does
+not enable or evaluate arbitrary external/customer repository execution. The executable base and
+finite overlays are frozen by bundle SHA-256
+`8e3554c97d41207213554f092e2bcb439560164ae0fcb744c5b56e6adf81f87e` and copied into the existing
+digest-selected M9 image. Plan, result, workload, mask, mutation and recommendation versions are:
+
+- `releaseproof.differential-plan.v1`;
+- `releaseproof.differential-result.v1`;
+- `releaseproof.fixture-workload.v1`;
+- `releaseproof.fixture-mask.v1`;
+- `releaseproof.fixture-mutations.v1`;
+- `recommendation-fusion-v1`.
+
+Base/candidate parity means the exact same image, Python environment, resource/network/mount
+policy, generated test and handler-probe commands. The base/candidate revision checksums and M9
+plan/approval/proposal/input hashes are part of the signed plan.
+
+## Frozen deterministic results
+
+The CC0-1.0 fixture in `tests/fixtures/execution/m10_differential_cases_v1.json` is synthetic and
+authored in-repository. Its four differential cases all pass:
+
+| Case | Expected/actual outcome | Selected differences |
+|---|---|---|
+| identical | `no_difference` | none |
+| planted tax regression | `difference` | `tests.outcome`, `http.body` |
+| candidate probe timeout | `unknown` | none attributed |
+| base failure | `base_failed` | none attributed to candidate |
+
+Both explicit mask controls pass: `http.headers.x-request-id` and `state.updated_at` do not create
+a difference. Status, schema, body, selected non-masked state and selected events remain comparable.
+Latency is retained as descriptive evidence and is not a threshold in this version.
+
+The bounded mutation slice has two controlled source overlays. The generated test kills the
+forced-tax mutation and the removed-negative-guard mutation survives: 1 killed / 2 eligible = 50%.
+This validates mutation accounting. Two hand-authored operators are not representative mutation
+coverage, and survival suggests a possible test gap rather than proving a production defect.
+
+All four frozen fusion cases pass:
+
+| Case | Expected/actual recommendation |
+|---|---|
+| all mandatory evidence clear | `SHIP` |
+| mandatory execution evidence missing | `UNKNOWN` |
+| deterministic differential HOLD + LLM SHIP | `HOLD` |
+| mutation score below 50% | `REVIEW` |
+
+Every output has `advisory_only=true` and `auto_merge=false`.
+
+## Evidence boundary
+
+`artifacts/evaluation/m10_differential_eval_v1.json` is a deterministic contract/policy artifact;
+it does not execute a container. The sandbox-marked test separately builds the pinned fixture image
+on disposable Linux CI and executes identical, planted-regression and timeout variants while
+rechecking the M9 isolation flags and cleanup. That live result is not claimed until the workflow
+for the exact pushed revision succeeds.
+
+The HTTP observation invokes a synthetic handler contract in-process and opens no socket. It proves
+selected comparison semantics, not Django/FastAPI server compatibility. No model was trained or
+downloaded, no customer/public data was acquired, and no hosted/paid provider was called.
+
+## Reproduce
+
+```text
+uv run python -m eng.evaluate_m10_differential --check
+uv run pytest tests/unit/test_differential_contracts.py tests/unit/test_recommendation_policy.py tests/integration/test_differential_workflow.py
+docker build -f runner/fixture_image/Dockerfile -t releaseproof-fixture-runner:m9 .
+RUN_SANDBOX_INTEGRATION=1 uv run pytest -m sandbox tests/sandbox
+```
+
+
+---
+
+# SOURCE FILE: `docs/44_M10_OWNER_LEARNING_NOTE.md`
+
+# 44 — M10 Owner Learning Note
+
+## 1. Concept implemented
+
+M10 implements controlled base-versus-candidate differential replay, selected semantic comparison,
+a bounded mutation-testing slice and deterministic recommendation fusion. Every executable input is
+checksum/version bound, and every persisted plan/result/decision is immutable and tenant scoped.
+
+## 2. Why it is used here
+
+A risk score says where to investigate; differential replay asks whether the candidate demonstrably
+behaves differently under the same workload. Mutation testing checks whether the selected tests can
+detect small planted faults. Fusion makes the final advisory outcome predictable when those facts
+agree, disagree or are missing.
+
+## 3. Algorithm and data assumptions
+
+The first adapter assumes one synthetic Python fixture and a finite image-bundled revision/mutation
+set. The comparator considers test outcome, selected HTTP status/schema/body, state and events.
+Exactly two known nondeterministic paths are masked. Timing is descriptive only. The mutation score
+is killed divided by non-inconclusive mutants; two mutants are far too small for a quality claim.
+
+Fusion precedence is deterministic HOLD, then UNKNOWN for any unavailable mandatory component,
+then REVIEW conditions, then advisory SHIP. An LLM suggestion is an input for transparency but is
+never decisive. A same-model critic would not change this ordering.
+
+## 4. Key code paths
+
+- `packages/execution_contracts/differential.py`: strict contracts, hashes and comparison.
+- `runner/fixture_image/differential_entrypoint.py`: in-sandbox parity replay and mutations.
+- `runner/docker_cli.py`: signed host boundary, image labels, limits and cleanup.
+- `packages/recommendation_core/policy.py`: deterministic fusion and immutable decision contract.
+- `apps/web/verification/differential_services.py`: tenant/evidence lineage and persistence.
+- `apps/web/verification/migrations/0007_differential_integrity.py`: composite and append-only DB controls.
+
+## 5. Exact experiment/test to rerun
+
+```text
+uv run python -m eng.evaluate_m10_differential --check
+uv run pytest tests/unit/test_differential_contracts.py tests/unit/test_recommendation_policy.py tests/integration/test_differential_workflow.py
+RUN_SANDBOX_INTEGRATION=1 uv run pytest -m sandbox tests/sandbox
+```
+
+The sandbox command requires the documented image build and a disposable Linux Docker host. The
+normal evaluator is network-free and does not execute fixture code.
+
+## 6. Likely interview question
+
+**Why is a candidate difference or surviving mutation not automatically a HOLD?**
+
+A difference may be intended, and a survived mutant only indicates that this workload did not
+distinguish it. ReleaseProof preserves attributable facts and applies an explicit versioned policy:
+known deterministic regression evidence can HOLD, incomplete evidence becomes UNKNOWN, and weak but
+non-definitive coverage becomes REVIEW. A human still decides whether to merge or deploy.
 
 
 ---

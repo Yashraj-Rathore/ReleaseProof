@@ -70,8 +70,32 @@ Run same bounded workload against exact base and candidate with same toolchain/p
 - repeated latency/resource observations only with measurement caveats.
 A difference is evidence, not automatically a defect.
 
+### M10 implemented boundary
+
+M10 remains inside ADR-018: only the source-controlled synthetic bundle can run. The signed plan is
+chained to an exact separately approved M9 plan and selects a finite image-bundled base/candidate
+revision. Base and candidate receive the same generated test, handler-probe workload, Python image,
+environment, network/mount policy and resource ceilings. The initial HTTP observation calls a
+fixture handler contract in-process and opens no socket.
+
+Comparison uses selected test outcome, HTTP status/schema/body, state and events. Paths
+`http.headers.x-request-id` and `state.updated_at` are explicitly excluded by
+`releaseproof.fixture-mask.v1`; latency is stored as descriptive evidence and is not a gate. A
+candidate timeout is UNKNOWN, while a base failure is reported as non-attributable.
+
 ## Mutation testing
 Controlled mutations only on fixture/explicitly configured paths initially. Mutation survival means test weakness may exist; it is not proof of a production bug.
+
+`releaseproof.fixture-mutations.v1` contains exactly two image-bundled source overlays. The focused
+generated test kills the forced-tax mutant and does not kill the removed-negative-guard mutant.
+The resulting 1/2 score validates kill/survive accounting only; it is not exhaustive coverage.
+
+## Recommendation fusion
+
+`recommendation-fusion-v1` requires explicit model-risk, retrieval, generated-test, execution,
+differential and mutation component status. A deterministic regression/failure HOLD wins over all
+other inputs including an LLM SHIP suggestion. Missing/failed mandatory evidence yields UNKNOWN;
+review-worthy available evidence yields REVIEW. SHIP remains advisory and never merges/deploys.
 
 ## Failure semantics
 Runner unavailable/timeout/install failure => UNKNOWN/REVIEW evidence, never pass. If base also fails, candidate cannot be blamed solely by that check.

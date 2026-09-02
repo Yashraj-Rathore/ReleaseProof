@@ -61,6 +61,14 @@ repeats the exact snapshot/proposal/plan hashes. Runs are append-only and idempo
 runner/image/plan identity, outcome, timing, bounded output hashes/excerpts, isolation checks,
 timeout/kill, cleanup and stale-at-recording state.
 
+### DifferentialPlan / DifferentialRun / RecommendationDecision
+The M10 plan is immutable and points to one exact M9 plan and its separate human approval. It binds
+controlled base/candidate revision checksums, the same image/environment/resource/workload policy,
+the nondeterminism-mask version and bounded mutation set. The result stores comparable test/probe/
+HTTP/state/event facts, bounded output, mutation outcomes and limitations. A recommendation row
+binds the snapshot, differential run, exact fusion-policy version, input hash and decision hash;
+historical decisions are never rewritten when a later policy is introduced.
+
 ### DeploymentOutcome
 Optional feedback taxonomy (`no_issue`, `revert`, `hotfix`, `incident`, `manual_label`, `unknown`), source/confidence/observation window and org-training eligibility.
 
@@ -198,3 +206,16 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
   with `stale_at_recording=true`, never promoted as current.
 - Audits store only opaque IDs, hashes, outcome, attempt and staleness—not patches, source, secrets
   or output excerpts.
+
+## M10 differential and recommendation evidence implementation
+
+- `DifferentialPlan` is one-to-one with the source execution plan and repeats its exact approval,
+  tenant, snapshot, proposal/input hash and image bindings through the strict payload.
+- `DifferentialRun` is append-only/idempotent by tenant key and plan attempt. It records the strict
+  result hash, outcome, killed/eligible mutation counts and whether the source plan was stale when
+  evidence arrived.
+- `RecommendationDecision` is append-only per differential run and policy version. Its payload is
+  reconstructed and re-evaluated during validation; advisory-only and `auto_merge=false` are
+  invariants, not UI conventions.
+- Composite foreign keys/triggers reject cross-tenant plan, approval, run and snapshot rebinding.
+  Database triggers reject raw update/delete of all three M10 record types.

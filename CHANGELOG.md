@@ -85,6 +85,18 @@
 - Frozen synthetic M9 policy evidence plus an explicit live CI sandbox suite for credential/host/
   socket/network/metadata/resource/timeout/output/signature/cleanup sentinels and an Owner Learning
   Note.
+- M10 strict differential plan/result contracts chained to the separate M9 approval, with exact
+  controlled base/candidate/bundle identities, one parity workload, explicit nondeterminism masks,
+  comparable test/HTTP/state/event evidence and fail-closed timeout/base-failure semantics.
+- A two-mutant synthetic fixture slice with explicit kill/survive/inconclusive accounting and
+  limitations, executed only inside the unchanged ADR-018 sandbox boundary.
+- Immutable tenant-bound differential plans/runs and `recommendation-fusion-v1` decisions with
+  composite database integrity, idempotency, exact evidence/policy hashes and raw-mutation denial.
+- A deterministic advisory fusion policy across risk, retrieval, generated tests, execution,
+  differential and mutation evidence; missing mandatory facts produce UNKNOWN and no LLM
+  suggestion can override deterministic HOLD.
+- A frozen four-case differential/four-case policy evaluation, live M10 sandbox test path and M10
+  Owner Learning Note; no new dependency, model, provider call or external execution scope.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.

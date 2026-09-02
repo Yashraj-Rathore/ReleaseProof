@@ -85,6 +85,12 @@ def _active(plan: ExecutionPlan) -> bool:
     )
 
 
+def execution_plan_is_active(plan: ExecutionPlan) -> bool:
+    """Expose the M9 freshness predicate to later evidence stages without weakening it."""
+
+    return _active(plan)
+
+
 def _load_plan(
     *, organization: Organization, public_id: uuid.UUID | str, lock: bool = False
 ) -> ExecutionPlan:

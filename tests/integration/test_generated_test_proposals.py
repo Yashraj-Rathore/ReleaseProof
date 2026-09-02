@@ -27,14 +27,26 @@ from apps.web.verification.services import (
     transition_test_proposal,
 )
 from tests import factories
+from tests.change_intel_fixtures import BASE_SHA
 from tests.integration.test_llm_evidence_persistence import _local_policy, _scope
 from tests.proposal_fixtures import VALID_TEST_PATH, proposal_fixture
 
 pytestmark = pytest.mark.django_db
 
 
-def _source(*, suffix: str, number: int) -> tuple[object, object, object, EvidenceItem]:
-    organization, repository, feature_set = _scope(suffix=suffix, number=number)
+def _source(
+    *,
+    suffix: str,
+    number: int,
+    base_sha: str = BASE_SHA,
+    head_sha: str | None = None,
+) -> tuple[object, object, object, EvidenceItem]:
+    organization, repository, feature_set = _scope(
+        suffix=suffix,
+        number=number,
+        base_sha=base_sha,
+        head_sha=head_sha,
+    )
     _local_policy(organization, repository)
     deterministic = (
         EvidenceItem.objects.filter(feature_set=feature_set).order_by("sequence").first()

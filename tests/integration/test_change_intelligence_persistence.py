@@ -46,6 +46,8 @@ def _snapshot(
     path: str,
     author_key: str | None,
     failed: bool | None,
+    base_sha: str = BASE_SHA,
+    head_sha: str | None = None,
 ) -> PullRequestSnapshot:
     receipt = WebhookReceipt.objects.create(
         organization=tenant,
@@ -73,8 +75,8 @@ def _snapshot(
         title=f"Synthetic change {label}",
         base_ref="main",
         head_ref=f"feature/{label}",
-        base_sha=BASE_SHA,
-        head_sha=f"{int(label):040x}",
+        base_sha=base_sha,
+        head_sha=head_sha or f"{int(label):040x}",
         author_key=author_key,
         commit_count=2,
         changed_files=[

@@ -1,0 +1,57 @@
+{
+  "differential_cases": [
+    {
+      "base_outcome": "passed",
+      "base_total": "113.00",
+      "candidate_outcome": "passed",
+      "candidate_total": "113.00",
+      "expected_differences": [],
+      "expected_outcome": "no_difference",
+      "id": "identical"
+    },
+    {
+      "base_outcome": "passed",
+      "base_total": "113.00",
+      "candidate_outcome": "failed",
+      "candidate_total": "115.00",
+      "expected_differences": ["tests.outcome", "http.body"],
+      "expected_outcome": "difference",
+      "id": "planted_regression"
+    },
+    {
+      "base_outcome": "passed",
+      "base_total": "113.00",
+      "candidate_outcome": "timeout",
+      "candidate_total": null,
+      "expected_differences": [],
+      "expected_outcome": "unknown",
+      "id": "candidate_timeout"
+    },
+    {
+      "base_outcome": "failed",
+      "base_total": "113.00",
+      "candidate_outcome": "failed",
+      "candidate_total": "115.00",
+      "expected_differences": [],
+      "expected_outcome": "base_failed",
+      "id": "base_failure_not_blame"
+    }
+  ],
+  "license": "CC0-1.0",
+  "mutation_expectation": {
+    "killed": 1,
+    "score_percent": 50,
+    "survived": 1,
+    "total": 2
+  },
+  "policy_cases": [
+    {"expected": "SHIP", "id": "complete_clear"},
+    {"expected": "UNKNOWN", "id": "missing_execution"},
+    {"expected": "HOLD", "id": "deterministic_hold_llm_ship"},
+    {"expected": "REVIEW", "id": "low_mutation_score"}
+  ],
+  "provenance": "authored in-repository for ReleaseProof M10 evaluation",
+  "schema_version": "m10-differential-evaluation-fixture-v1",
+  "synthetic": true,
+  "usage": "deterministic fixture evaluation only; not customer or production outcome evidence"
+}

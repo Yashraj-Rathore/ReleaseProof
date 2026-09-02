@@ -103,8 +103,9 @@ The controlled adapter rejects traversal, arbitrary target files, source-file mo
 unexpected commands/imports, dunder introspection and obvious file/process/network capabilities.
 Static AST filtering cannot make hostile code safe, so M8 deliberately has no execution path,
 repository credential, patch application, runner call or execution approval. Audit metadata keeps
-hash/version/lifecycle facts and excludes patch/source content. M9 must complete its independent
-threat review and isolation signoff before execution exists.
+hash/version/lifecycle facts and excludes patch/source content. M9 completed its independent
+threat review and isolation signoff before the separate fixture-only execution path became
+available.
 
 ## M9 sandbox boundary
 
@@ -116,3 +117,16 @@ non-root with a read-only root, no capabilities and no-new-privileges, and are f
 each attempt. Live sentinels cover parent secrets, socket/mount, metadata/network, cgroup/tmpfs,
 timeout/kill/output and cleanup. These controls reduce risk for the source-controlled fixture and
 are not a universal container-isolation claim.
+
+## M10 differential/recommendation controls
+
+M10 adds no execution backend, network path or provider. Signed contracts accept only a finite
+checksum-bound synthetic base/candidate/mutation bundle inside the M9 image and preserve the same
+no-network/no-mount/non-root/resource controls. Result parsers bound output and reject unknown
+schema fields. Explicit masks apply only to two declared nondeterministic display fields and cannot
+hide test outcome, HTTP status/schema/body, selected state or selected events.
+
+Differential plans chain to the separate M9 approval and become stale with that source plan.
+Composite database constraints prevent tenant/approval/snapshot rebinding. Recommendation inputs
+must cite same-tenant persisted evidence; deterministic HOLD has highest precedence, incomplete
+mandatory evidence becomes UNKNOWN, and `auto_merge=false` is validated and persisted.

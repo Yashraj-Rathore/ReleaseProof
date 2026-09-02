@@ -53,3 +53,10 @@ append-only human lifecycle/audit events -> bounded export. The frozen synthetic
 evaluation checksum are preserved beside that chain. Acceptance is not model promotion or
 execution authorization; future M9 evidence must name the exact exported proposal and a separate
 execution-plan hash without rewriting M8 history.
+
+M9/M10 extend that chain with exact execution plan + separate human approval + signed bounded run
+result + differential plan + controlled base/candidate revisions + workload/mask/mutation versions
++ signed result + immutable `recommendation-fusion-v1` input/decision hashes. A later recommendation
+policy must create a new decision version; it cannot rewrite historical M10 decisions. The fixture
+evaluation and live CI evidence remain distinct, and neither promotes arbitrary repository
+execution.

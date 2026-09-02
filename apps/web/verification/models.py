@@ -25,12 +25,24 @@ from packages.ai_core import (
     ProposalRisk,
 )
 from packages.execution_contracts import (
+    DIFFERENTIAL_PLAN_SCHEMA_VERSION,
+    DIFFERENTIAL_RESULT_SCHEMA_VERSION,
     EXECUTION_PLAN_SCHEMA_VERSION,
     EXECUTION_RESULT_SCHEMA_VERSION,
+    DifferentialOutcome,
     ExecutionContractError,
     ExecutionOutcome,
+    parse_differential_plan_json,
+    parse_differential_result_json,
     parse_execution_plan_json,
     parse_execution_result_json,
+)
+from packages.recommendation_core import (
+    RECOMMENDATION_POLICY_VERSION,
+    Recommendation,
+    fuse_recommendation,
+    recommendation_decision_from_dict,
+    recommendation_inputs_from_dict,
 )
 
 
@@ -568,3 +580,273 @@ class ExecutionRun(models.Model):
     def delete(self, *args: object, **kwargs: object) -> NoReturn:
         del args, kwargs
         raise ValidationError("execution runs are immutable")
+
+
+def validate_differential_plan_payload(value: Any) -> None:
+    if not isinstance(value, dict):
+        raise ValidationError("differential plan payload must be an object")
+    try:
+        parse_differential_plan_json(json.dumps(value, sort_keys=True))
+    except (ExecutionContractError, TypeError, ValueError) as error:
+        raise ValidationError("differential plan payload is invalid") from error
+
+
+def validate_differential_result_payload(value: Any) -> None:
+    if not isinstance(value, dict):
+        raise ValidationError("differential result payload must be an object")
+    try:
+        parse_differential_result_json(json.dumps(value, sort_keys=True))
+    except (ExecutionContractError, TypeError, ValueError) as error:
+        raise ValidationError("differential result payload is invalid") from error
+
+
+def validate_recommendation_payload(value: Any) -> None:
+    if not isinstance(value, dict) or set(value) != {"decision", "inputs"}:
+        raise ValidationError("recommendation payload is invalid")
+    try:
+        inputs = recommendation_inputs_from_dict(value["inputs"])
+        decision = recommendation_decision_from_dict(value["decision"])
+    except (KeyError, TypeError, ValueError) as error:
+        raise ValidationError("recommendation payload is invalid") from error
+    if fuse_recommendation(inputs) != decision:
+        raise ValidationError("recommendation payload does not match the deterministic policy")
+
+
+class DifferentialPlanQuerySet(ImmutableQuerySet["DifferentialPlan"]):
+    def for_organization(self, organization: Organization | int) -> DifferentialPlanQuerySet:
+        organization_id = (
+            organization.pk if isinstance(organization, Organization) else organization
+        )
+        return self.filter(organization_id=organization_id)
+
+
+class DifferentialPlan(models.Model):
+    """One immutable M10 plan chained to an exact separately approved M9 plan."""
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.PROTECT, related_name="differential_plans"
+    )
+    source_execution_plan = models.OneToOneField(
+        ExecutionPlan, on_delete=models.PROTECT, related_name="differential_plan"
+    )
+    source_approval = models.ForeignKey(
+        ExecutionApproval, on_delete=models.PROTECT, related_name="differential_plans"
+    )
+    schema_version = models.CharField(max_length=64, default=DIFFERENTIAL_PLAN_SCHEMA_VERSION)
+    plan_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    base_sha = models.CharField(max_length=40, validators=[validate_sha])
+    candidate_sha = models.CharField(max_length=40, validators=[validate_sha])
+    image = models.CharField(max_length=160)
+    payload = models.JSONField(validators=[validate_differential_plan_payload])
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="differential_plans_created",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = DifferentialPlanQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("organization", "id"), name="verification_diff_plan_org_id_unique"
+            ),
+            models.UniqueConstraint(
+                fields=("organization", "plan_hash"),
+                name="verification_diff_plan_org_hash_unique",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(schema_version=DIFFERENTIAL_PLAN_SCHEMA_VERSION),
+                name="verification_diff_plan_schema_v1",
+            ),
+        ]
+        ordering = ("-created_at", "-id")
+
+    def clean(self) -> None:
+        super().clean()
+        if self.organization_id is None or self.source_execution_plan_id is None:
+            return
+        plan = parse_differential_plan_json(json.dumps(self.payload, sort_keys=True))
+        source = self.source_execution_plan
+        approval = self.source_approval
+        if (
+            source.organization_id != self.organization_id
+            or approval.organization_id != self.organization_id
+            or approval.plan_id != source.id
+            or plan.execution_plan_id != str(source.public_id)
+            or plan.execution_approval_id != str(approval.public_id)
+            or plan.execution_plan_sha256 != source.plan_hash
+            or plan.snapshot_id != str(source.snapshot.public_id)
+            or plan.organization_id != str(self.organization.public_id)
+            or plan.repository_id != str(source.snapshot.repository.public_id)
+            or plan.proposal_hash != source.proposal_hash
+            or plan.plan_sha256 != self.plan_hash
+            or plan.base_sha != self.base_sha
+            or plan.candidate_sha != self.candidate_sha
+            or plan.image != self.image
+        ):
+            raise ValidationError("differential plan must bind the exact approved tenant plan")
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        if self.pk is not None:
+            raise ValidationError("differential plans are immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args: object, **kwargs: object) -> NoReturn:
+        del args, kwargs
+        raise ValidationError("differential plans are immutable")
+
+
+class DifferentialRun(models.Model):
+    """Append-only comparable base/candidate and bounded mutation evidence."""
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.PROTECT, related_name="differential_runs"
+    )
+    plan = models.ForeignKey(DifferentialPlan, on_delete=models.PROTECT, related_name="runs")
+    schema_version = models.CharField(max_length=64, default=DIFFERENTIAL_RESULT_SCHEMA_VERSION)
+    result_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    attempt = models.PositiveSmallIntegerField()
+    outcome = models.CharField(
+        max_length=32, choices=[(item.value, item.value) for item in DifferentialOutcome]
+    )
+    mutation_killed = models.PositiveSmallIntegerField()
+    mutation_total = models.PositiveSmallIntegerField()
+    idempotency_key = models.UUIDField()
+    stale_at_recording = models.BooleanField(default=False)
+    payload = models.JSONField(validators=[validate_differential_result_payload])
+    recorded_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager["DifferentialRun"]()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("organization", "id"), name="verification_diff_run_org_id_unique"
+            ),
+            models.UniqueConstraint(
+                fields=("organization", "idempotency_key"),
+                name="verification_diff_run_org_idempotent",
+            ),
+            models.UniqueConstraint(
+                fields=("plan", "attempt"), name="verification_diff_run_plan_attempt_unique"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(schema_version=DIFFERENTIAL_RESULT_SCHEMA_VERSION),
+                name="verification_diff_result_schema_v1",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(outcome__in=[item.value for item in DifferentialOutcome]),
+                name="verification_diff_outcome_allowed",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(mutation_killed__lte=models.F("mutation_total")),
+                name="verification_mutation_killed_lte_total",
+            ),
+        ]
+        ordering = ("plan_id", "attempt", "id")
+
+    def clean(self) -> None:
+        super().clean()
+        if self.organization_id is None or self.plan_id is None:
+            return
+        result = parse_differential_result_json(json.dumps(self.payload, sort_keys=True))
+        if (
+            self.plan.organization_id != self.organization_id
+            or result.plan_sha256 != self.plan.plan_hash
+            or result.result_sha256 != self.result_hash
+            or result.attempt != self.attempt
+            or result.outcome.value != self.outcome
+            or result.mutation_killed != self.mutation_killed
+            or result.mutation_total != self.mutation_total
+        ):
+            raise ValidationError("differential result must bind the exact tenant plan")
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        if self.pk is not None:
+            raise ValidationError("differential runs are immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args: object, **kwargs: object) -> NoReturn:
+        del args, kwargs
+        raise ValidationError("differential runs are immutable")
+
+
+class RecommendationDecision(models.Model):
+    """An immutable decision under one exact historical policy version."""
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.PROTECT, related_name="recommendation_decisions"
+    )
+    snapshot = models.ForeignKey(
+        PullRequestSnapshot, on_delete=models.PROTECT, related_name="recommendation_decisions"
+    )
+    differential_run = models.ForeignKey(
+        DifferentialRun, on_delete=models.PROTECT, related_name="recommendation_decisions"
+    )
+    policy_version = models.CharField(max_length=64, default=RECOMMENDATION_POLICY_VERSION)
+    recommendation = models.CharField(
+        max_length=16, choices=[(item.value, item.value) for item in Recommendation]
+    )
+    inputs_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    decision_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    payload = models.JSONField(validators=[validate_recommendation_payload])
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="recommendation_decisions_created",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager["RecommendationDecision"]()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("organization", "id"), name="verification_rec_org_id_unique"
+            ),
+            models.UniqueConstraint(
+                fields=("differential_run", "policy_version"),
+                name="verification_rec_run_policy_unique",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(policy_version=RECOMMENDATION_POLICY_VERSION),
+                name="verification_rec_policy_v1",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(recommendation__in=[item.value for item in Recommendation]),
+                name="verification_rec_value_allowed",
+            ),
+        ]
+        ordering = ("-created_at", "-id")
+
+    def clean(self) -> None:
+        super().clean()
+        if self.organization_id is None or self.differential_run_id is None:
+            return
+        inputs = recommendation_inputs_from_dict(self.payload["inputs"])
+        decision = recommendation_decision_from_dict(self.payload["decision"])
+        if (
+            self.differential_run.organization_id != self.organization_id
+            or self.differential_run.plan.source_execution_plan.snapshot_id != self.snapshot_id
+            or self.snapshot.organization_id != self.organization_id
+            or decision != fuse_recommendation(inputs)
+            or decision.policy_version != self.policy_version
+            or decision.recommendation.value != self.recommendation
+            or decision.inputs_sha256 != self.inputs_hash
+            or decision.decision_sha256 != self.decision_hash
+        ):
+            raise ValidationError("recommendation decision binding is invalid")
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        if self.pk is not None:
+            raise ValidationError("recommendation decisions are immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args: object, **kwargs: object) -> NoReturn:
+        del args, kwargs
+        raise ValidationError("recommendation decisions are immutable")

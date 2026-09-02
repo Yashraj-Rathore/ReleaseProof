@@ -44,5 +44,7 @@
 | `40_M9_RUNNER_THREAT_REVIEW.md` | ranked runner threats, host assumptions, controls and RP-0801 signoff |
 | `41_M9_RUNNER_EVALUATION.md` | deterministic policy evidence, live sentinel scope and limitations |
 | `42_M9_OWNER_LEARNING_NOTE.md` | owner-defensible M9 trust boundary, contracts and rerun path |
+| `43_M10_DIFFERENTIAL_EVALUATION.md` | differential/mutation/fusion fixture results and limitations |
+| `44_M10_OWNER_LEARNING_NOTE.md` | owner-defensible M10 parity, comparison, mutation and policy explanation |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

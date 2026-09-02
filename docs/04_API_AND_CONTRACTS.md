@@ -77,6 +77,25 @@ baseline active with an explicit fallback reason.
 `RiskModelResponseV1`: exact model artifact/checksum, raw score, calibrated probability nullable, band, explanation, latency metadata.
 Feature mismatch is rejected.
 
+## M10 differential and recommendation contracts
+
+`releaseproof.differential-plan.v1` references one exact approved M9 plan and binds both controlled
+revision checksums, the candidate variant, proposal/input hash, image, resource/host/environment/
+network/mount policy, `releaseproof.fixture-workload.v1`, `releaseproof.fixture-mask.v1` and
+`releaseproof.fixture-mutations.v1`. Unknown fields, revisions, masks, mutations or hashes reject
+the plan.
+
+`releaseproof.differential-result.v1` records comparable base/candidate test and probe outcomes,
+exit facts, bounded output hashes/excerpts, selected HTTP status/schema/body, selected state/events,
+descriptive timings, explicit difference codes, mutation kill/survive/inconclusive results,
+isolation/cleanup facts and limitations. A timeout is UNKNOWN; a base failure is non-attributable.
+
+`recommendation-fusion-v1` consumes explicit status/fact/evidence references for model risk,
+retrieval, generated tests, execution, differential and mutation evidence. It produces immutable
+advisory SHIP/REVIEW/HOLD/UNKNOWN plus reason codes and exact input/decision hashes. Its precedence
+is deterministic HOLD, mandatory-evidence UNKNOWN, review conditions, then SHIP. LLM suggestions
+are recorded input but cannot override any deterministic HOLD. No contract authorizes merge/deploy.
+
 ## Retrieval contract
 Server-resolved org/repo scope, query, filters, max candidates. Results include document/chunk source/version, lexical/vector/fusion/rerank scores and safe excerpt.
 

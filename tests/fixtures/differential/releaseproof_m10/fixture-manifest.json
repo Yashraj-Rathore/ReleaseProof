@@ -1,0 +1,30 @@
+{
+  "base": {
+    "revision_sha": "a043cc1f93e40f7f14c1de107a4364177ae25392",
+    "tree_sha256": "a043cc1f93e40f7f14c1de107a4364177ae25392a787f5611260f9f298c12cd5"
+  },
+  "bundle_sha256": "8e3554c97d41207213554f092e2bcb439560164ae0fcb744c5b56e6adf81f87e",
+  "candidate_revisions": {
+    "identical": {
+      "overlay": null,
+      "revision_sha": "a043cc1f93e40f7f14c1de107a4364177ae25392"
+    },
+    "probe_timeout": {
+      "overlay": "probe_timeout",
+      "revision_sha": "082df2491655a5bff0452212476a2e40c6af40547"
+    },
+    "tax_regression": {
+      "overlay": "tax_regression",
+      "revision_sha": "703143e8e75a685bd5385ec6f7e8016795451c8d"
+    }
+  },
+  "license_spdx": "MIT",
+  "mutation_revisions": {
+    "negative_guard_removed": "negative_guard_removed",
+    "tax_rate_forced": "tax_regression"
+  },
+  "provenance": "authored in-repository for ReleaseProof M10 tests",
+  "schema_version": "releaseproof.differential-fixture-manifest.v1",
+  "synthetic": true,
+  "usage": "fixture-only differential and mutation evaluation; not customer isolation evidence"
+}

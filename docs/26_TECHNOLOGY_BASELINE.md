@@ -148,6 +148,16 @@ image ID and must carry labels matching runner version `releaseproof-fixture-run
 fixture-tree hash `70b1ebeb3d2257fa88667f06d8df3690de118dd277ec993f805d1851c17b4673`.
 Mutable tags are not accepted in an execution plan.
 
+## M10 dependency/image decision — verified 2026-09-02
+
+M10 adds no package. Strict contracts, comparison, mutation accounting, policy fusion and fixture
+process control use the Python standard library plus existing Django persistence and pytest in the
+runner image. The M9 image gains a second exact label for
+`releaseproof-differential-runner-v1` and frozen executable-bundle SHA-256
+`8e3554c97d41207213554f092e2bcb439560164ae0fcb744c5b56e6adf81f87e`; M9's original fixture hash
+and runner identity remain unchanged. No mutation framework, HTTP client/server, LLM SDK call or
+additional container/runtime dependency is needed for this bounded slice.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.

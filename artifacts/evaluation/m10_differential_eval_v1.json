@@ -1,0 +1,99 @@
+{
+  "bundle": {
+    "matches_frozen_hash": true,
+    "path": "tests/fixtures/differential/releaseproof_m10",
+    "sha256": "8e3554c97d41207213554f092e2bcb439560164ae0fcb744c5b56e6adf81f87e"
+  },
+  "decision": {
+    "all_fixture_cases_passed": true,
+    "bundle_identity_validated": true,
+    "external_repository_execution_enabled": false,
+    "live_sandbox_evidence_required_in_ci": true
+  },
+  "differential_cases": [
+    {
+      "actual_differences": [],
+      "actual_outcome": "no_difference",
+      "id": "identical",
+      "passed": true
+    },
+    {
+      "actual_differences": [
+        "tests.outcome",
+        "http.body"
+      ],
+      "actual_outcome": "difference",
+      "id": "planted_regression",
+      "passed": true
+    },
+    {
+      "actual_differences": [],
+      "actual_outcome": "unknown",
+      "id": "candidate_timeout",
+      "passed": true
+    },
+    {
+      "actual_differences": [],
+      "actual_outcome": "base_failed",
+      "id": "base_failure_not_blame",
+      "passed": true
+    }
+  ],
+  "fixture": {
+    "license": "CC0-1.0",
+    "path": "tests/fixtures/execution/m10_differential_cases_v1.json",
+    "sha256": "30aeb85db00a38247b506312357e2c2de554b312a57ed6e6b7895ca7b4cfbe18"
+  },
+  "limitations": [
+    "All inputs and revisions are synthetic and source controlled.",
+    "Latency values are descriptive and are not a performance-regression threshold.",
+    "The HTTP fixture calls a handler contract in-process and opens no network socket.",
+    "Live sandbox evidence is produced separately on the disposable CI host."
+  ],
+  "mutation": {
+    "killed": 1,
+    "limitations": [
+      "Only two controlled source mutations are evaluated.",
+      "A surviving mutation indicates a possible test gap, not a production defect."
+    ],
+    "score_percent": 50,
+    "survived": 1,
+    "total": 2
+  },
+  "policy_cases": [
+    {
+      "actual": "SHIP",
+      "advisory_only": true,
+      "auto_merge": false,
+      "expected": "SHIP",
+      "id": "complete_clear",
+      "passed": true
+    },
+    {
+      "actual": "UNKNOWN",
+      "advisory_only": true,
+      "auto_merge": false,
+      "expected": "UNKNOWN",
+      "id": "missing_execution",
+      "passed": true
+    },
+    {
+      "actual": "HOLD",
+      "advisory_only": true,
+      "auto_merge": false,
+      "expected": "HOLD",
+      "id": "deterministic_hold_llm_ship",
+      "passed": true
+    },
+    {
+      "actual": "REVIEW",
+      "advisory_only": true,
+      "auto_merge": false,
+      "expected": "REVIEW",
+      "id": "low_mutation_score",
+      "passed": true
+    }
+  ],
+  "schema_version": "m10-differential-evaluation-v1",
+  "synthetic": true
+}

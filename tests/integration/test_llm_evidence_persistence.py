@@ -21,12 +21,19 @@ from packages.ai_core import (
 )
 from packages.retrieval_core import EvidenceDocumentInput, EvidenceSourceType
 from tests import factories
+from tests.change_intel_fixtures import BASE_SHA
 from tests.integration.test_change_intelligence_persistence import _snapshot
 
 pytestmark = pytest.mark.django_db
 
 
-def _scope(*, suffix: str, number: int) -> tuple[object, object, object]:
+def _scope(
+    *,
+    suffix: str,
+    number: int,
+    base_sha: str = BASE_SHA,
+    head_sha: str | None = None,
+) -> tuple[object, object, object]:
     organization = factories.organization(name=f"LLM {suffix}", slug=f"llm-{suffix}")
     installation = factories.installation(
         organization=organization,
@@ -47,6 +54,8 @@ def _scope(*, suffix: str, number: int) -> tuple[object, object, object]:
         path="src/auth/policy.py",
         author_key=None,
         failed=None,
+        base_sha=base_sha,
+        head_sha=head_sha,
     )
     feature_set, _created = analyze_snapshot_for_organization(
         organization=organization,

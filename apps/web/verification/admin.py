@@ -7,11 +7,14 @@ from django.http import HttpRequest
 
 from apps.web.organizations.admin import TenantScopedAdminMixin
 from apps.web.verification.models import (
+    DifferentialPlan,
+    DifferentialRun,
     ExecutionApproval,
     ExecutionPlan,
     ExecutionRun,
     GeneratedTestProposal,
     ProposalLifecycleEvent,
+    RecommendationDecision,
 )
 
 
@@ -67,3 +70,40 @@ class ExecutionApprovalAdmin(_ReadOnlyProposalAdmin):
 class ExecutionRunAdmin(_ReadOnlyProposalAdmin):
     list_display = ("public_id", "organization", "plan", "attempt", "outcome", "recorded_at")
     readonly_fields = tuple(field.name for field in ExecutionRun._meta.fields)
+
+
+@admin.register(DifferentialPlan)
+class DifferentialPlanAdmin(_ReadOnlyProposalAdmin):
+    list_display = (
+        "public_id",
+        "organization",
+        "base_sha",
+        "candidate_sha",
+        "created_at",
+    )
+    readonly_fields = tuple(field.name for field in DifferentialPlan._meta.fields)
+
+
+@admin.register(DifferentialRun)
+class DifferentialRunAdmin(_ReadOnlyProposalAdmin):
+    list_display = (
+        "public_id",
+        "organization",
+        "plan",
+        "attempt",
+        "outcome",
+        "recorded_at",
+    )
+    readonly_fields = tuple(field.name for field in DifferentialRun._meta.fields)
+
+
+@admin.register(RecommendationDecision)
+class RecommendationDecisionAdmin(_ReadOnlyProposalAdmin):
+    list_display = (
+        "public_id",
+        "organization",
+        "policy_version",
+        "recommendation",
+        "created_at",
+    )
+    readonly_fields = tuple(field.name for field in RecommendationDecision._meta.fields)

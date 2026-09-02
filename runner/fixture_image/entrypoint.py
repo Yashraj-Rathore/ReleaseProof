@@ -114,6 +114,11 @@ def main() -> int:
     if len(raw) > MAX_INPUT:
         return 64
     payload = json.loads(raw)
+    if "differential_plan" in payload:
+        from differential_entrypoint import run
+
+        plan = payload["differential_plan"]
+        return run(payload, _checks(plan))
     plan = payload["plan"]
     execution_input = payload["input"]
     limits = plan["resources"]
