@@ -14,8 +14,8 @@ checkout-independent.
 | `.pre-commit-config.yaml` | 1044 | `c34ecf7f9680dc30e0dde0b178dda144231197554f42c4c6637ae7b48d40f805` |
 | `.python-version` | 8 | `861b3dd8083d28f336ef70f6755bc399538ddad627b1d095820ca34cb953cf14` |
 | `AGENTS.md` | 7313 | `0abf3b78b53895e7086b9f9851f7c4ca5cc8ce4e8c6d0c125079712fe6d02f6e` |
-| `CHANGELOG.md` | 13517 | `8df7be6d574056007a4988dfc61c2c903b351a90a6b49ba65cc0fa3cdf3bbb83` |
-| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 312049 | `7961f1441a7c26ddddd446844eecfc09ea2a40fa9b434303ecc8537bf46fde5a` |
+| `CHANGELOG.md` | 13711 | `104274514fe2fa4f20ffd5f591fbbf6f09e52d805d4908fc6439fe2baef39be2` |
+| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 312243 | `a0b5f643bf453846854f163eb426594ddf9afebbb65b3aeba93645ac337d0a99` |
 | `CODEX_PROMPT_SEQUENCE.md` | 4186 | `01f5b7913c8d80546d92ce6d00ea16d2bd251fd0f4213eee32eac5ecf235ec35` |
 | `CODEX_START_HERE.md` | 2443 | `225d7bd9451e0c8f9911dbb88bdd7c806e79e24ddf1458f12b7cfa2cec5b4e7e` |
 | `IMPLEMENTATION_CHECKLIST.md` | 1641 | `28a5ef63491e9ccc2166f6be3d0e38b110ceb02aa59f1372c691618cf75eb267` |
@@ -346,7 +346,7 @@ checkout-independent.
 | `tests/integration/test_retrieval_persistence.py` | 8924 | `b84ade1683240584252900bb6b99eb7327a24e40ad5e4b9ada011f6c7997dab1` |
 | `tests/integration/test_s3_contract.py` | 1644 | `5d34ba2c9d6bbd96e22f93a788d1223aebdb0f617aee14a0eb5eb0ca74ac42dd` |
 | `tests/proposal_fixtures.py` | 2878 | `c5f833f90c1d4da8fb7ec98b0b2cc7c6f027cad86344f8c1552eadfebec652b7` |
-| `tests/sandbox/test_fixture_runner.py` | 5220 | `a083c17c9bfe58b735e2e42cdad1599d548363c89e557c8f24faada8182f2467` |
+| `tests/sandbox/test_fixture_runner.py` | 5283 | `f0891e84def6b72c8b9641bc996a9668f7090a2e1231c13044e3b1e9726a9a2b` |
 | `tests/security/test_change_intelligence_tenancy.py` | 7101 | `c53f752e35c8ac966d4deea1dc0eafc9f8f3ded9a92bef00051e7af75c38be31` |
 | `tests/security/test_retrieval_tenancy.py` | 5046 | `61ec4e52cad5d596f5f027c788a0f1c5dc313c39cb740b5d9a6d01a83b0aca34` |
 | `tests/security/test_tenant_constraints.py` | 1737 | `4a2dbf1d1b46acfb7bf8a38cc7793f348646a757b1cb23d929a2bf615f54430a` |

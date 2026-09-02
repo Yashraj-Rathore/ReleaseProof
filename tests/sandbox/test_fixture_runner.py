@@ -138,11 +138,12 @@ def test_live_fixture_runner_proves_isolation_resources_timeout_output_and_clean
     noisy, noisy_input = _case(
         "from fixture_app.probes import emit_output\n\n\n"
         "def test_output_limit() -> None:\n"
-        "    emit_output()\n",
+        "    emit_output()\n"
+        "    raise AssertionError('replay captured output')\n",
         name="m9_output",
     )
     bounded = _run(noisy, noisy_input)
-    assert bounded.outcome is ExecutionOutcome.PASSED
+    assert bounded.outcome is ExecutionOutcome.FAILED
     assert bounded.stdout.truncated is True
     assert len(bounded.stdout.excerpt.encode()) <= noisy.resources.output_bytes
     _assert_no_runner_containers()

@@ -1075,6 +1075,8 @@ and its remote M2 result is tracked in GitHub Actions.
   allowed only for the explicit controlled-fixture ephemeral-CI profile.
 - Disabled compression for the M9 Docker `local` log driver because the bounded one-file rotation
   policy is incompatible with that driver's default compression setting.
+- Made the synthetic output-limit sentinel fail after emission so pytest replays its captured bytes
+  and the live runner proves truncation on a correctly classified failed candidate execution.
 - Added the frozen M4 artifact rebuild to the canonical validator and kept NumPy, pandas,
   scikit-learn and XGBoost deferred until a learned-model milestone needs them.
 - Reverified and locked NumPy 2.5.2, pandas 3.0.5, scikit-learn 1.9.0 and CPU-only XGBoost 3.4.1
