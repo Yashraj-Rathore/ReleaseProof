@@ -133,6 +133,14 @@ def test_output_is_bounded_but_preserves_full_content_hash_and_size() -> None:
     ("stderr", "expected"),
     [
         (b"PermissionError: blocked", "permission_error"),
+        (
+            b"Error response from daemon: OCI runtime create failed: invalid argument",
+            "invalid_argument",
+        ),
+        (
+            b"Error response from daemon: failed to create shim task",
+            "runtime_task_creation",
+        ),
         (b"Error response from daemon: rejected", "docker_runtime_error"),
         (b"Traceback (most recent call last)", "python_error"),
         (b"arbitrary untrusted value", "nonzero_exit"),

@@ -705,7 +705,7 @@ exact base/candidate parity.
   `c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759` before final
   documentation synchronization. It is non-live synthetic evidence; the sandbox-marked CI suite
   separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
-- The local deterministic suite passed **139 tests**, with one PostgreSQL physical-index assertion
+- The local deterministic suite passed **141 tests**, with one PostgreSQL physical-index assertion
   skipped and live S3/sandbox tests deselected. Ruff, strict mypy (183 source files), Django and M9
   focused checks passed. The local Docker daemon was unavailable, so the pushed GitHub Actions run
   is the authoritative live PostgreSQL/S3/container evidence.
