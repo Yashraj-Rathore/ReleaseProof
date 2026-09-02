@@ -21,7 +21,12 @@ from packages.execution_contracts import (
     sign_payload,
     verify_payload_signature,
 )
-from runner.docker_cli import _classify_runner_failure, docker_create_arguments
+from runner.docker_cli import (
+    RunnerRejectedError,
+    _classify_runner_failure,
+    _safe_ephemeral_ci_diagnostic,
+    docker_create_arguments,
+)
 
 FIXTURE_ROOT = Path("tests/fixtures/repositories/releaseproof_fixture")
 
@@ -155,3 +160,25 @@ def test_runner_failure_classification_never_exposes_raw_output(
 
     assert category == expected
     assert stderr.decode() not in category
+
+
+def test_ephemeral_ci_diagnostic_is_bounded_and_neutralizes_control_text() -> None:
+    diagnostic = _safe_ephemeral_ci_diagnostic(
+        b"Error response from daemon:\n\x1b[31minvalid\r\n" + b"x" * 4_096
+    )
+
+    assert diagnostic.startswith("Error response from daemon: ?[31minvalid")
+    assert "\n" not in diagnostic
+    assert "\r" not in diagnostic
+    assert "\x1b" not in diagnostic
+    assert len(diagnostic) == 512
+
+
+def test_runner_rejection_keeps_diagnostic_separate_from_stable_code() -> None:
+    rejection = RunnerRejectedError(
+        "runner_result_invalid_runtime_task_creation",
+        ephemeral_ci_diagnostic="bounded fixture-only detail",
+    )
+
+    assert rejection.code == "runner_result_invalid_runtime_task_creation"
+    assert rejection.ephemeral_ci_diagnostic == "bounded fixture-only detail"

@@ -26,9 +26,30 @@ from packages.execution_contracts import (
 class RunnerRejectedError(RuntimeError):
     """A safe, stable runner-boundary rejection."""
 
-    def __init__(self, code: str) -> None:
-        super().__init__(code)
+    def __init__(self, code: str, *, ephemeral_ci_diagnostic: str | None = None) -> None:
+        message = code
+        if ephemeral_ci_diagnostic:
+            message = f"{code}: {ephemeral_ci_diagnostic}"
+        super().__init__(message)
         self.code = code
+        self.ephemeral_ci_diagnostic = ephemeral_ci_diagnostic
+
+
+def _safe_ephemeral_ci_diagnostic(raw: bytes) -> str:
+    """Bound and neutralize controlled-fixture CI output for one disposable host."""
+
+    decoded = raw[:2_048].decode("utf-8", errors="replace")
+    safe = "".join(
+        " "
+        if character in "\r\n\t"
+        else (
+            character
+            if character.isascii() and (character.isalnum() or character in " .,:/_=-()[]")
+            else "?"
+        )
+        for character in decoded
+    )
+    return " ".join(safe.split())[:512]
 
 
 def _classify_runner_failure(completed: subprocess.CompletedProcess[bytes]) -> str:
@@ -282,7 +303,13 @@ def run_fixture_plan(
                 result = parse_execution_result_json(completed.stdout.decode("utf-8"))
             except (UnicodeDecodeError, ExecutionContractError) as error:
                 category = _classify_runner_failure(completed)
-                raise RunnerRejectedError(f"runner_result_invalid_{category}") from error
+                diagnostic = None
+                if allow_ephemeral_ci_fixture:
+                    diagnostic = _safe_ephemeral_ci_diagnostic(completed.stderr)
+                raise RunnerRejectedError(
+                    f"runner_result_invalid_{category}",
+                    ephemeral_ci_diagnostic=diagnostic,
+                ) from error
             if (
                 result.plan_sha256 != plan.plan_sha256
                 or result.image != plan.image
