@@ -102,6 +102,13 @@ def _capture(path: Path, limit: int) -> dict[str, object]:
     }
 
 
+def _resolved_allowlisted_command(command: object, file_path: str) -> list[str]:
+    expected = ["python", "-m", "pytest", "-q", file_path]
+    if command != expected:
+        raise ValueError("command is not allowlisted")
+    return [sys.executable, *expected[1:]]
+
+
 def main() -> int:
     raw = sys.stdin.buffer.read(MAX_INPUT + 1)
     if len(raw) > MAX_INPUT:
@@ -130,10 +137,7 @@ def main() -> int:
         )
         environment = dict(plan["environment"])
         environment["PYTHONPATH"] = "/workspace/repository/src"
-        command = plan["commands"][0]
-        expected_command = ["python", "-m", "pytest", "-q", execution_input["file_path"]]
-        if command != expected_command:
-            raise ValueError("command is not allowlisted")
+        command = _resolved_allowlisted_command(plan["commands"][0], execution_input["file_path"])
         with stdout_path.open("wb") as stdout, stderr_path.open("wb") as stderr:
             process = subprocess.Popen(  # noqa: S603
                 command,

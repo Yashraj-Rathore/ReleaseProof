@@ -14,14 +14,14 @@ checkout-independent.
 | `.pre-commit-config.yaml` | 1044 | `c34ecf7f9680dc30e0dde0b178dda144231197554f42c4c6637ae7b48d40f805` |
 | `.python-version` | 8 | `861b3dd8083d28f336ef70f6755bc399538ddad627b1d095820ca34cb953cf14` |
 | `AGENTS.md` | 7313 | `0abf3b78b53895e7086b9f9851f7c4ca5cc8ce4e8c6d0c125079712fe6d02f6e` |
-| `CHANGELOG.md` | 12988 | `998162d8a200fafb2f22f3e27539e8affc5d651b4af4f428b64672f29961a1d1` |
-| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 311520 | `ad92b695ae7d701e875ccfb5f3a15b516b95d9dbb0b1042a737f96e230dca89d` |
+| `CHANGELOG.md` | 13175 | `2e18b2437e4667bd4c20542b1288c27449dffe5eb720b288685eda6fa5f0f2fd` |
+| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 311707 | `12f070342866c6e7f149c90dc2f715c077317660aa7520b1f14147e25594d708` |
 | `CODEX_PROMPT_SEQUENCE.md` | 4186 | `01f5b7913c8d80546d92ce6d00ea16d2bd251fd0f4213eee32eac5ecf235ec35` |
 | `CODEX_START_HERE.md` | 2443 | `225d7bd9451e0c8f9911dbb88bdd7c806e79e24ddf1458f12b7cfa2cec5b4e7e` |
 | `IMPLEMENTATION_CHECKLIST.md` | 1641 | `28a5ef63491e9ccc2166f6be3d0e38b110ceb02aa59f1372c691618cf75eb267` |
 | `PACKAGE_MANIFEST.md` | 2443 | `42f7d2f6379e0b3dac81072106676505e8112810202fc6d39c5b55127a20e722` |
 | `PACKAGE_VALIDATION.md` | 4897 | `932346cb417afab304e9d40f4940f48397d2db09a4b1f8f239536c945ddb5d8c` |
-| `PROJECT_STATUS.md` | 20749 | `dd25e91ae0a91a8d4f82251c31549fb2ce8736eeca04dbadf26164380e5348d7` |
+| `PROJECT_STATUS.md` | 20749 | `a632cfd8922b94221cc80688cd684efb211e5a374d9b2c03ecdfc61a31b14624` |
 | `README.md` | 17024 | `4610cc1b71b4cb5a0a8f95402f5e4b681b4d8626805cdf02350446b35952ec69` |
 | `adapters/__init__.py` | 56 | `05ffe9e489705476ef1d3ebbd55a4ddbccbe746f896cc416a239650d300d67c9` |
 | `adapters/change_intel/__init__.py` | 143 | `74aaa4034bfed8a1f4c4567e670c5ae117a9c43c80ea38ddea10725fd292c669` |
@@ -306,7 +306,7 @@ checkout-independent.
 | `runner/__init__.py` | 75 | `0d2e23e5bd82a37b865317ca79b19165798b9e799bbf80d06bf7c06939a8a75e` |
 | `runner/docker_cli.py` | 9539 | `295e1002c6ae4df0ae31858e131e8172f0d0befe3b8619b8820c510954c75fa2` |
 | `runner/fixture_image/Dockerfile` | 616 | `55f42fb3a0cc99c8aa827a0accac39f308790146718b80602066153d9ce8ec07` |
-| `runner/fixture_image/entrypoint.py` | 6794 | `0867c2d3225c493d6e6067bc86811f7007e10cde3f14d8396c0468fc55471a5b` |
+| `runner/fixture_image/entrypoint.py` | 6934 | `6628f789ba6a5527e11686a638499abee782df61ab9bec3378f7bd32113ca08e` |
 | `templates/dataset-card-template.md` | 696 | `47a6b4246438305e994126af3f1e46ac268eadd2a4de1736d4c3e1e21f678ec1` |
 | `templates/definition-of-done.md` | 1387 | `7e0be39e59c42f50537cf3757a2fc04dcdfc845ffe8a55c3c0692aad90a93fd2` |
 | `templates/experiment-report-template.md` | 398 | `9eb17af43cfcac32625e25759c4e2786927943368c914316e4eebc1ba902f316` |
@@ -355,6 +355,7 @@ checkout-independent.
 | `tests/unit/test_classical_ml.py` | 5807 | `dbda657efe024f44e02f13566b2d0f2cc951871cb91cc05989bee09ec239c402` |
 | `tests/unit/test_dataset_baseline.py` | 8021 | `5f951a4c5abda41e856c5247572a12b459fc503fcb0bf9300b1b2bfe1332c348` |
 | `tests/unit/test_execution_contracts.py` | 4622 | `3303ddffcd5ddfbc046cc7f9cdbb09229050a42a4e0caa0b38ed90ae426463a7` |
+| `tests/unit/test_fixture_entrypoint.py` | 979 | `3f4d603125cee2d5e80bd47d0f76c07ccffff62942182952c298f79638250664` |
 | `tests/unit/test_foundation_manifests.py` | 4293 | `bac3269bdec22b16f08f147a116718335f3c4184fbd66465509c646f20e666fc` |
 | `tests/unit/test_github_auth_contract.py` | 2167 | `dd621394f5b7e43b7824189f3437a936b3a1aa909ba8a7fa6d99b464e2ca9452` |
 | `tests/unit/test_llm_core.py` | 7991 | `5f99ce5533d79fd947cd4523d83e0ca1d92b079bbd111d96e0454d46237f5dc0` |

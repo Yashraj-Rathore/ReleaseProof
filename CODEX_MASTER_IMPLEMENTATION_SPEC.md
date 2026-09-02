@@ -705,7 +705,7 @@ exact base/candidate parity.
   `c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759` before final
   documentation synchronization. It is non-live synthetic evidence; the sandbox-marked CI suite
   separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
-- The local deterministic suite passed **131 tests**, with one PostgreSQL physical-index assertion
+- The local deterministic suite passed **135 tests**, with one PostgreSQL physical-index assertion
   skipped and live S3/sandbox tests deselected. Ruff, strict mypy (183 source files), Django and M9
   focused checks passed. The local Docker daemon was unavailable, so the pushed GitHub Actions run
   is the authoritative live PostgreSQL/S3/container evidence.
@@ -1069,6 +1069,8 @@ and its remote M2 result is tracked in GitHub Actions.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
   tenant and immutability controls cannot be inferred only from SQLite tests; the step uses an
   explicit public test-only webhook signing value while `.env.example` remains secret-free.
+- Resolved the fixture runner's allowlisted `python` command through the image's current
+  interpreter so its deliberately minimal, secret-free child environment does not require `PATH`.
 - Added the frozen M4 artifact rebuild to the canonical validator and kept NumPy, pandas,
   scikit-learn and XGBoost deferred until a learned-model milestone needs them.
 - Reverified and locked NumPy 2.5.2, pandas 3.0.5, scikit-learn 1.9.0 and CPU-only XGBoost 3.4.1
