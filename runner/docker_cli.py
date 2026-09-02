@@ -31,6 +31,34 @@ class RunnerRejectedError(RuntimeError):
         self.code = code
 
 
+def _classify_runner_failure(completed: subprocess.CompletedProcess[bytes]) -> str:
+    """Return a bounded diagnostic category without exposing untrusted output."""
+
+    stderr = completed.stderr[:196_608].lower()
+    categories = (
+        (b"read-only file system", "read_only_filesystem"),
+        (b"permission denied", "permission_denied"),
+        (b"permissionerror", "permission_error"),
+        (b"no such file or directory", "file_not_found"),
+        (b"filenotfounderror", "file_not_found"),
+        (b"error response from daemon", "docker_runtime_error"),
+        (b"operation not permitted", "operation_not_permitted"),
+        (b"jsondecodeerror", "json_decode_error"),
+        (b"assertionerror", "assertion_error"),
+        (b"valueerror", "value_error"),
+        (b"keyerror", "key_error"),
+        (b"indexerror", "index_error"),
+        (b"oserror", "os_error"),
+        (b"traceback", "python_error"),
+    )
+    for marker, category in categories:
+        if marker in stderr:
+            return category
+    if completed.returncode != 0:
+        return "nonzero_exit"
+    return "malformed_stdout"
+
+
 def _docker(*args: str, timeout: int = 10) -> subprocess.CompletedProcess[bytes]:
     executable = shutil.which("docker")
     if executable is None:
@@ -243,7 +271,8 @@ def run_fixture_plan(
             try:
                 result = parse_execution_result_json(completed.stdout.decode("utf-8"))
             except (UnicodeDecodeError, ExecutionContractError) as error:
-                raise RunnerRejectedError("runner_result_invalid") from error
+                category = _classify_runner_failure(completed)
+                raise RunnerRejectedError(f"runner_result_invalid_{category}") from error
             if (
                 result.plan_sha256 != plan.plan_sha256
                 or result.image != plan.image

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 from dataclasses import replace
 from pathlib import Path
 
@@ -20,7 +21,7 @@ from packages.execution_contracts import (
     sign_payload,
     verify_payload_signature,
 )
-from runner.docker_cli import docker_create_arguments
+from runner.docker_cli import _classify_runner_failure, docker_create_arguments
 
 FIXTURE_ROOT = Path("tests/fixtures/repositories/releaseproof_fixture")
 
@@ -126,3 +127,23 @@ def test_output_is_bounded_but_preserves_full_content_hash_and_size() -> None:
     assert len(output.excerpt.encode()) == 4_096
     assert output.original_bytes == len(raw)
     assert output.truncated is True
+
+
+@pytest.mark.parametrize(
+    ("stderr", "expected"),
+    [
+        (b"PermissionError: blocked", "permission_error"),
+        (b"Error response from daemon: rejected", "docker_runtime_error"),
+        (b"Traceback (most recent call last)", "python_error"),
+        (b"arbitrary untrusted value", "nonzero_exit"),
+    ],
+)
+def test_runner_failure_classification_never_exposes_raw_output(
+    stderr: bytes, expected: str
+) -> None:
+    completed = subprocess.CompletedProcess(("docker",), returncode=1, stdout=b"", stderr=stderr)
+
+    category = _classify_runner_failure(completed)
+
+    assert category == expected
+    assert stderr.decode() not in category
