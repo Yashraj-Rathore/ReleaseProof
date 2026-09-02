@@ -87,3 +87,18 @@ does not execute model output. Redaction is bounded and versioned but is not pro
 safe to transmit. Persisted evidence excludes prompt/context, provider raw responses, secret values,
 hidden reasoning and arbitrary error text; application logging must maintain the same exclusion.
 The deterministic fake remains the only enabled-by-default M7 path.
+
+## M8 generated-test boundary
+
+Provider output crosses a strict bounded schema before persistence. Generation metadata must match
+the exact completed tenant-scoped M7 evidence, and proposal citations must be a subset of that
+evidence's source references. Every lookup begins from the authenticated active organization;
+Reviewer role and CSRF protect accept/reject/edit/export. Composite foreign keys and immutable
+database triggers prevent cross-tenant rebinding and raw mutation.
+
+The controlled adapter rejects traversal, arbitrary target files, source-file modification,
+unexpected commands/imports, dunder introspection and obvious file/process/network capabilities.
+Static AST filtering cannot make hostile code safe, so M8 deliberately has no execution path,
+repository credential, patch application, runner call or execution approval. Audit metadata keeps
+hash/version/lifecycle facts and excludes patch/source content. M9 must complete its independent
+threat review and isolation signoff before execution exists.

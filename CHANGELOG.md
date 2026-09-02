@@ -66,6 +66,14 @@
   persists prompt/source text, raw provider output, hidden reasoning, secrets or arbitrary errors.
 - A frozen six-case CC0 synthetic grounding suite, raw evaluation artifact and M7 Owner Learning
   Note covering schema/citation/unsupported-claim/stability/injection/cost/latency evidence.
+- M8 strict generated-test proposal contracts and a deterministic controlled-Python-fixture
+  adapter that builds inert add-only patches and performs parse/format/type-shape/safety checks.
+- Tenant-bound immutable proposal revisions, append-only draft/accept/reject/supersede events,
+  composite database constraints/triggers, safe audits and idempotent lifecycle services.
+- Reviewer/CSRF-protected API and server-rendered review/edit/export flows that explicitly separate
+  export acceptance from M9 execution approval and never create execution jobs.
+- A frozen 11-case CC0 adversarial proposal suite, raw evaluation artifact and M8 Owner Learning
+  Note covering schema/static checks, stability, non-execution and limitations.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -99,6 +107,8 @@
 - Reverified and locked `openai==3.6.0` in the optional `ai` group with immutable model snapshot
   `gpt-5.4-mini-2026-03-17`; omitted LangChain because the bounded adapter needs no additional
   framework, and kept hosted routing disabled without an explicit compatible tenant policy.
+- Kept the dependency lock unchanged in M8: standard-library static parsing plus existing
+  Django/DRF controls are sufficient, while execution tooling remains deferred to M9 threat review.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -118,3 +128,6 @@
 - M7 evidence is recorded in `PROJECT_STATUS.md` and docs/36; its perfect frozen-fixture figures
   validate only the deterministic fake/schema harness. No hosted provider/customer source was
   contacted and no hosted quality, real latency, billed cost or zero-retention claim is made.
+- M8 evidence is recorded in `PROJECT_STATUS.md` and docs/38; its perfect frozen-fixture figures
+  validate only the controlled schema/static-filter harness. No proposal was executed, committed or
+  approved for M9 execution, and real-repository usefulness/sandbox safety are not claimed.

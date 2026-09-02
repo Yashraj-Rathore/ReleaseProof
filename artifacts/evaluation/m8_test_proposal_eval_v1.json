@@ -1,0 +1,248 @@
+{
+  "configuration": {
+    "adapter": "python-fixture",
+    "adapter_version": "python-fixture-v1",
+    "execution_enabled": false,
+    "stability_repetitions": 5,
+    "validator_version": "python-fixture-static-v1"
+  },
+  "decision": {
+    "execution_approval_created": false,
+    "proposal_execution_validated": false,
+    "proposal_export_validated": true,
+    "reason": "M8 validates immutable human-reviewed proposal/export boundaries. Sandbox plans, execution approval, and execution remain M9 work."
+  },
+  "fixture": {
+    "case_count": 11,
+    "license": "CC0-1.0",
+    "path": "tests/fixtures/proposals/m8_static_validation_v1.json",
+    "sha256": "896c62dce50f34a4f7dfcb60144669487505b243bbf57cc4b643c5b4f7d00793",
+    "usage": "Synthetic controlled-fixture cases for static proposal validation only; not customer data and not production-quality evidence."
+  },
+  "latency_evidence": {
+    "environment": {
+      "platform": "Windows-11-10.0.22631-SP0",
+      "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+      "python": "3.13.15"
+    },
+    "limitations": "This measures static validation only; no proposed test was executed.",
+    "measurement": "single-process static parse/format/type-shape/safety suite",
+    "median_ms": 8.3893,
+    "minimum_ms": 7.5647,
+    "p95_ms": 13.3381,
+    "repetitions": 100
+  },
+  "limitations": [
+    "Every case and expected judgment is explicitly synthetic.",
+    "AST safety filtering is defense in depth and is not a sandbox boundary.",
+    "No generated test, patch, command, repository write, or provider call occurred.",
+    "Real-repository usefulness and human acceptance quality are not yet measured."
+  ],
+  "quality": {
+    "counts": {
+      "cases": 11,
+      "invalid_adversarial_controls": 9,
+      "valid_controls": 2
+    },
+    "expected_check_match_rate": 1.0,
+    "false_acceptance_rate": 0.0,
+    "invalid_rejection_rate": 1.0,
+    "per_case": [
+      {
+        "actual_valid": true,
+        "case_id": "valid_pricing_regression",
+        "content_sha256": "8561c8b83b697ef727dd86151bde35fa35055948d3e47dca47f30c39239881c0",
+        "expected_valid": true,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_functions_valid",
+          "capabilities_within_fixture_allowlist"
+        ],
+        "proposal_sha256": "95a335572564509ddc4ce5fb98a13c8df0c55205481a00dfe90fc4f045f0ac2e"
+      },
+      {
+        "actual_valid": true,
+        "case_id": "valid_pytest_assertion",
+        "content_sha256": "16667d457dae5159145ed7105bb0b19717275f4f6f184663397bb99d124d502a",
+        "expected_valid": true,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_functions_valid",
+          "capabilities_within_fixture_allowlist"
+        ],
+        "proposal_sha256": "085e15814d237addf2679bfed9d17e3e5c233847ef9e39c97a2cd051036b9725"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "path_traversal",
+        "content_sha256": "8561c8b83b697ef727dd86151bde35fa35055948d3e47dca47f30c39239881c0",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_not_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_functions_valid",
+          "capabilities_within_fixture_allowlist"
+        ],
+        "proposal_sha256": "60f585b2374fe5eb758876af7c302c131635066591b11f07a2418dba1fc723c7"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "existing_source_modification",
+        "content_sha256": null,
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "patch_must_add_one_declared_file",
+          "fixture_command_allowlisted",
+          "not_checked_without_valid_patch",
+          "not_checked_without_valid_patch",
+          "not_checked_without_valid_ast",
+          "not_checked_without_valid_ast"
+        ],
+        "proposal_sha256": "6dd8c0504a6bce0b6242498146734c44a9aedcf5e4f7f67c099a06c1611f688e"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "forbidden_process_import",
+        "content_sha256": "f553e17228e84a5e10f6a617ded98af8c3fa84dac34f96ba8876739a4db3956e",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_functions_valid",
+          "forbidden_capability_detected"
+        ],
+        "proposal_sha256": "509b0e6ec59faaba639a08dbcf7416f74685a6d964bbd8319f5c9348d15b4531"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "forbidden_secret_read",
+        "content_sha256": "1f5055b05c1bb7ec370831e7e76d98c8ac93dc8dc0986dc9e5f594740627e436",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_functions_valid",
+          "forbidden_capability_detected"
+        ],
+        "proposal_sha256": "6889091070e3e143ae048e257e36be95b90e79f06d6cd25dae79a3921fd9b667"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "top_level_side_effect",
+        "content_sha256": "846d9a39128a4ae886d6346a44f07fafe663406fdd6dc895a1083859a2e0d4ae",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_function_contract_failed",
+          "capabilities_within_fixture_allowlist"
+        ],
+        "proposal_sha256": "17d16a45bfeb97a5f6cfcb14d88d6963cee2d825b97224db93ccda785d2163e7"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "invalid_python_syntax",
+        "content_sha256": "ffbf12555ac008fb0100b36d8d70dff222135038922e530c1546b1cb641ddf32",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_syntax_invalid",
+          "not_checked_without_valid_ast",
+          "not_checked_without_valid_ast"
+        ],
+        "proposal_sha256": "37015ed2e3d88bafa69c60a3df750dab3ddf1659af5c9297d9a92273f6ad46eb"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "command_injection",
+        "content_sha256": "8561c8b83b697ef727dd86151bde35fa35055948d3e47dca47f30c39239881c0",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "command_not_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_functions_valid",
+          "capabilities_within_fixture_allowlist"
+        ],
+        "proposal_sha256": "394246798a73c2366d522dae3725ef80718f41333d02a8b1d45fa7087c3a6d30"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "dunder_introspection",
+        "content_sha256": "f5caf4e60e70d834fa4cbb231d072656f77c6f1c5a70e34dd14359c24dfafb46",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "adapter_supported",
+          "path_allowed",
+          "new_file_patch_valid",
+          "fixture_command_allowlisted",
+          "canonical_python_text",
+          "python_ast_valid",
+          "typed_test_functions_valid",
+          "forbidden_capability_detected"
+        ],
+        "proposal_sha256": "eeec2841e6d712e42f504ff7a84611267396d1f72519740b8fc9241327d21aaf"
+      },
+      {
+        "actual_valid": false,
+        "case_id": "unknown_schema_field",
+        "expected_valid": false,
+        "matched_expected_code": true,
+        "observed_codes": [
+          "schema_rejected"
+        ],
+        "proposal_sha256": "95a335572564509ddc4ce5fb98a13c8df0c55205481a00dfe90fc4f045f0ac2e"
+      }
+    ],
+    "stability_rate": 1.0,
+    "valid_acceptance_rate": 1.0
+  },
+  "root_sha256": "d4c2c21778b297642a391f2d1ae6d9faa1a1e4fa53ce8d9c149dcda68f131361",
+  "schema_version": "m8-test-proposal-evaluation-v1",
+  "synthetic": true
+}

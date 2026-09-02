@@ -97,6 +97,27 @@ hostile evidence as serialized data, conservative byte/token/output/cost budgets
 connect/read timeouts, bounded attempts/backoff and cancellation. This is an internal M7 service;
 no public browser/API mutation is introduced.
 
+## Generated-test proposal contract and routes
+
+M8 implements strict internal `generated-test-proposal-v1`. Unknown/duplicate fields, malformed
+metadata, unbounded text/collections or invalid enum values reject the whole proposal. The
+controlled `python-fixture-v1` adapter permits one add-only `tests/generated/test_*.py` patch and
+the exact proposed command `python -m pytest -q <declared-path>`. Static validation parses Python
+AST and checks canonical text, typed test shape and a narrow capability allowlist without importing
+or executing the proposal.
+
+Authenticated active-organization reads are available at
+`GET /api/v1/test-proposals/{public_id}` and `/app/test-proposals/{public_id}/`. Reviewer-or-higher,
+session/CSRF-protected mutations are:
+
+- `POST /api/v1/test-proposals/{public_id}/accept|reject|edit|export`;
+- `POST /app/test-proposals/{public_id}/accept|reject|edit|export/`.
+
+Responses expose immutable revision/hash, snapshot SHA, evidence and generation identity,
+validation results and `accepted_for_export_is_execution_approval=false`. Export is a no-store
+`text/x-diff` attachment with proposal-hash/correlation headers. It never applies the patch or
+starts a job. M9 will define a different execution-plan and approval contract.
+
 ## Runner contract
 Runner accepts only immutable/signed internal `ExecutionPlanV1`: artifact hashes, image/toolchain, allowlisted commands, resource/network policy, timeout/output limits. No free-form host paths or Docker options.
 

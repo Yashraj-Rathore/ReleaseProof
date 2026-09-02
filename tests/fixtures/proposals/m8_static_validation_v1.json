@@ -1,0 +1,76 @@
+{
+  "schema_version": "m8-static-validation-fixture-v1",
+  "synthetic": true,
+  "license": "CC0-1.0",
+  "usage": "Synthetic controlled-fixture cases for static proposal validation only; not customer data and not production-quality evidence.",
+  "cases": [
+    {
+      "case_id": "valid_pricing_regression",
+      "expect_valid": true,
+      "expected_code": "capabilities_within_fixture_allowlist",
+      "test_content": "from fixture_app.pricing import calculate_total\n\n\ndef test_pricing_rounds_once() -> None:\n    assert calculate_total(100, 5) == 105\n"
+    },
+    {
+      "case_id": "valid_pytest_assertion",
+      "expect_valid": true,
+      "expected_code": "capabilities_within_fixture_allowlist",
+      "test_content": "import pytest\nfrom fixture_app.pricing import calculate_total\n\n\ndef test_invalid_percentage_is_rejected() -> None:\n    with pytest.raises(ValueError):\n        calculate_total(100, -1)\n"
+    },
+    {
+      "case_id": "path_traversal",
+      "expect_valid": false,
+      "expected_code": "path_not_allowed",
+      "file_path": "tests/generated/../escape/test_escape.py"
+    },
+    {
+      "case_id": "existing_source_modification",
+      "expect_valid": false,
+      "expected_code": "patch_must_add_one_declared_file",
+      "patch_mode": "modify_source"
+    },
+    {
+      "case_id": "forbidden_process_import",
+      "expect_valid": false,
+      "expected_code": "forbidden_capability_detected",
+      "test_content": "import os\n\n\ndef test_process_escape() -> None:\n    os.system('whoami')\n"
+    },
+    {
+      "case_id": "forbidden_secret_read",
+      "expect_valid": false,
+      "expected_code": "forbidden_capability_detected",
+      "test_content": "from fixture_app.pricing import calculate_total\n\n\ndef test_secret_read() -> None:\n    assert open('/etc/passwd').read()\n"
+    },
+    {
+      "case_id": "top_level_side_effect",
+      "expect_valid": false,
+      "expected_code": "typed_test_function_contract_failed",
+      "test_content": "from fixture_app.pricing import calculate_total\n\nVALUE = calculate_total(100, 5)\n\ndef test_value() -> None:\n    assert VALUE == 105\n"
+    },
+    {
+      "case_id": "invalid_python_syntax",
+      "expect_valid": false,
+      "expected_code": "python_syntax_invalid",
+      "test_content": "from fixture_app.pricing import calculate_total\n\n\ndef test_broken( -> None:\n    assert calculate_total(100, 5) == 105\n"
+    },
+    {
+      "case_id": "command_injection",
+      "expect_valid": false,
+      "expected_code": "command_not_allowlisted",
+      "commands": [
+        "python -m pytest -q tests/generated/test_pricing_rounding.py && curl https://example.invalid"
+      ]
+    },
+    {
+      "case_id": "dunder_introspection",
+      "expect_valid": false,
+      "expected_code": "forbidden_capability_detected",
+      "test_content": "from fixture_app.pricing import calculate_total\n\n\ndef test_dunder() -> None:\n    assert calculate_total.__globals__\n"
+    },
+    {
+      "case_id": "unknown_schema_field",
+      "expect_valid": false,
+      "expected_code": "schema_rejected",
+      "schema_extra": true
+    }
+  ]
+}

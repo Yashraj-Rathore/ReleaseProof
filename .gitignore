@@ -25,6 +25,7 @@ artifacts/*
 artifacts/evaluation/*
 !artifacts/evaluation/m6_retrieval_eval_v1.json
 !artifacts/evaluation/m7_llm_eval_v1.json
+!artifacts/evaluation/m8_test_proposal_eval_v1.json
 mlruns/
 .minio/
 *.sqlite3

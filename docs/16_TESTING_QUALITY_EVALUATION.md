@@ -92,3 +92,19 @@ prompt-injection resilience 1.0 and five-run output stability 1.0. These measure
 only the fake-provider/schema/evaluator harness. Local in-process latency excludes database, queue,
 network and provider time; hosted quality, latency and billed cost are not measured. Exact evidence
 and limitations are in `36_M7_LLM_EVALUATION.md`.
+
+## M8 generated-test proposal evidence
+
+Unit tests cover strict schema parsing/hashing, deterministic adapter construction, canonical
+new-file patches, path/command allowlists, syntax, typed test shape and dangerous capability
+rejection. Django integration tests cover tenant/source/generation binding, idempotent creation,
+immutable revisions, append-only lifecycles, invalid-accept denial, bounded export, safe audits,
+database cross-tenant/raw-mutation controls and absence of job/outbox execution side effects. Web
+tests cover tenant-scoped API/HTML reads, Reviewer authorization, CSRF, edit/reject and exact export.
+
+The committed 11-case CC0 synthetic fixture contains two valid controls and nine adversarial
+invalid controls. It measures valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0,
+expected-check matching 1.0 and five-run stability 1.0. Local latency covers only static in-process
+validation. No proposal was executed and these measurements do not establish generated-test
+usefulness, sandbox safety or customer outcomes. Exact evidence is in
+`38_M8_GENERATED_TEST_EVALUATION.md`.

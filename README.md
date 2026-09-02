@@ -286,3 +286,27 @@ uv run pytest tests/unit/test_llm_core.py tests/unit/test_openai_adapter.py test
 
 See `docs/36_M7_LLM_EVALUATION.md` for exact synthetic measurements and limitations, and
 `docs/37_M7_OWNER_LEARNING_NOTE.md` for the owner-defensible explanation.
+
+## M8 generated-test proposals
+
+M8 implements `RP-0701..RP-0704` for one deliberately narrow Python fixture adapter. A strict
+`generated-test-proposal-v1` contract binds target behavior, rationale, cited M7 evidence, one new
+test-file patch, one allowlisted command, expected result, risk and exact generation identity.
+Every persisted revision is immutable and tenant-bound; editing creates a new hash/revision and
+supersedes the old one.
+
+Reviewer mutations use session authentication, CSRF and server-derived organization scope. A
+human may accept a statically valid proposal for export, reject it, edit it into a new draft, or
+download its inert patch. Acceptance does not commit, enqueue, authorize or execute anything. M9
+still owns its separate threat review, immutable execution plan, execution approval and sandbox.
+
+```text
+uv sync --frozen --group dev --group ml --group ai
+uv run python -m eng.evaluate_m8_proposals --check
+uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+```
+
+The frozen 11-case CC0 suite has two valid controls and nine adversarial invalid controls. It
+records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0 and five-run stability
+1.0. These synthetic results validate the contract/static-filter harness only; no generated test
+was run and usefulness on real repositories is not measured. See docs/38 and docs/39.

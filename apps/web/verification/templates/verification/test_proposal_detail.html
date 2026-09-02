@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Generated test proposal | ReleaseProof</title>
+  </head>
+  <body>
+    <main>
+      <h1>Generated test proposal</h1>
+      <p>Organization: {{ organization.name }}</p>
+      <p><strong>Advisory draft:</strong> accepting this revision permits export only. It does not commit or execute code.</p>
+      <dl>
+        <dt>Lifecycle</dt><dd>{{ proposal.lifecycle }}</dd>
+        <dt>Revision</dt><dd>{{ proposal.revision }}</dd>
+        <dt>Proposal hash</dt><dd><code>{{ proposal.proposal_hash }}</code></dd>
+        <dt>Snapshot head</dt><dd><code>{{ proposal.head_sha }}</code></dd>
+        <dt>Target behavior</dt><dd>{{ proposal.target_behavior }}</dd>
+        <dt>Rationale</dt><dd>{{ proposal.rationale }}</dd>
+        <dt>Risk</dt><dd>{{ proposal.risk }}</dd>
+        <dt>Expected result</dt><dd>{{ proposal.expected_result }}</dd>
+      </dl>
+
+      <h2>Static validation</h2>
+      <p>Valid for export: {{ proposal.validation_report.valid|yesno:"yes,no" }}</p>
+      <ul>
+        {% for check in proposal.validation_report.checks %}
+          <li>{{ check.name }}: {{ check.passed|yesno:"pass,fail" }} ({{ check.code }})</li>
+        {% endfor %}
+      </ul>
+
+      <h2>Evidence references</h2>
+      <ul>
+        {% for evidence_id in proposal.evidence_ids %}<li><code>{{ evidence_id }}</code></li>{% endfor %}
+      </ul>
+
+      <h2>Proposed patch</h2>
+      <pre><code>{{ proposal.patch }}</code></pre>
+      <p>Proposed command (not executed in M8): <code>{{ proposal.commands|join:"; " }}</code></p>
+
+      {% if proposal.lifecycle == "draft" %}
+        <form method="post" action="{% url 'accept-test-proposal' proposal.id %}">
+          {% csrf_token %}<button type="submit">Accept for export</button>
+        </form>
+        <form method="post" action="{% url 'reject-test-proposal' proposal.id %}">
+          {% csrf_token %}<button type="submit">Reject proposal</button>
+        </form>
+      {% endif %}
+
+      {% if proposal.lifecycle != "superseded" %}
+        <h2>Edit into a new immutable revision</h2>
+        <form method="post" action="{% url 'edit-test-proposal' proposal.id %}">
+          {% csrf_token %}
+          <label>Target behavior <textarea name="target_behavior" maxlength="500" required>{{ proposal.target_behavior }}</textarea></label>
+          <label>Rationale <textarea name="rationale" maxlength="2000" required>{{ proposal.rationale }}</textarea></label>
+          <label>File path <input name="file_path" maxlength="240" value="{{ proposal.file_path }}" required></label>
+          <label>Patch <textarea name="patch" maxlength="65536" required>{{ proposal.patch }}</textarea></label>
+          <label>Commands <textarea name="commands" maxlength="2500" required>{% for command in proposal.commands %}{{ command }}{% if not forloop.last %}
+{% endif %}{% endfor %}</textarea></label>
+          <label>Expected result <textarea name="expected_result" maxlength="1000" required>{{ proposal.expected_result }}</textarea></label>
+          <label>Risk
+            <select name="risk">
+              <option value="low"{% if proposal.risk == "low" %} selected{% endif %}>Low</option>
+              <option value="medium"{% if proposal.risk == "medium" %} selected{% endif %}>Medium</option>
+              <option value="high"{% if proposal.risk == "high" %} selected{% endif %}>High</option>
+            </select>
+          </label>
+          <button type="submit">Create revised draft</button>
+        </form>
+      {% endif %}
+
+      {% if proposal.lifecycle == "accepted_for_export" %}
+        <form method="post" action="{% url 'export-test-proposal' proposal.id %}">
+          {% csrf_token %}<button type="submit">Export accepted patch</button>
+        </form>
+      {% endif %}
+    </main>
+  </body>
+</html>

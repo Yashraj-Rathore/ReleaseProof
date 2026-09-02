@@ -1,20 +1,50 @@
 # Project Status
 
-**Current state: M7 evidence-grounded LLM analysis complete on 2026-09-01.**
+**Current state: M8 generated-test proposals complete on 2026-09-01.**
 
-The repository now adds typed advisory-LLM contracts, a network-free deterministic provider, one
-pinned hosted adapter, immutable tenant privacy routing, source-controlled prompt/schema identities,
-strict cited structured output, safe append-only LLM evidence and a frozen synthetic evaluation.
-Hosted transmission is disabled without explicit compatible policy; provider failure preserves
-deterministic/retrieval evidence. No hosted provider was called, so hosted usefulness, latency,
-billed cost, retention and regional behavior are not validated. No generated test has been accepted
-or executed, and no sandbox-security or production-readiness claim exists yet.
+The repository now turns completed M7 evidence into strict, immutable, tenant-bound generated-test
+proposals for one controlled Python fixture. Reviewers may accept for export, reject, edit into a
+new revision or download the inert patch through CSRF-protected flows. Static parse/format/
+type-shape/safety checks run without importing or executing generated content. No patch was applied,
+no proposed command or untrusted code was executed, and no M9 execution approval, runner,
+sandbox-security or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/08_GENERATED_TESTS.md` for `RP-0701..RP-0704`. Keep generated files as immutable
-proposals for the controlled Python fixture, validate them statically without executing repository
-code, and keep M8 review/export acceptance separate from M9 execution approval.
+Run `codex-prompts/09_SANDBOX.md` for `RP-0801` first. Complete the runner threat review and accept
+an isolation-backend ADR before any runner code. Stop on unresolved Critical/High concerns; keep
+M8 `accepted_for_export` separate from a future immutable M9 execution-plan approval.
+
+## M8 evidence
+
+- `generated-test-proposal-v1` strictly binds target behavior, rationale, cited evidence, one file
+  path/add-only patch, proposed command, expected result, risk, controlled adapter and exact M7
+  provider/model/adapter/prompt/source identity. Duplicate/extra/malformed input is rejected.
+- `python-fixture-v1` constructs proposals for one `tests/generated/test_*.py` file. Static
+  validation checks canonical text, path/patch/command allowlists, Python AST syntax, typed test
+  shape and dangerous capabilities without importing or executing code.
+- Immutable tenant/source-bound proposal revisions and append-only lifecycle events implement only
+  `draft`, `accepted_for_export`, `rejected` and `superseded`. Editing creates a new hash/revision;
+  database constraints/triggers reject cross-tenant binding, raw mutation, invalid chains and
+  acceptance when the persisted static report is invalid.
+- Authenticated API/HTML detail and Reviewer mutations enforce server-derived active-organization
+  scope, role checks and CSRF. Export returns the accepted patch with no-store/hash/correlation
+  headers. Acceptance/export creates neither `AnalysisJob` nor `OutboxEvent` and cannot represent
+  execution approval.
+- The 11-case CC0 synthetic harness has two valid controls and nine adversarial invalid controls.
+  It records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0, expected-check
+  matching 1.0 and five-repeat stability 1.0. These are controlled contract measurements, not
+  generated-test usefulness, sandbox safety or customer outcomes.
+- Evaluation root hash is
+  `d4c2c21778b297642a391f2d1ae6d9faa1a1e4fa53ce8d9c149dcda68f131361`. Local static-suite
+  latency recorded median 8.3893 ms/p95 13.3381 ms; it excludes database, provider, queue, patch,
+  test-runner, container and network time.
+- The canonical local suite passed **123 tests**, with one PostgreSQL physical-index assertion
+  skipped and the live S3 contract deselected. Ruff, strict mypy and Django/migration checks passed;
+  CI supplies authoritative PostgreSQL/S3 and container evidence for the pushed revision.
+- M8 added no dependency, called no hosted provider, downloaded no model, applied no patch and
+  executed no generated/untrusted code. Exact evaluation and learning evidence are in docs/38 and
+  docs/39.
 
 ## M7 evidence
 
@@ -218,7 +248,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
 | M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
 | M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
-| M8 generated tests | Not started |
+| M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
 | M9 sandbox | Not started |
 | M10 differential | Not started |
 | M11 PyTorch/HF | Not started |

@@ -46,3 +46,10 @@ suggestion -> usage/cost/latency -> frozen fixture/evaluation root hash. Hosted 
 terms are external reviewed inputs rather than mutable constants. The deterministic fake remains
 the default because the frozen synthetic suite does not measure hosted-model quality; later MLflow
 registration must preserve that decision and the original raw artifact.
+
+M8 adds completed M7 evidence identity -> strict generated-test schema/adapter versions -> cited
+source IDs -> immutable proposal content hash/revision -> static-validator version/result ->
+append-only human lifecycle/audit events -> bounded export. The frozen synthetic fixture and raw
+evaluation checksum are preserved beside that chain. Acceptance is not model promotion or
+execution authorization; future M9 evidence must name the exact exported proposal and a separate
+execution-plan hash without rewriting M8 history.

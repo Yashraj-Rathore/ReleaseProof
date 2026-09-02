@@ -31,6 +31,7 @@ COMMANDS = (
     (sys.executable, "-m", "eng.evaluate_m5_classical", "--check"),
     (sys.executable, "-m", "eng.evaluate_m6_retrieval", "--check"),
     (sys.executable, "-m", "eng.evaluate_m7_llm", "--check"),
+    (sys.executable, "-m", "eng.evaluate_m8_proposals", "--check"),
 )
 
 

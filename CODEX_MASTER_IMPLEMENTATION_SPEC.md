@@ -299,6 +299,30 @@ uv run pytest tests/unit/test_llm_core.py tests/unit/test_openai_adapter.py test
 See `docs/36_M7_LLM_EVALUATION.md` for exact synthetic measurements and limitations, and
 `docs/37_M7_OWNER_LEARNING_NOTE.md` for the owner-defensible explanation.
 
+## M8 generated-test proposals
+
+M8 implements `RP-0701..RP-0704` for one deliberately narrow Python fixture adapter. A strict
+`generated-test-proposal-v1` contract binds target behavior, rationale, cited M7 evidence, one new
+test-file patch, one allowlisted command, expected result, risk and exact generation identity.
+Every persisted revision is immutable and tenant-bound; editing creates a new hash/revision and
+supersedes the old one.
+
+Reviewer mutations use session authentication, CSRF and server-derived organization scope. A
+human may accept a statically valid proposal for export, reject it, edit it into a new draft, or
+download its inert patch. Acceptance does not commit, enqueue, authorize or execute anything. M9
+still owns its separate threat review, immutable execution plan, execution approval and sandbox.
+
+```text
+uv sync --frozen --group dev --group ml --group ai
+uv run python -m eng.evaluate_m8_proposals --check
+uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+```
+
+The frozen 11-case CC0 suite has two valid controls and nine adversarial invalid controls. It
+records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0 and five-run stability
+1.0. These synthetic results validate the contract/static-filter harness only; no generated test
+was run and usefulness on real repositories is not measured. See docs/38 and docs/39.
+
 
 ---
 
@@ -632,21 +656,51 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M7 evidence-grounded LLM analysis complete on 2026-09-01.**
+**Current state: M8 generated-test proposals complete on 2026-09-01.**
 
-The repository now adds typed advisory-LLM contracts, a network-free deterministic provider, one
-pinned hosted adapter, immutable tenant privacy routing, source-controlled prompt/schema identities,
-strict cited structured output, safe append-only LLM evidence and a frozen synthetic evaluation.
-Hosted transmission is disabled without explicit compatible policy; provider failure preserves
-deterministic/retrieval evidence. No hosted provider was called, so hosted usefulness, latency,
-billed cost, retention and regional behavior are not validated. No generated test has been accepted
-or executed, and no sandbox-security or production-readiness claim exists yet.
+The repository now turns completed M7 evidence into strict, immutable, tenant-bound generated-test
+proposals for one controlled Python fixture. Reviewers may accept for export, reject, edit into a
+new revision or download the inert patch through CSRF-protected flows. Static parse/format/
+type-shape/safety checks run without importing or executing generated content. No patch was applied,
+no proposed command or untrusted code was executed, and no M9 execution approval, runner,
+sandbox-security or production-readiness claim exists yet.
 
 ## Next action
 
-Run `codex-prompts/08_GENERATED_TESTS.md` for `RP-0701..RP-0704`. Keep generated files as immutable
-proposals for the controlled Python fixture, validate them statically without executing repository
-code, and keep M8 review/export acceptance separate from M9 execution approval.
+Run `codex-prompts/09_SANDBOX.md` for `RP-0801` first. Complete the runner threat review and accept
+an isolation-backend ADR before any runner code. Stop on unresolved Critical/High concerns; keep
+M8 `accepted_for_export` separate from a future immutable M9 execution-plan approval.
+
+## M8 evidence
+
+- `generated-test-proposal-v1` strictly binds target behavior, rationale, cited evidence, one file
+  path/add-only patch, proposed command, expected result, risk, controlled adapter and exact M7
+  provider/model/adapter/prompt/source identity. Duplicate/extra/malformed input is rejected.
+- `python-fixture-v1` constructs proposals for one `tests/generated/test_*.py` file. Static
+  validation checks canonical text, path/patch/command allowlists, Python AST syntax, typed test
+  shape and dangerous capabilities without importing or executing code.
+- Immutable tenant/source-bound proposal revisions and append-only lifecycle events implement only
+  `draft`, `accepted_for_export`, `rejected` and `superseded`. Editing creates a new hash/revision;
+  database constraints/triggers reject cross-tenant binding, raw mutation, invalid chains and
+  acceptance when the persisted static report is invalid.
+- Authenticated API/HTML detail and Reviewer mutations enforce server-derived active-organization
+  scope, role checks and CSRF. Export returns the accepted patch with no-store/hash/correlation
+  headers. Acceptance/export creates neither `AnalysisJob` nor `OutboxEvent` and cannot represent
+  execution approval.
+- The 11-case CC0 synthetic harness has two valid controls and nine adversarial invalid controls.
+  It records valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0, expected-check
+  matching 1.0 and five-repeat stability 1.0. These are controlled contract measurements, not
+  generated-test usefulness, sandbox safety or customer outcomes.
+- Evaluation root hash is
+  `d4c2c21778b297642a391f2d1ae6d9faa1a1e4fa53ce8d9c149dcda68f131361`. Local static-suite
+  latency recorded median 8.3893 ms/p95 13.3381 ms; it excludes database, provider, queue, patch,
+  test-runner, container and network time.
+- The canonical local suite passed **123 tests**, with one PostgreSQL physical-index assertion
+  skipped and the live S3 contract deselected. Ruff, strict mypy and Django/migration checks passed;
+  CI supplies authoritative PostgreSQL/S3 and container evidence for the pushed revision.
+- M8 added no dependency, called no hosted provider, downloaded no model, applied no patch and
+  executed no generated/untrusted code. Exact evaluation and learning evidence are in docs/38 and
+  docs/39.
 
 ## M7 evidence
 
@@ -850,7 +904,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M5 classical ML | Complete - RP-0401..RP-0406; candidates not promoted |
 | M6 RAG | Complete - RP-0501..RP-0506; real reranker disabled pending representative evidence |
 | M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
-| M8 generated tests | Not started |
+| M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
 | M9 sandbox | Not started |
 | M10 differential | Not started |
 | M11 PyTorch/HF | Not started |
@@ -934,6 +988,14 @@ and its remote M2 result is tracked in GitHub Actions.
   persists prompt/source text, raw provider output, hidden reasoning, secrets or arbitrary errors.
 - A frozen six-case CC0 synthetic grounding suite, raw evaluation artifact and M7 Owner Learning
   Note covering schema/citation/unsupported-claim/stability/injection/cost/latency evidence.
+- M8 strict generated-test proposal contracts and a deterministic controlled-Python-fixture
+  adapter that builds inert add-only patches and performs parse/format/type-shape/safety checks.
+- Tenant-bound immutable proposal revisions, append-only draft/accept/reject/supersede events,
+  composite database constraints/triggers, safe audits and idempotent lifecycle services.
+- Reviewer/CSRF-protected API and server-rendered review/edit/export flows that explicitly separate
+  export acceptance from M9 execution approval and never create execution jobs.
+- A frozen 11-case CC0 adversarial proposal suite, raw evaluation artifact and M8 Owner Learning
+  Note covering schema/static checks, stability, non-execution and limitations.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -967,6 +1029,8 @@ and its remote M2 result is tracked in GitHub Actions.
 - Reverified and locked `openai==3.6.0` in the optional `ai` group with immutable model snapshot
   `gpt-5.4-mini-2026-03-17`; omitted LangChain because the bounded adapter needs no additional
   framework, and kept hosted routing disabled without an explicit compatible tenant policy.
+- Kept the dependency lock unchanged in M8: standard-library static parsing plus existing
+  Django/DRF controls are sufficient, while execution tooling remains deferred to M9 threat review.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -986,6 +1050,9 @@ and its remote M2 result is tracked in GitHub Actions.
 - M7 evidence is recorded in `PROJECT_STATUS.md` and docs/36; its perfect frozen-fixture figures
   validate only the deterministic fake/schema harness. No hosted provider/customer source was
   contacted and no hosted quality, real latency, billed cost or zero-retention claim is made.
+- M8 evidence is recorded in `PROJECT_STATUS.md` and docs/38; its perfect frozen-fixture figures
+  validate only the controlled schema/static-filter harness. No proposal was executed, committed or
+  approved for M9 execution, and real-repository usefulness/sandbox safety are not claimed.
 
 
 ---
@@ -1106,6 +1173,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `35_M6_OWNER_LEARNING_NOTE.md` | owner-defensible M6 concepts, assumptions and rerun path |
 | `36_M7_LLM_EVALUATION.md` | strict-schema grounding evaluation, configuration, measurements and limitations |
 | `37_M7_OWNER_LEARNING_NOTE.md` | owner-defensible M7 contracts, privacy routing and rerun path |
+| `38_M8_GENERATED_TEST_EVALUATION.md` | immutable proposal/static-validation evaluation and limitations |
+| `39_M8_OWNER_LEARNING_NOTE.md` | owner-defensible M8 proposal, review and non-execution boundary |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1309,7 +1378,11 @@ MLflow/model identifier, algorithm, dataset manifest, feature version, metrics s
 Immutable/versioned prompts and frozen evaluation cases.
 
 ### GeneratedTestProposal
-Analysis, immutable revision/hash, adapter, file/content artifact, rationale/evidence refs and lifecycle (`draft`, `accepted_for_export`, `rejected`, `execution_approved`, `executed`, `superseded`). Editing creates a new draft revision. M8 acceptance permits export only; M9 execution approval is a separate audited transition bound to the current snapshot, proposal hash, execution-plan hash and approving Reviewer/Admin.
+Analysis, immutable revision/hash, adapter, file/content artifact, rationale/evidence refs and M8
+lifecycle (`draft`, `accepted_for_export`, `rejected`, `superseded`). Editing creates a new draft
+revision. M8 acceptance permits export only. M9 will add separate execution-plan/authorization
+state bound to the current snapshot, proposal hash, execution-plan hash and approving
+Reviewer/Admin; `execution_approved` and `executed` are not M8 proposal states.
 
 ### ExecutionPlan / ExecutionRun / Observation
 Exact SHAs/artifacts, allowed commands, resource/network limits, plan hash; runner image digest, outcomes, timings, bounded stdout/stderr/artifacts, timeout/killed/isolation state.
@@ -1424,6 +1497,22 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
   hidden reasoning are not persisted in the LLM evidence payload. Idempotency binds the immutable
   context, policy, provider and versioned request configuration.
 
+### M8 implemented generated-test proposals
+
+- `GeneratedTestProposal` stores one immutable `generated-test-proposal-v1` revision with its exact
+  content hash, controlled adapter/version, source M7 LLM evidence, citations, inert patch,
+  proposed command, generation identity and static-validation report.
+- `ProposalLifecycleEvent` is append-only. The initial event creates `draft`; Reviewer actions may
+  add `accepted_for_export` or `rejected`, while a content edit creates a new draft and appends
+  `superseded` to the prior revision. Duplicate transitions are idempotent.
+- Composite organization/source, organization/parent and organization/proposal constraints reject
+  cross-tenant binding. PostgreSQL constraints/triggers and SQLite test triggers also reject raw
+  proposal/event update/delete, invalid lifecycle chains and acceptance of a statically invalid
+  proposal.
+- Export returns only the already accepted bounded patch and appends a safe audit record. No M8
+  model or service references an execution plan, execution approval, runner job or repository
+  write, and no analysis job/outbox event is created by review/export.
+
 
 ---
 
@@ -1527,6 +1616,27 @@ token usage, cost in integer micro-USD and elapsed time. Requests bind prompt/sc
 hostile evidence as serialized data, conservative byte/token/output/cost budgets, separate
 connect/read timeouts, bounded attempts/backoff and cancellation. This is an internal M7 service;
 no public browser/API mutation is introduced.
+
+## Generated-test proposal contract and routes
+
+M8 implements strict internal `generated-test-proposal-v1`. Unknown/duplicate fields, malformed
+metadata, unbounded text/collections or invalid enum values reject the whole proposal. The
+controlled `python-fixture-v1` adapter permits one add-only `tests/generated/test_*.py` patch and
+the exact proposed command `python -m pytest -q <declared-path>`. Static validation parses Python
+AST and checks canonical text, typed test shape and a narrow capability allowlist without importing
+or executing the proposal.
+
+Authenticated active-organization reads are available at
+`GET /api/v1/test-proposals/{public_id}` and `/app/test-proposals/{public_id}/`. Reviewer-or-higher,
+session/CSRF-protected mutations are:
+
+- `POST /api/v1/test-proposals/{public_id}/accept|reject|edit|export`;
+- `POST /app/test-proposals/{public_id}/accept|reject|edit|export/`.
+
+Responses expose immutable revision/hash, snapshot SHA, evidence and generation identity,
+validation results and `accepted_for_export_is_execution_approval=false`. Export is a no-store
+`text/x-diff` attachment with proposal-hash/correlation headers. It never applies the patch or
+starts a job. M9 will define a different execution-plan and approval contract.
 
 ## Runner contract
 Runner accepts only immutable/signed internal `ExecutionPlanV1`: artifact hashes, image/toolchain, allowlisted commands, resource/network policy, timeout/output limits. No free-form host paths or Docker options.
@@ -2117,6 +2227,20 @@ A fictional Python Django/FastAPI fixture repository with deliberately planted a
 
 External repo execution later requires explicit configuration: image/toolchain, install/build/test commands, service dependencies, network policy, resource/time/output budgets.
 
+### M8 implemented boundary
+
+`python-fixture-v1` constructs a strict proposal for one new Python file directly under
+`tests/generated/`. It accepts only a canonical add-only patch and the exact focused pytest command.
+Validation uses inert text checks and `ast.parse`; it rejects traversal, source modification,
+syntax/shape failures, unknown imports, dunder access and file/process/network-like capabilities.
+This allowlist is defense in depth, not an isolation boundary.
+
+Draft, review, edit and export paths never invoke a shell, subprocess, Python import, patch tool,
+Celery task, runner or repository writer. Acceptance means only `accepted_for_export`. The command
+is displayed as untrusted proposed text and is not executed. The committed M8 adversarial fixture
+and evaluator likewise perform static validation only. M9 remains blocked on RP-0801 and an
+accepted isolation ADR before any runner implementation.
+
 ## Isolation requirements
 - separate runner trust boundary for real untrusted execution;
 - non-root;
@@ -2191,6 +2315,15 @@ The current-model page names the active artifact, candidate lifecycle/calibratio
 artifact and limitations. The snapshot-risk page names the exact active score artifact and renders
 its deterministic rule contributions. Both are authenticated, active-organization scoped and say
 that the score is not a calibrated probability; no color-only status or JavaScript is required.
+
+## Implemented M8 proposal review
+
+The server-rendered proposal page shows organization, immutable revision/hash, snapshot head,
+target behavior, rationale, risk, expected result, evidence references, proposed patch/command and
+every static-check outcome. It prominently states that acceptance permits export only. Reviewers
+can accept/reject with CSRF-protected forms, edit into a new immutable draft, or export only an
+accepted valid patch. Members may read tenant-visible evidence but cannot mutate it. No JavaScript
+or client-stored credential is required.
 
 ## HTMX
 Use for partial status refresh, evidence filtering, proposal approval, policy forms and evaluation detail. Server remains authoritative.
@@ -2296,6 +2429,21 @@ safe to transmit. Persisted evidence excludes prompt/context, provider raw respo
 hidden reasoning and arbitrary error text; application logging must maintain the same exclusion.
 The deterministic fake remains the only enabled-by-default M7 path.
 
+## M8 generated-test boundary
+
+Provider output crosses a strict bounded schema before persistence. Generation metadata must match
+the exact completed tenant-scoped M7 evidence, and proposal citations must be a subset of that
+evidence's source references. Every lookup begins from the authenticated active organization;
+Reviewer role and CSRF protect accept/reject/edit/export. Composite foreign keys and immutable
+database triggers prevent cross-tenant rebinding and raw mutation.
+
+The controlled adapter rejects traversal, arbitrary target files, source-file modification,
+unexpected commands/imports, dunder introspection and obvious file/process/network capabilities.
+Static AST filtering cannot make hostile code safe, so M8 deliberately has no execution path,
+repository credential, patch application, runner call or execution approval. Audit metadata keeps
+hash/version/lifecycle facts and excludes patch/source content. M9 must complete its independent
+threat review and isolation signoff before execution exists.
+
 
 ---
 
@@ -2396,6 +2544,22 @@ only the fake-provider/schema/evaluator harness. Local in-process latency exclud
 network and provider time; hosted quality, latency and billed cost are not measured. Exact evidence
 and limitations are in `36_M7_LLM_EVALUATION.md`.
 
+## M8 generated-test proposal evidence
+
+Unit tests cover strict schema parsing/hashing, deterministic adapter construction, canonical
+new-file patches, path/command allowlists, syntax, typed test shape and dangerous capability
+rejection. Django integration tests cover tenant/source/generation binding, idempotent creation,
+immutable revisions, append-only lifecycles, invalid-accept denial, bounded export, safe audits,
+database cross-tenant/raw-mutation controls and absence of job/outbox execution side effects. Web
+tests cover tenant-scoped API/HTML reads, Reviewer authorization, CSRF, edit/reject and exact export.
+
+The committed 11-case CC0 synthetic fixture contains two valid controls and nine adversarial
+invalid controls. It measures valid acceptance 1.0, invalid rejection 1.0, false acceptance 0.0,
+expected-check matching 1.0 and five-run stability 1.0. Local latency covers only static in-process
+validation. No proposal was executed and these measurements do not establish generated-test
+usefulness, sandbox safety or customer outcomes. Exact evidence is in
+`38_M8_GENERATED_TEST_EVALUATION.md`.
+
 
 ---
 
@@ -2449,6 +2613,13 @@ suggestion -> usage/cost/latency -> frozen fixture/evaluation root hash. Hosted 
 terms are external reviewed inputs rather than mutable constants. The deterministic fake remains
 the default because the frozen synthetic suite does not measure hosted-model quality; later MLflow
 registration must preserve that decision and the original raw artifact.
+
+M8 adds completed M7 evidence identity -> strict generated-test schema/adapter versions -> cited
+source IDs -> immutable proposal content hash/revision -> static-validator version/result ->
+append-only human lifecycle/audit events -> bounded export. The frozen synthetic fixture and raw
+evaluation checksum are preserved beside that chain. Acceptance is not model promotion or
+execution authorization; future M9 evidence must name the exact exported proposal and a separate
+execution-plan hash without rewriting M8 history.
 
 
 ---
@@ -3118,7 +3289,7 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7 verified 2026-09-01
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -3244,6 +3415,15 @@ snapshot, disables provider-side response storage, exposes no tools, rejects inv
 uses explicitly reviewed external pricing/retention/training/region configuration. No API call was
 made during M7 verification, so hosted quality, latency, billed cost, retention and regional
 behavior remain not yet validated.
+
+## M8 dependency decision — verified 2026-09-01
+
+M8 adds no dependency. Python `dataclasses`, `json`, `hashlib`, `pathlib` and inert `ast.parse`
+provide the strict contract/static adapter; existing Django/DRF/session/CSRF/database facilities
+provide persistence and review. No formatter, type checker, test runner, patch utility, shell,
+container runtime or provider is invoked on generated content in M8. Their appearance as proposed
+commands is data only. This preserves the verified M7 lock unchanged and leaves runner/backend
+selection to the RP-0801 threat review.
 
 ## Dependency and image management
 
@@ -3864,6 +4044,140 @@ cited evidence entails the statement. ReleaseProof therefore keeps deterministic
 authoritative, measures citation support and unsupported claims on frozen cases, shows uncertainty,
 rejects invalid outputs and requires a human reviewer. Privacy and tenant policy are enforced before
 the model call and never delegated to the model.
+
+
+---
+
+# SOURCE FILE: `docs/38_M8_GENERATED_TEST_EVALUATION.md`
+
+# 38 — M8 Generated-Test Proposal Evaluation
+
+## Decision
+
+M8 accepts the `generated-test-proposal-v1`, `python-fixture-v1` and
+`python-fixture-static-v1` contracts for immutable human review and bounded patch export. It does
+not accept generated-test execution. RP-0801 threat review, an isolation ADR, an immutable
+execution plan and separate execution approval remain mandatory M9 gates.
+
+## Frozen input and provenance
+
+`tests/fixtures/proposals/m8_static_validation_v1.json` is an explicitly synthetic CC0-1.0 suite.
+Its SHA-256 is `896c62dce50f34a4f7dfcb60144669487505b243bbf57cc4b643c5b4f7d00793`.
+It contains two valid controls and nine invalid adversarial controls: traversal, source
+modification, forbidden process import, secret-file read, top-level side effect, invalid syntax,
+command injection, dunder introspection and an unknown strict-schema field. It contains no customer
+or mined public-repository data.
+
+## Exact configuration
+
+- proposal schema: `generated-test-proposal-v1`;
+- adapter: `python-fixture` / `python-fixture-v1`;
+- validator: `python-fixture-static-v1`;
+- stability repetitions: 5;
+- execution, patch application, repository writes and provider calls: disabled.
+
+The adapter permits one new file directly under `tests/generated/`, named `test_*.py`, and the
+exact proposed command `python -m pytest -q <file>`. It checks canonical text, new-file patch shape,
+Python AST syntax, typed zero-argument test functions, import roots and a narrow capability
+allowlist. The evaluator never invokes the proposed command.
+
+## Measurements
+
+The frozen artifact records:
+
+| Measurement | Result |
+|---|---:|
+| Valid-control acceptance | 1.0 (2/2) |
+| Invalid-control rejection | 1.0 (9/9) |
+| Invalid false acceptance | 0.0 (0/9) |
+| Expected static-check match | 1.0 (11/11) |
+| Five-run stability | 1.0 |
+
+The local CPython 3.13.15 Windows run measured the complete static suite 100 times: median
+8.3893 ms, p95 13.3381 ms and minimum 7.5647 ms. This excludes database, queue, provider, patch,
+test-runner, container and network time. It is not a production latency claim.
+
+The raw artifact is `artifacts/evaluation/m8_test_proposal_eval_v1.json`; its root SHA-256 is
+`d4c2c21778b297642a391f2d1ae6d9faa1a1e4fa53ce8d9c149dcda68f131361`.
+
+## Rerun
+
+```text
+uv run python -m eng.evaluate_m8_proposals --check
+uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+```
+
+`--check` recomputes stable quality/configuration and separately reports current-machine latency.
+Use `--write` only when deliberately revising the frozen fixture/evaluator and review the new raw
+cases and root hash.
+
+## Limitations
+
+- All cases and gold judgments are synthetic.
+- Exact static rejection does not prove that accepted code is safe or useful.
+- AST allowlisting is defense in depth, not a sandbox boundary.
+- No generated test, command, patch, repository write, hosted provider or model was executed.
+- Human acceptance quality, real-repository portability and regression-killing value are not yet
+  measured.
+- Sandbox escape resistance, resource isolation and sentinel confidentiality remain unvalidated.
+
+
+---
+
+# SOURCE FILE: `docs/39_M8_OWNER_LEARNING_NOTE.md`
+
+# 39 — M8 Owner Learning Note
+
+## 1. Concept implemented
+
+M8 implements generated tests as immutable, evidence-linked proposals rather than executable
+instructions. A controlled adapter constructs a strict proposal for one new Python fixture test,
+and static validation returns attributable checks. Human lifecycle events record draft,
+accepted-for-export, rejected and superseded state without mutating proposal content.
+
+## 2. Why ReleaseProof uses it
+
+LLM-generated code is untrusted, but a reviewer still needs a reproducible artifact to inspect.
+Hashing a strict proposal and separating content revision, review/export acceptance and later
+execution authorization prevents an ambiguous “approved” flag from silently becoming permission
+to run or commit different code.
+
+## 3. Algorithm and data assumptions
+
+The first adapter assumes a deliberately narrow synthetic Python fixture: one add-only
+`tests/generated/test_*.py` patch, one exact pytest command, import roots `fixture_app`/`pytest`,
+typed zero-argument test functions and no obvious file/process/network/dunder capabilities. The
+source LLM evidence is already immutable, tenant-scoped and completed; citations must be a subset
+of its references. Static success is not a safety or usefulness proof. The evaluation data is CC0,
+synthetic and cannot support customer-quality claims.
+
+## 4. Key code paths
+
+- `packages/ai_core/proposals.py`: strict schema, generation metadata and stable proposal hash;
+- `adapters/test_generation/python_fixture.py`: controlled proposal builder and inert static checks;
+- `apps/web/verification/models.py`: immutable revisions and append-only lifecycle events;
+- `apps/web/verification/services.py`: source binding, review transitions, edits and bounded export;
+- `apps/web/verification/api.py`, `views.py` and template: tenant/role/CSRF human workflow;
+- `eng/evaluate_m8_proposals.py`: frozen adversarial evaluation without code execution.
+
+## 5. Exact experiment/test to rerun
+
+```text
+uv run python -m eng.evaluate_m8_proposals --check
+uv run pytest tests/unit/test_test_proposals.py tests/integration/test_generated_test_proposals.py tests/web/test_generated_test_proposal_workflow.py
+```
+
+Inspect `artifacts/evaluation/m8_test_proposal_eval_v1.json` for every observed static-check code,
+proposal/content hash and the explicit `execution_enabled=false` decision.
+
+## 6. Likely interview question
+
+**Why does accepting a generated test not authorize execution?**
+
+Because content review and hostile-code execution have different risks and evidence. M8 acceptance
+is bound to an immutable proposal hash and permits only export. M9 must separately bind the exact
+snapshot, proposal and execution-plan hashes to a human approval after isolation threat review;
+any content/plan change invalidates that authorization.
 
 
 ---

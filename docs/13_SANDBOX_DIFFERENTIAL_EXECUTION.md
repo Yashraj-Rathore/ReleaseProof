@@ -13,6 +13,20 @@ A fictional Python Django/FastAPI fixture repository with deliberately planted a
 
 External repo execution later requires explicit configuration: image/toolchain, install/build/test commands, service dependencies, network policy, resource/time/output budgets.
 
+### M8 implemented boundary
+
+`python-fixture-v1` constructs a strict proposal for one new Python file directly under
+`tests/generated/`. It accepts only a canonical add-only patch and the exact focused pytest command.
+Validation uses inert text checks and `ast.parse`; it rejects traversal, source modification,
+syntax/shape failures, unknown imports, dunder access and file/process/network-like capabilities.
+This allowlist is defense in depth, not an isolation boundary.
+
+Draft, review, edit and export paths never invoke a shell, subprocess, Python import, patch tool,
+Celery task, runner or repository writer. Acceptance means only `accepted_for_export`. The command
+is displayed as untrusted proposed text and is not executed. The committed M8 adversarial fixture
+and evaluator likewise perform static validation only. M9 remains blocked on RP-0801 and an
+accepted isolation ADR before any runner implementation.
+
 ## Isolation requirements
 - separate runner trust boundary for real untrusted execution;
 - non-root;

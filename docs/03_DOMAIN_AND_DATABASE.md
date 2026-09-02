@@ -47,7 +47,11 @@ MLflow/model identifier, algorithm, dataset manifest, feature version, metrics s
 Immutable/versioned prompts and frozen evaluation cases.
 
 ### GeneratedTestProposal
-Analysis, immutable revision/hash, adapter, file/content artifact, rationale/evidence refs and lifecycle (`draft`, `accepted_for_export`, `rejected`, `execution_approved`, `executed`, `superseded`). Editing creates a new draft revision. M8 acceptance permits export only; M9 execution approval is a separate audited transition bound to the current snapshot, proposal hash, execution-plan hash and approving Reviewer/Admin.
+Analysis, immutable revision/hash, adapter, file/content artifact, rationale/evidence refs and M8
+lifecycle (`draft`, `accepted_for_export`, `rejected`, `superseded`). Editing creates a new draft
+revision. M8 acceptance permits export only. M9 will add separate execution-plan/authorization
+state bound to the current snapshot, proposal hash, execution-plan hash and approving
+Reviewer/Admin; `execution_approved` and `executed` are not M8 proposal states.
 
 ### ExecutionPlan / ExecutionRun / Observation
 Exact SHAs/artifacts, allowed commands, resource/network limits, plan hash; runner image digest, outcomes, timings, bounded stdout/stderr/artifacts, timeout/killed/isolation state.
@@ -161,3 +165,19 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
 - Prompt input, retrieved source, provider raw output, credentials, arbitrary provider errors and
   hidden reasoning are not persisted in the LLM evidence payload. Idempotency binds the immutable
   context, policy, provider and versioned request configuration.
+
+### M8 implemented generated-test proposals
+
+- `GeneratedTestProposal` stores one immutable `generated-test-proposal-v1` revision with its exact
+  content hash, controlled adapter/version, source M7 LLM evidence, citations, inert patch,
+  proposed command, generation identity and static-validation report.
+- `ProposalLifecycleEvent` is append-only. The initial event creates `draft`; Reviewer actions may
+  add `accepted_for_export` or `rejected`, while a content edit creates a new draft and appends
+  `superseded` to the prior revision. Duplicate transitions are idempotent.
+- Composite organization/source, organization/parent and organization/proposal constraints reject
+  cross-tenant binding. PostgreSQL constraints/triggers and SQLite test triggers also reject raw
+  proposal/event update/delete, invalid lifecycle chains and acceptance of a statically invalid
+  proposal.
+- Export returns only the already accepted bounded patch and appends a safe audit record. No M8
+  model or service references an execution plan, execution approval, runner job or repository
+  write, and no analysis job/outbox event is created by review/export.

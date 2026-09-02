@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7 verified 2026-09-01
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -124,6 +124,15 @@ snapshot, disables provider-side response storage, exposes no tools, rejects inv
 uses explicitly reviewed external pricing/retention/training/region configuration. No API call was
 made during M7 verification, so hosted quality, latency, billed cost, retention and regional
 behavior remain not yet validated.
+
+## M8 dependency decision — verified 2026-09-01
+
+M8 adds no dependency. Python `dataclasses`, `json`, `hashlib`, `pathlib` and inert `ast.parse`
+provide the strict contract/static adapter; existing Django/DRF/session/CSRF/database facilities
+provide persistence and review. No formatter, type checker, test runner, patch utility, shell,
+container runtime or provider is invoked on generated content in M8. Their appearance as proposed
+commands is data only. This preserves the verified M7 lock unchanged and leaves runner/backend
+selection to the RP-0801 threat review.
 
 ## Dependency and image management
 

@@ -13,6 +13,20 @@ from apps.web.releaseproof import health
 from apps.web.repositories.api import RepositoryDetailView, RepositoryLifecycleView
 from apps.web.risk.api import CurrentModelView, SnapshotRiskView
 from apps.web.risk.views import current_model_view, snapshot_risk_view
+from apps.web.verification.api import (
+    AcceptTestProposalView,
+    EditTestProposalView,
+    ExportTestProposalView,
+    RejectTestProposalView,
+    TestProposalDetailView,
+)
+from apps.web.verification.views import (
+    accept_test_proposal_view,
+    edit_test_proposal_view,
+    export_test_proposal_view,
+    reject_test_proposal_view,
+    test_proposal_detail_view,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -41,6 +55,56 @@ urlpatterns = [
         name="select-organization",
     ),
     path("app/models/current/", current_model_view, name="current-model"),
+    path(
+        "api/v1/test-proposals/<uuid:public_id>",
+        TestProposalDetailView.as_view(),
+        name="api-test-proposal-detail",
+    ),
+    path(
+        "api/v1/test-proposals/<uuid:public_id>/accept",
+        AcceptTestProposalView.as_view(),
+        name="api-accept-test-proposal",
+    ),
+    path(
+        "api/v1/test-proposals/<uuid:public_id>/reject",
+        RejectTestProposalView.as_view(),
+        name="api-reject-test-proposal",
+    ),
+    path(
+        "api/v1/test-proposals/<uuid:public_id>/edit",
+        EditTestProposalView.as_view(),
+        name="api-edit-test-proposal",
+    ),
+    path(
+        "api/v1/test-proposals/<uuid:public_id>/export",
+        ExportTestProposalView.as_view(),
+        name="api-export-test-proposal",
+    ),
+    path(
+        "app/test-proposals/<uuid:public_id>/",
+        test_proposal_detail_view,
+        name="test-proposal-detail",
+    ),
+    path(
+        "app/test-proposals/<uuid:public_id>/accept/",
+        accept_test_proposal_view,
+        name="accept-test-proposal",
+    ),
+    path(
+        "app/test-proposals/<uuid:public_id>/reject/",
+        reject_test_proposal_view,
+        name="reject-test-proposal",
+    ),
+    path(
+        "app/test-proposals/<uuid:public_id>/edit/",
+        edit_test_proposal_view,
+        name="edit-test-proposal",
+    ),
+    path(
+        "app/test-proposals/<uuid:public_id>/export/",
+        export_test_proposal_view,
+        name="export-test-proposal",
+    ),
     path(
         "app/risk/snapshots/<uuid:snapshot_public_id>/",
         snapshot_risk_view,

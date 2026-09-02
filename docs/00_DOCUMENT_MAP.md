@@ -39,5 +39,7 @@
 | `35_M6_OWNER_LEARNING_NOTE.md` | owner-defensible M6 concepts, assumptions and rerun path |
 | `36_M7_LLM_EVALUATION.md` | strict-schema grounding evaluation, configuration, measurements and limitations |
 | `37_M7_OWNER_LEARNING_NOTE.md` | owner-defensible M7 contracts, privacy routing and rerun path |
+| `38_M8_GENERATED_TEST_EVALUATION.md` | immutable proposal/static-validation evaluation and limitations |
+| `39_M8_OWNER_LEARNING_NOTE.md` | owner-defensible M8 proposal, review and non-execution boundary |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

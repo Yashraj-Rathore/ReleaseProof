@@ -31,6 +31,15 @@ artifact and limitations. The snapshot-risk page names the exact active score ar
 its deterministic rule contributions. Both are authenticated, active-organization scoped and say
 that the score is not a calibrated probability; no color-only status or JavaScript is required.
 
+## Implemented M8 proposal review
+
+The server-rendered proposal page shows organization, immutable revision/hash, snapshot head,
+target behavior, rationale, risk, expected result, evidence references, proposed patch/command and
+every static-check outcome. It prominently states that acceptance permits export only. Reviewers
+can accept/reject with CSRF-protected forms, edit into a new immutable draft, or export only an
+accepted valid patch. Members may read tenant-visible evidence but cannot mutate it. No JavaScript
+or client-stored credential is required.
+
 ## HTMX
 Use for partial status refresh, evidence filtering, proposal approval, policy forms and evaluation detail. Server remains authoritative.
 
