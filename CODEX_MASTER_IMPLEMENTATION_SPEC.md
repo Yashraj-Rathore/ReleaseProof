@@ -670,7 +670,7 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M9 fixture-only isolated runner implemented on 2026-09-02.**
+**Current state: M9 fixture-only isolated runner implemented and CI-validated on 2026-09-02.**
 
 The repository now has the signed RP-0801 threat review and accepted ADR-018, strict plan/input/
 result contracts, a separate audited human execution approval, append-only tenant-bound result
@@ -680,9 +680,8 @@ execution remains disabled; M9 is not a universal sandbox or production-readines
 
 ## Next action
 
-Require the pushed CI revision to pass its PostgreSQL/S3 and live Docker sentinel gates. Only then
-begin M10 (`RP-0901..RP-0905`) differential/mutation work; preserve the same fixture-only scope and
-exact base/candidate parity.
+Begin M10 (`RP-0901..RP-0905`) differential/mutation work while preserving the same fixture-only
+scope and exact base/candidate parity.
 
 ## M9 evidence
 
@@ -707,8 +706,8 @@ exact base/candidate parity.
   separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
 - The local deterministic suite passed **143 tests**, with one PostgreSQL physical-index assertion
   skipped and live S3/sandbox tests deselected. Ruff, strict mypy (183 source files), Django and M9
-  focused checks passed. The local Docker daemon was unavailable, so the pushed GitHub Actions run
-  is the authoritative live PostgreSQL/S3/container evidence.
+  focused checks passed. GitHub Actions run `33639377865` on commit `b8a866b` then passed the
+  authoritative PostgreSQL, live Docker sentinel and SeaweedFS contract gates.
 - M9 adds no Python dependency, mines no data, calls no hosted/paid provider and executes no
   customer repository. Exact threat, evaluation and learning evidence is in docs/40, docs/41 and
   docs/42.
@@ -4437,6 +4436,14 @@ bounded output and post-run container cleanup. A tampered signature is rejected 
 The live CI profile is intentionally rootful because the hosted worker is ephemeral. Passing it
 does not qualify that host for product traffic; the durable profile separately fails closed unless
 Docker reports rootless mode.
+
+## Live CI evidence
+
+GitHub Actions run `33639377865` for commit `b8a866b` passed on 2026-09-02. It completed the
+canonical source/Django/evaluation validator, Compose configuration and startup, authoritative
+PostgreSQL contracts, pinned runner-image build, live sandbox sentinels, the bounded SeaweedFS
+object contract and infrastructure teardown. This is the authoritative live M9 evidence because
+the local Windows Docker daemon was unavailable.
 
 ## Decision and limitations
 
