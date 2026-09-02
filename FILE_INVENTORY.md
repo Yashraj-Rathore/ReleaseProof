@@ -15,13 +15,13 @@ checkout-independent.
 | `.python-version` | 8 | `861b3dd8083d28f336ef70f6755bc399538ddad627b1d095820ca34cb953cf14` |
 | `AGENTS.md` | 7313 | `0abf3b78b53895e7086b9f9851f7c4ca5cc8ce4e8c6d0c125079712fe6d02f6e` |
 | `CHANGELOG.md` | 12988 | `998162d8a200fafb2f22f3e27539e8affc5d651b4af4f428b64672f29961a1d1` |
-| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 311520 | `f919ae863af33d3b7df432f0cb0dd9b93ab1a4ce96138c79a1daf6f8a779f62a` |
+| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 311520 | `ad92b695ae7d701e875ccfb5f3a15b516b95d9dbb0b1042a737f96e230dca89d` |
 | `CODEX_PROMPT_SEQUENCE.md` | 4186 | `01f5b7913c8d80546d92ce6d00ea16d2bd251fd0f4213eee32eac5ecf235ec35` |
 | `CODEX_START_HERE.md` | 2443 | `225d7bd9451e0c8f9911dbb88bdd7c806e79e24ddf1458f12b7cfa2cec5b4e7e` |
 | `IMPLEMENTATION_CHECKLIST.md` | 1641 | `28a5ef63491e9ccc2166f6be3d0e38b110ceb02aa59f1372c691618cf75eb267` |
 | `PACKAGE_MANIFEST.md` | 2443 | `42f7d2f6379e0b3dac81072106676505e8112810202fc6d39c5b55127a20e722` |
 | `PACKAGE_VALIDATION.md` | 4897 | `932346cb417afab304e9d40f4940f48397d2db09a4b1f8f239536c945ddb5d8c` |
-| `PROJECT_STATUS.md` | 20749 | `3d9f23413bd670e8fbfda4f0e38aea8d90739f4111cc5b5d9a0abc8e684cac58` |
+| `PROJECT_STATUS.md` | 20749 | `dd25e91ae0a91a8d4f82251c31549fb2ce8736eeca04dbadf26164380e5348d7` |
 | `README.md` | 17024 | `4610cc1b71b4cb5a0a8f95402f5e4b681b4d8626805cdf02350446b35952ec69` |
 | `adapters/__init__.py` | 56 | `05ffe9e489705476ef1d3ebbd55a4ddbccbe746f896cc416a239650d300d67c9` |
 | `adapters/change_intel/__init__.py` | 143 | `74aaa4034bfed8a1f4c4567e670c5ae117a9c43c80ea38ddea10725fd292c669` |
@@ -205,7 +205,7 @@ checkout-independent.
 | `docs/23_DEMO_PORTFOLIO.md` | 1454 | `953c76d3c092302fb287b41950bad0cb25ffeb181e82d536738368439dba3998` |
 | `docs/24_COMMERCIALIZATION.md` | 1312 | `18f349cbb8eb93cf39ba13c1051c341b1a44a7007f2048a607827336f451e19f` |
 | `docs/25_FAILURE_MODES_RUNBOOKS.md` | 1657 | `298c0efb01409d1886368e2692c597f8126ce9d0fec6c65f0003ae6ff4bad1e4` |
-| `docs/26_TECHNOLOGY_BASELINE.md` | 15801 | `85c471a260db9354d160d4f437d73411a1e99ae4b05e1c3fb12011738b75d4da` |
+| `docs/26_TECHNOLOGY_BASELINE.md` | 15801 | `055e9fdd137d0769c6cd606a93b25fe7d8ac875295fffdfc99d7c7e310b6b4b9` |
 | `docs/27_INTERVIEW_TALK_TRACK.md` | 2306 | `a4ca4547176a91406638d299ef77a0a047cf661486fc16fea6555419dabea64e` |
 | `docs/28_NON_GOALS_FUTURE.md` | 704 | `acf359acbb30994a4ffeecb00ed421620555da92e71bc74fcab605ba36c1ca2a` |
 | `docs/29_PILOT_PACKAGE.md` | 1067 | `396ec83b68a43488f7b1bc4dff099a44ec08d7dbd9af45bf0a9c840f1b76895c` |
@@ -286,7 +286,7 @@ checkout-independent.
 | `packages/domain/object_storage.py` | 2490 | `617d1953b6dfbf55b0957e26d2c32d9c4a8f52787d323225dca2b209b7e76fda` |
 | `packages/domain/tasks.py` | 954 | `7edc06de337861ce353c22f88fa03878c19031749190f62bbaccbfaecb90d890` |
 | `packages/execution_contracts/__init__.py` | 1073 | `28ff2e23bb982f493f9cea73243f7f298eec143ea64d763c2f0d22bbd086abca` |
-| `packages/execution_contracts/contracts.py` | 20741 | `9d488c6c735b00443c63564a394b2b4a33ee403d11657c19a3c0bdcb77e86928` |
+| `packages/execution_contracts/contracts.py` | 20916 | `acb21dbbb86e35f728cc6966bf7f97ab4222fdae648781105117381f6f6488ed` |
 | `packages/execution_contracts/signing.py` | 736 | `15a842d78d5c71c19e4101440686eeeef62cfad0e99954c15f1b4e6c761acb47` |
 | `packages/github_contracts/__init__.py` | 828 | `3f79738e4334810406ebe385fd0cbf161c57d80c0dbdedd0ef99b007cd16a682` |
 | `packages/github_contracts/auth.py` | 2974 | `025fc76eda3f3f16960938fee01c0d977d759bc35359c64ba1d482a7a2a64082` |
@@ -305,7 +305,7 @@ checkout-independent.
 | `pyproject.toml` | 1978 | `b5aa85b605ac17c39d0162c069b929b11448c3db41cd8aa4fe91a2bde9094069` |
 | `runner/__init__.py` | 75 | `0d2e23e5bd82a37b865317ca79b19165798b9e799bbf80d06bf7c06939a8a75e` |
 | `runner/docker_cli.py` | 9539 | `295e1002c6ae4df0ae31858e131e8172f0d0befe3b8619b8820c510954c75fa2` |
-| `runner/fixture_image/Dockerfile` | 616 | `cea3b2bff55f5cf30280cfa240f4ff0089c9e48bbae8d3024fc8acfefd7095f8` |
+| `runner/fixture_image/Dockerfile` | 616 | `55f42fb3a0cc99c8aa827a0accac39f308790146718b80602066153d9ce8ec07` |
 | `runner/fixture_image/entrypoint.py` | 6794 | `0867c2d3225c493d6e6067bc86811f7007e10cde3f14d8396c0468fc55471a5b` |
 | `templates/dataset-card-template.md` | 696 | `47a6b4246438305e994126af3f1e46ac268eadd2a4de1736d4c3e1e21f678ec1` |
 | `templates/definition-of-done.md` | 1387 | `7e0be39e59c42f50537cf3757a2fc04dcdfc845ffe8a55c3c0692aad90a93fd2` |

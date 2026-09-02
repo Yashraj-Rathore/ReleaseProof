@@ -145,7 +145,7 @@ The fixture Dockerfile pins the official multi-platform
 `python:3.13.15-slim-bookworm@sha256:ed86c82274b3c69b52fb5820f358f0bd7df0b603332063cb5c6e32bd220c3e6e`
 index resolved from Docker Hub on 2026-09-02. The built runner itself is selected by exact local
 image ID and must carry labels matching runner version `releaseproof-fixture-runner-v1` and frozen
-fixture-tree hash `d0bb7d8a86b163ecf690cee8d04616b47c756a9bfea2d43d79729c3966d82043`.
+fixture-tree hash `70b1ebeb3d2257fa88667f06d8df3690de118dd277ec993f805d1851c17b4673`.
 Mutable tags are not accepted in an execution plan.
 
 ## Dependency and image management

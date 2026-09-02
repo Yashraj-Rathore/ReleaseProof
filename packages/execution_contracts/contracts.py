@@ -15,7 +15,7 @@ EXECUTION_PLAN_SCHEMA_VERSION = "releaseproof.execution-plan.v1"
 EXECUTION_RESULT_SCHEMA_VERSION = "releaseproof.execution-result.v1"
 RUNNER_VERSION = "releaseproof-fixture-runner-v1"
 FIXTURE_ID = "releaseproof-fictional-python-v1"
-CONTROLLED_FIXTURE_TREE_SHA256 = "d0bb7d8a86b163ecf690cee8d04616b47c756a9bfea2d43d79729c3966d82043"
+CONTROLLED_FIXTURE_TREE_SHA256 = "70b1ebeb3d2257fa88667f06d8df3690de118dd277ec993f805d1851c17b4673"
 _SHA256 = re.compile(r"^[0-9a-f]{64}$")
 _CHECKOUT_SHA = re.compile(r"^[0-9a-f]{40}$")
 _IMAGE = re.compile(r"^releaseproof/fixture-runner@sha256:[0-9a-f]{64}$")
@@ -542,9 +542,10 @@ def compute_tree_sha256(root: Path) -> str:
         and item.suffix != ".pyc"
         and not any(part.startswith(".") for part in item.relative_to(root).parts)
     )
-    for path in sorted(files):
+    for path in sorted(files, key=lambda item: item.relative_to(root).as_posix().encode()):
         relative = path.relative_to(root).as_posix().encode()
-        content = path.read_bytes()
+        # Git normalizes these text fixtures to LF in CI; hash the same bytes on Windows.
+        content = path.read_bytes().replace(b"\r\n", b"\n")
         digest.update(len(relative).to_bytes(4, "big"))
         digest.update(relative)
         digest.update(len(content).to_bytes(8, "big"))

@@ -691,7 +691,7 @@ exact base/candidate parity.
   ADR-018 accepts dedicated rootless Docker only for the frozen fictional fixture and explicitly
   disables arbitrary external repositories.
 - `releaseproof.execution-plan.v1` binds the exact snapshot/check-out, proposal/input, frozen
-  fixture tree (`d0bb7d8a...82043`), labeled image digest, argv, four constant non-secret env values,
+  fixture tree (`70b1ebeb...b4673`), labeled image digest, argv, four constant non-secret env values,
   network `none`, empty mounts, CPU/memory/PID/tmpfs/time/output ceilings and artifact vocabulary.
   Duplicate/extra/tampered fields and signatures fail closed.
 - Candidate containers are numeric non-root, read-only, capability-free, no-new-privileges,
@@ -702,7 +702,7 @@ exact base/candidate parity.
   result ingest authenticates exact plan/image/attempt, reuses identical duplicates, rejects
   conflicts and records late evidence as stale.
 - The frozen CC0 contract/policy artifact passes all ten declared controls and has file SHA-256
-  `3c40fcab342ce0fd0f6957479b8853dc28a3e1f1d1fff2e34f8694c2c637ed85` before final
+  `c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759` before final
   documentation synchronization. It is non-live synthetic evidence; the sandbox-marked CI suite
   separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
 - The local deterministic suite passed **131 tests**, with one PostgreSQL physical-index assertion
@@ -3574,7 +3574,7 @@ The fixture Dockerfile pins the official multi-platform
 `python:3.13.15-slim-bookworm@sha256:ed86c82274b3c69b52fb5820f358f0bd7df0b603332063cb5c6e32bd220c3e6e`
 index resolved from Docker Hub on 2026-09-02. The built runner itself is selected by exact local
 image ID and must carry labels matching runner version `releaseproof-fixture-runner-v1` and frozen
-fixture-tree hash `d0bb7d8a86b163ecf690cee8d04616b47c756a9bfea2d43d79729c3966d82043`.
+fixture-tree hash `70b1ebeb3d2257fa88667f06d8df3690de118dd277ec993f805d1851c17b4673`.
 Mutable tags are not accepted in an execution plan.
 
 ## Dependency and image management
