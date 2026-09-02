@@ -1073,6 +1073,8 @@ and its remote M2 result is tracked in GitHub Actions.
   interpreter so its deliberately minimal, secret-free child environment does not require `PATH`;
   invalid runner output reports a bounded category, with a sanitized/length-bounded daemon detail
   allowed only for the explicit controlled-fixture ephemeral-CI profile.
+- Disabled compression for the M9 Docker `local` log driver because the bounded one-file rotation
+  policy is incompatible with that driver's default compression setting.
 - Added the frozen M4 artifact rebuild to the canonical validator and kept NumPy, pandas,
   scikit-learn and XGBoost deferred until a learned-model milestone needs them.
 - Reverified and locked NumPy 2.5.2, pandas 3.0.5, scikit-learn 1.9.0 and CPU-only XGBoost 3.4.1

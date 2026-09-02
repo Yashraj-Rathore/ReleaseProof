@@ -121,6 +121,7 @@ def test_docker_arguments_enforce_all_m9_isolation_and_resource_controls() -> No
     assert "--memory-swap 268435456" in joined
     assert "--cpus 0.500" in joined
     assert "/workspace:rw,nosuid,nodev,noexec,size=67108864" in joined
+    assert "--log-opt max-size=64k --log-opt max-file=1 --log-opt compress=false" in joined
     assert "/var/run/docker.sock" not in joined
     assert "RELEASEPROOF_HOST_SENTINEL" not in joined
 

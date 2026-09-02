@@ -171,6 +171,8 @@ def _create_arguments(plan: ExecutionPlanV1, *, name: str) -> tuple[str, ...]:
         "max-size=64k",
         "--log-opt",
         "max-file=1",
+        "--log-opt",
+        "compress=false",
     ]
     for key, value in plan.environment:
         arguments.extend(("--env", f"{key}={value}"))
