@@ -364,3 +364,8 @@ The committed CC0 evaluation covers identical, planted-regression, candidate-tim
 base-failure cases plus all four recommendation outcomes. The mutation slice kills one of two
 controlled mutants (50%); that is harness evidence, not repository-wide mutation coverage or a
 customer-quality claim. See docs/43 and docs/44.
+
+GitHub Actions run `33680837554` for implementation commit `14b133e` passed canonical validation,
+Compose/startup, authoritative PostgreSQL constraints, the pinned runner-image build, live
+regression/identical/timeout sandbox evidence, SeaweedFS and teardown. This remains evidence for
+the controlled synthetic fixture only.

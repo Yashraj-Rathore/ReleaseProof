@@ -56,8 +56,13 @@ Every output has `advisory_only=true` and `auto_merge=false`.
 `artifacts/evaluation/m10_differential_eval_v1.json` is a deterministic contract/policy artifact;
 it does not execute a container. The sandbox-marked test separately builds the pinned fixture image
 on disposable Linux CI and executes identical, planted-regression and timeout variants while
-rechecking the M9 isolation flags and cleanup. That live result is not claimed until the workflow
-for the exact pushed revision succeeds.
+rechecking the M9 isolation flags and cleanup.
+
+GitHub Actions run `33680837554` for implementation commit
+`14b133e116169dde11493bd46860d591f5098c0b` passed on 2026-09-02. Canonical checks, Compose/startup,
+authoritative PostgreSQL constraints, the image build, live sandbox suite, SeaweedFS contract and
+teardown all succeeded. The hosted CI profile is fixture evidence, not qualification for arbitrary
+repository execution or the dedicated rootless production host profile.
 
 The HTTP observation invokes a synthetic handler contract in-process and opens no socket. It proves
 selected comparison semantics, not Django/FastAPI server compatibility. No model was trained or

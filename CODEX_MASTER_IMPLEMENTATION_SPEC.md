@@ -377,6 +377,11 @@ base-failure cases plus all four recommendation outcomes. The mutation slice kil
 controlled mutants (50%); that is harness evidence, not repository-wide mutation coverage or a
 customer-quality claim. See docs/43 and docs/44.
 
+GitHub Actions run `33680837554` for implementation commit `14b133e` passed canonical validation,
+Compose/startup, authoritative PostgreSQL constraints, the pinned runner-image build, live
+regression/identical/timeout sandbox evidence, SeaweedFS and teardown. This remains evidence for
+the controlled synthetic fixture only.
+
 
 ---
 
@@ -710,7 +715,7 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M10 differential/mutation verification implemented and locally validated on 2026-09-02; live CI evidence for this revision is pending.**
+**Current state: M10 differential/mutation verification implemented and CI-validated on 2026-09-02.**
 
 The repository now chains strict M10 base/candidate plans to an exact separately approved M9 plan,
 replays one frozen workload under parity, compares selected HTTP/state/event evidence with explicit
@@ -720,8 +725,8 @@ execution remains disabled; this is not a universal sandbox or production-readin
 
 ## Next action
 
-After M10 CI evidence is recorded, begin M11 (`RP-1001..RP-1006`) semantic-model work from the
-unchanged M4/M5 dataset and promotion gates. Do not widen fixture execution or begin M12 agent work.
+Begin M11 (`RP-1001..RP-1006`) semantic-model work from the unchanged M4/M5 dataset and promotion
+gates. Do not widen fixture execution or begin M12 agent work.
 
 ## M10 evidence
 
@@ -747,8 +752,9 @@ unchanged M4/M5 dataset and promotion gates. Do not widen fixture execution or b
 - Canonical local validation passed **153 tests** with one PostgreSQL physical-index assertion
   skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 190 source
   files, Django, migration drift, generated docs/inventory and M4-M10 evaluators passed. The
-  Docker-marked suite and authoritative PostgreSQL constraints will be validated by GitHub Actions
-  for the pushed revision; no such remote result is claimed yet. Exact evidence is in docs/43/44.
+  exact implementation commit `14b133e` passed GitHub Actions run `33680837554`: canonical checks,
+  Compose/startup, authoritative PostgreSQL constraints, pinned image build, live M9/M10 sandbox
+  sentinels, SeaweedFS and teardown all succeeded. Exact evidence is in docs/43/44.
 
 ## M9 evidence
 
@@ -1015,7 +1021,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
 | M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
-| M10 differential | Implemented - RP-0901..RP-0905; local validation passed, live CI pending |
+| M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Not started |
 | M12 LangGraph | Not started |
 | M13 MLflow/governance | Not started |
@@ -4764,8 +4770,13 @@ Every output has `advisory_only=true` and `auto_merge=false`.
 `artifacts/evaluation/m10_differential_eval_v1.json` is a deterministic contract/policy artifact;
 it does not execute a container. The sandbox-marked test separately builds the pinned fixture image
 on disposable Linux CI and executes identical, planted-regression and timeout variants while
-rechecking the M9 isolation flags and cleanup. That live result is not claimed until the workflow
-for the exact pushed revision succeeds.
+rechecking the M9 isolation flags and cleanup.
+
+GitHub Actions run `33680837554` for implementation commit
+`14b133e116169dde11493bd46860d591f5098c0b` passed on 2026-09-02. Canonical checks, Compose/startup,
+authoritative PostgreSQL constraints, the image build, live sandbox suite, SeaweedFS contract and
+teardown all succeeded. The hosted CI profile is fixture evidence, not qualification for arbitrary
+repository execution or the dedicated rootless production host profile.
 
 The HTTP observation invokes a synthetic handler contract in-process and opens no socket. It proves
 selected comparison semantics, not Django/FastAPI server compatibility. No model was trained or

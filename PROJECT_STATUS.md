@@ -1,6 +1,6 @@
 # Project Status
 
-**Current state: M10 differential/mutation verification implemented and locally validated on 2026-09-02; live CI evidence for this revision is pending.**
+**Current state: M10 differential/mutation verification implemented and CI-validated on 2026-09-02.**
 
 The repository now chains strict M10 base/candidate plans to an exact separately approved M9 plan,
 replays one frozen workload under parity, compares selected HTTP/state/event evidence with explicit
@@ -10,8 +10,8 @@ execution remains disabled; this is not a universal sandbox or production-readin
 
 ## Next action
 
-After M10 CI evidence is recorded, begin M11 (`RP-1001..RP-1006`) semantic-model work from the
-unchanged M4/M5 dataset and promotion gates. Do not widen fixture execution or begin M12 agent work.
+Begin M11 (`RP-1001..RP-1006`) semantic-model work from the unchanged M4/M5 dataset and promotion
+gates. Do not widen fixture execution or begin M12 agent work.
 
 ## M10 evidence
 
@@ -37,8 +37,9 @@ unchanged M4/M5 dataset and promotion gates. Do not widen fixture execution or b
 - Canonical local validation passed **153 tests** with one PostgreSQL physical-index assertion
   skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 190 source
   files, Django, migration drift, generated docs/inventory and M4-M10 evaluators passed. The
-  Docker-marked suite and authoritative PostgreSQL constraints will be validated by GitHub Actions
-  for the pushed revision; no such remote result is claimed yet. Exact evidence is in docs/43/44.
+  exact implementation commit `14b133e` passed GitHub Actions run `33680837554`: canonical checks,
+  Compose/startup, authoritative PostgreSQL constraints, pinned image build, live M9/M10 sandbox
+  sentinels, SeaweedFS and teardown all succeeded. Exact evidence is in docs/43/44.
 
 ## M9 evidence
 
@@ -305,7 +306,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M7 LLM evidence | Complete - RP-0601..RP-0606; deterministic fake remains default |
 | M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
-| M10 differential | Implemented - RP-0901..RP-0905; local validation passed, live CI pending |
+| M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Not started |
 | M12 LangGraph | Not started |
 | M13 MLflow/governance | Not started |
