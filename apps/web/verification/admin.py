@@ -6,7 +6,13 @@ from django.contrib import admin
 from django.http import HttpRequest
 
 from apps.web.organizations.admin import TenantScopedAdminMixin
-from apps.web.verification.models import GeneratedTestProposal, ProposalLifecycleEvent
+from apps.web.verification.models import (
+    ExecutionApproval,
+    ExecutionPlan,
+    ExecutionRun,
+    GeneratedTestProposal,
+    ProposalLifecycleEvent,
+)
 
 
 class _ReadOnlyProposalAdmin(TenantScopedAdminMixin):
@@ -43,3 +49,21 @@ class ProposalLifecycleEventAdmin(_ReadOnlyProposalAdmin):
         "occurred_at",
     )
     readonly_fields = tuple(field.name for field in ProposalLifecycleEvent._meta.fields)
+
+
+@admin.register(ExecutionPlan)
+class ExecutionPlanAdmin(_ReadOnlyProposalAdmin):
+    list_display = ("public_id", "organization", "plan_hash", "created_at")
+    readonly_fields = tuple(field.name for field in ExecutionPlan._meta.fields)
+
+
+@admin.register(ExecutionApproval)
+class ExecutionApprovalAdmin(_ReadOnlyProposalAdmin):
+    list_display = ("public_id", "organization", "plan", "actor", "occurred_at")
+    readonly_fields = tuple(field.name for field in ExecutionApproval._meta.fields)
+
+
+@admin.register(ExecutionRun)
+class ExecutionRunAdmin(_ReadOnlyProposalAdmin):
+    list_display = ("public_id", "organization", "plan", "attempt", "outcome", "recorded_at")
+    readonly_fields = tuple(field.name for field in ExecutionRun._meta.fields)

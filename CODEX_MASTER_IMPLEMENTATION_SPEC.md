@@ -312,6 +312,20 @@ human may accept a statically valid proposal for export, reject it, edit it into
 download its inert patch. Acceptance does not commit, enqueue, authorize or execute anything. M9
 still owns its separate threat review, immutable execution plan, execution approval and sandbox.
 
+## M9 fixture-only sandbox runner
+
+M9 implements `RP-0801..RP-0805` under the accepted ADR-018 boundary. It supports only the exact
+source-controlled fictional fixture on a dedicated rootless disposable Linux Docker host; external
+repositories remain disabled. Immutable signed plans bind the snapshot, proposal/input, fixture,
+image, argv, environment, network/mount/resource policy and plan hash. Reviewer execution approval
+is a separate CSRF/role-gated append-only event, and strict bounded results are idempotently
+persisted with explicit stale/timeout/kill/isolation/cleanup facts.
+
+The deterministic local suite does not need Docker. The explicit `sandbox` marker builds and runs
+known live sentinel probes on a disposable Linux Docker host; CI is the authoritative live evidence
+when a developer daemon is unavailable. Passing those probes is not a claim that containers safely
+isolate arbitrary hostile customer repositories. See docs/40, ADR-018 and docs/41.
+
 ```text
 uv sync --frozen --group dev --group ml --group ai
 uv run python -m eng.evaluate_m8_proposals --check
@@ -656,20 +670,48 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M8 generated-test proposals complete on 2026-09-01.**
+**Current state: M9 fixture-only isolated runner implemented on 2026-09-02.**
 
-The repository now turns completed M7 evidence into strict, immutable, tenant-bound generated-test
-proposals for one controlled Python fixture. Reviewers may accept for export, reject, edit into a
-new revision or download the inert patch through CSRF-protected flows. Static parse/format/
-type-shape/safety checks run without importing or executing generated content. No patch was applied,
-no proposed command or untrusted code was executed, and no M9 execution approval, runner,
-sandbox-security or production-readiness claim exists yet.
+The repository now has the signed RP-0801 threat review and accepted ADR-018, strict plan/input/
+result contracts, a separate audited human execution approval, append-only tenant-bound result
+evidence and a hardened Docker CLI runner for the exact source-controlled fictional fixture. The
+durable profile requires a dedicated rootless disposable Linux host. External/customer repository
+execution remains disabled; M9 is not a universal sandbox or production-readiness claim.
 
 ## Next action
 
-Run `codex-prompts/09_SANDBOX.md` for `RP-0801` first. Complete the runner threat review and accept
-an isolation-backend ADR before any runner code. Stop on unresolved Critical/High concerns; keep
-M8 `accepted_for_export` separate from a future immutable M9 execution-plan approval.
+Require the pushed CI revision to pass its PostgreSQL/S3 and live Docker sentinel gates. Only then
+begin M10 (`RP-0901..RP-0905`) differential/mutation work; preserve the same fixture-only scope and
+exact base/candidate parity.
+
+## M9 evidence
+
+- Docs/40 ranks kernel/runtime escape, secret/socket/mount/network exfiltration, forged policy,
+  tenant/stale binding, resource denial, image substitution, hostile output and cleanup threats.
+  ADR-018 accepts dedicated rootless Docker only for the frozen fictional fixture and explicitly
+  disables arbitrary external repositories.
+- `releaseproof.execution-plan.v1` binds the exact snapshot/check-out, proposal/input, frozen
+  fixture tree (`d0bb7d8a...82043`), labeled image digest, argv, four constant non-secret env values,
+  network `none`, empty mounts, CPU/memory/PID/tmpfs/time/output ceilings and artifact vocabulary.
+  Duplicate/extra/tampered fields and signatures fail closed.
+- Candidate containers are numeric non-root, read-only, capability-free, no-new-privileges,
+  networkless and mountless, with 0.5 CPU, 256 MiB memory, 64 PIDs, bounded tmpfs/log/output and
+  inner/outer timeout+kill. The application/Celery boundary neither imports nor invokes runner code.
+- Immutable `ExecutionPlan`, `ExecutionApproval` and `ExecutionRun` rows use composite tenant
+  constraints/triggers. Reviewer approval separately repeats exact snapshot/proposal/plan hashes;
+  result ingest authenticates exact plan/image/attempt, reuses identical duplicates, rejects
+  conflicts and records late evidence as stale.
+- The frozen CC0 contract/policy artifact passes all ten declared controls and has file SHA-256
+  `3c40fcab342ce0fd0f6957479b8853dc28a3e1f1d1fff2e34f8694c2c637ed85` before final
+  documentation synchronization. It is non-live synthetic evidence; the sandbox-marked CI suite
+  separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
+- The local deterministic suite passed **131 tests**, with one PostgreSQL physical-index assertion
+  skipped and live S3/sandbox tests deselected. Ruff, strict mypy (183 source files), Django and M9
+  focused checks passed. The local Docker daemon was unavailable, so the pushed GitHub Actions run
+  is the authoritative live PostgreSQL/S3/container evidence.
+- M9 adds no Python dependency, mines no data, calls no hosted/paid provider and executes no
+  customer repository. Exact threat, evaluation and learning evidence is in docs/40, docs/41 and
+  docs/42.
 
 ## M8 evidence
 
@@ -996,6 +1038,17 @@ and its remote M2 result is tracked in GitHub Actions.
   export acceptance from M9 execution approval and never create execution jobs.
 - A frozen 11-case CC0 adversarial proposal suite, raw evaluation artifact and M8 Owner Learning
   Note covering schema/static checks, stability, non-execution and limitations.
+- An accepted RP-0801 threat review and ADR-018 selecting dedicated rootless Docker for only the
+  exact fictional fixture while keeping arbitrary external repository execution disabled.
+- Strict HMAC-authenticated M9 execution input/plan/result contracts with immutable hashes, pinned
+  fixture/image/argv/environment/network/mount/resource/artifact policies and bounded output.
+- Tenant-bound immutable execution plans, separate Reviewer/CSRF execution approvals and append-only
+  idempotent result evidence with stale/timeout/kill/isolation/cleanup facts and database triggers.
+- A separate Docker CLI runner/image using non-root/read-only/no-capability/no-new-privileges/
+  no-network/no-host-mount controls, cgroup/tmpfs/time/output limits and mandatory cleanup.
+- Frozen synthetic M9 policy evidence plus an explicit live CI sandbox suite for credential/host/
+  socket/network/metadata/resource/timeout/output/signature/cleanup sentinels and an Owner Learning
+  Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -1031,6 +1084,9 @@ and its remote M2 result is tracked in GitHub Actions.
   framework, and kept hosted routing disabled without an explicit compatible tenant policy.
 - Kept the dependency lock unchanged in M8: standard-library static parsing plus existing
   Django/DRF controls are sufficient, while execution tooling remains deferred to M9 threat review.
+- Kept the dependency lock unchanged in M9: the separate runner uses the standard library, Docker
+  CLI and the already pinned fixture pytest version. The runner is not placed beside application
+  services in Compose and the application host receives no Docker socket.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -1053,6 +1109,9 @@ and its remote M2 result is tracked in GitHub Actions.
 - M8 evidence is recorded in `PROJECT_STATUS.md` and docs/38; its perfect frozen-fixture figures
   validate only the controlled schema/static-filter harness. No proposal was executed, committed or
   approved for M9 execution, and real-repository usefulness/sandbox safety are not claimed.
+- M9 evidence is recorded in `PROJECT_STATUS.md` and docs/40-42. Deterministic policy and known live
+  fixture sentinels do not prove absence of all container escapes; arbitrary external repository
+  execution and general production readiness remain explicitly unvalidated.
 
 
 ---
@@ -1175,6 +1234,9 @@ and repositories until a later assigned issue justifies a separate module.
 | `37_M7_OWNER_LEARNING_NOTE.md` | owner-defensible M7 contracts, privacy routing and rerun path |
 | `38_M8_GENERATED_TEST_EVALUATION.md` | immutable proposal/static-validation evaluation and limitations |
 | `39_M8_OWNER_LEARNING_NOTE.md` | owner-defensible M8 proposal, review and non-execution boundary |
+| `40_M9_RUNNER_THREAT_REVIEW.md` | ranked runner threats, host assumptions, controls and RP-0801 signoff |
+| `41_M9_RUNNER_EVALUATION.md` | deterministic policy evidence, live sentinel scope and limitations |
+| `42_M9_OWNER_LEARNING_NOTE.md` | owner-defensible M9 trust boundary, contracts and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1380,12 +1442,17 @@ Immutable/versioned prompts and frozen evaluation cases.
 ### GeneratedTestProposal
 Analysis, immutable revision/hash, adapter, file/content artifact, rationale/evidence refs and M8
 lifecycle (`draft`, `accepted_for_export`, `rejected`, `superseded`). Editing creates a new draft
-revision. M8 acceptance permits export only. M9 will add separate execution-plan/authorization
-state bound to the current snapshot, proposal hash, execution-plan hash and approving
-Reviewer/Admin; `execution_approved` and `executed` are not M8 proposal states.
+revision. M8 acceptance permits export only. M9 adds separate immutable `ExecutionPlan`,
+`ExecutionApproval` and `ExecutionRun` records bound to the current snapshot, proposal hash,
+execution-plan hash and approving Reviewer/Admin; `execution_approved` and `executed` are not M8
+proposal states.
 
-### ExecutionPlan / ExecutionRun / Observation
-Exact SHAs/artifacts, allowed commands, resource/network limits, plan hash; runner image digest, outcomes, timings, bounded stdout/stderr/artifacts, timeout/killed/isolation state.
+### ExecutionPlan / ExecutionApproval / ExecutionRun / Observation
+The M9 plan stores exact fixture/check-out/proposal/input/image identifiers, argv, constant
+environment, empty mounts, network `none`, quotas, artifacts and plan hash. Approval separately
+repeats the exact snapshot/proposal/plan hashes. Runs are append-only and idempotent; they retain
+runner/image/plan identity, outcome, timing, bounded output hashes/excerpts, isolation checks,
+timeout/kill, cleanup and stale-at-recording state.
 
 ### DeploymentOutcome
 Optional feedback taxonomy (`no_issue`, `revert`, `hotfix`, `incident`, `manual_label`, `unknown`), source/confidence/observation window and org-training eligibility.
@@ -1513,6 +1580,18 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
   model or service references an execution plan, execution approval, runner job or repository
   write, and no analysis job/outbox event is created by review/export.
 
+## M9 execution evidence implementation
+
+- Plan, approval and result rows are tenant-bound with composite database foreign keys/test
+  triggers and immutable at both application and database layers.
+- Plan creation is idempotent by organization/hash and neither approves nor enqueues execution.
+  Reviewer approval is separately CSRF/role gated and fails when the head/proposal is stale.
+- Result ingestion requires a valid signature and exact plan/image/attempt binding. Duplicate
+  identical requests reuse evidence; conflicting duplicates fail closed. A late result is retained
+  with `stale_at_recording=true`, never promoted as current.
+- Audits store only opaque IDs, hashes, outcome, attempt and staleness—not patches, source, secrets
+  or output excerpts.
+
 
 ---
 
@@ -1636,12 +1715,24 @@ session/CSRF-protected mutations are:
 Responses expose immutable revision/hash, snapshot SHA, evidence and generation identity,
 validation results and `accepted_for_export_is_execution_approval=false`. Export is a no-store
 `text/x-diff` attachment with proposal-hash/correlation headers. It never applies the patch or
-starts a job. M9 will define a different execution-plan and approval contract.
+starts a job. M9 uses different execution-plan and approval records.
 
 ## Runner contract
-Runner accepts only immutable/signed internal `ExecutionPlanV1`: artifact hashes, image/toolchain, allowlisted commands, resource/network policy, timeout/output limits. No free-form host paths or Docker options.
+Runner accepts only immutable/HMAC-authenticated internal `releaseproof.execution-plan.v1`: exact
+fictional fixture/check-out/proposal/input hashes, a `releaseproof/fixture-runner@sha256` image,
+allowlisted argv, constant non-secret environment, bounded resources, network `none`, empty mounts
+and one expected result artifact. Duplicate/extra fields, mutable tags, host paths and free-form
+Docker options are rejected.
 
-Runner returns plan hash, image digests, command outcomes, timings/resource observations, bounded artifact refs, explicit timeout/killed/isolation failure.
+Runner returns strict `releaseproof.execution-result.v1`: plan/image/runner/attempt identity,
+outcome/exit/timing, bounded stdout/stderr excerpts with full hashes/sizes, isolation facts,
+timeout/killed/cleanup state and bounded artifact vocabulary. The control plane authenticates and
+validates it before append-only persistence.
+
+Implemented authenticated M9 routes are `GET /api/v1/execution-plans/{public_id}` and Reviewer
+`POST /api/v1/execution-plans/{public_id}/approve`, plus equivalent HTML detail/approval routes.
+They are tenant scoped and session mutations require CSRF. Plan creation/result ingestion remain
+trusted application-service boundaries; no public endpoint accepts Docker options or runner output.
 
 ## Idempotency/staleness
 GitHub delivery + snapshot identity dedupe. Manual reanalysis may use idempotency key. Old-head analysis cannot publish current-head conclusion.
@@ -2238,8 +2329,20 @@ This allowlist is defense in depth, not an isolation boundary.
 Draft, review, edit and export paths never invoke a shell, subprocess, Python import, patch tool,
 Celery task, runner or repository writer. Acceptance means only `accepted_for_export`. The command
 is displayed as untrusted proposed text and is not executed. The committed M8 adversarial fixture
-and evaluator likewise perform static validation only. M9 remains blocked on RP-0801 and an
-accepted isolation ADR before any runner implementation.
+and evaluator likewise perform static validation only.
+
+### M9 implemented boundary
+
+RP-0801 is signed off in docs/40 and ADR-018. M9 supports only the exact source-controlled
+fictional fixture on a dedicated rootless disposable Linux runner; external/customer repositories
+remain disabled. Strict signed plans bind every input and policy. Reviewer execution approval is
+separate from M8 export acceptance and becomes stale after head/proposal changes. The candidate
+uses a digest-pinned image, non-root/read-only/no-capability/no-network/no-mount controls and bounded
+CPU/memory/PIDs/tmpfs/time/output. Results are strict, bounded, append-only and idempotent.
+
+The sandbox-marked CI suite runs known probes on an ephemeral rootful CI host to validate observed
+flags, secrets/network/host denial, resource enforcement, timeout/kill/output and cleanup. It does
+not qualify that host or Docker generally for arbitrary hostile code.
 
 ## Isolation requirements
 - separate runner trust boundary for real untrusted execution;
@@ -2359,7 +2462,10 @@ Separate metadata/diff/index/execution/LLM-trace/training retention classes. Hos
 Repo text is hostile content. It cannot change tenant/tool/sandbox/secret/budget policy. Authorization is server-enforced.
 
 ## Sandbox threats
-Container escape, fork/resource bombs, mining, network/DNS exfiltration, socket/mount access, package install scripts, archive traversal/decompression bombs, artifact poisoning, persistence. M9 blocks until isolation evidence passes.
+Container escape, fork/resource bombs, mining, network/DNS exfiltration, socket/mount access,
+package install scripts, archive traversal/decompression bombs, artifact poisoning and persistence.
+M9 addresses only the frozen fictional fixture under ADR-018; arbitrary external repository
+execution stays disabled.
 
 Human acceptance of a generated test authorizes review/export only. Execution requires the separate M9 authorization bound to immutable snapshot/proposal/plan hashes and is invalidated by any change.
 
@@ -2443,6 +2549,17 @@ Static AST filtering cannot make hostile code safe, so M8 deliberately has no ex
 repository credential, patch application, runner call or execution approval. Audit metadata keeps
 hash/version/lifecycle facts and excludes patch/source content. M9 must complete its independent
 threat review and isolation signoff before execution exists.
+
+## M9 sandbox boundary
+
+The signed RP-0801 review is docs/40 and the accepted backend is ADR-018. Durable execution requires
+a dedicated rootless Linux Docker host with cgroups v2, default seccomp and enforcing LSM. Plans
+cannot request network, mounts, ambient env, alternate image namespace/argv or larger-than-v1
+resources. Candidate containers receive no socket/host path/SSH agent/credential, run as numeric
+non-root with a read-only root, no capabilities and no-new-privileges, and are force-removed after
+each attempt. Live sentinels cover parent secrets, socket/mount, metadata/network, cgroup/tmpfs,
+timeout/kill/output and cleanup. These controls reduce risk for the source-controlled fixture and
+are not a universal container-isolation claim.
 
 
 ---
@@ -2560,6 +2677,17 @@ validation. No proposal was executed and these measurements do not establish gen
 usefulness, sandbox safety or customer outcomes. Exact evidence is in
 `38_M8_GENERATED_TEST_EVALUATION.md`.
 
+## M9 runner evidence
+
+The frozen CC0 M9 artifact deterministically checks the fictional fixture tree hash, plan/result
+schema/hash/signature boundary and exact Docker image/argv/environment/network/mount/resource flags
+without executing code. A separately enabled `sandbox` suite builds the pinned image on a
+disposable Linux CI host and proves non-root/capability/no-new-privileges/read-only controls,
+credential/host/socket/network/metadata denial, cgroup/tmpfs quotas, timeout/kill, bounded output,
+signature rejection and cleanup. Passing is evidence only for those known probes and fixture; it
+does not establish absence of every escape or support arbitrary external repositories. Exact scope
+and rerun commands are in docs/41.
+
 
 ---
 
@@ -2670,6 +2798,12 @@ evidence; SQLite triggers remain a fast mirror, not a substitute. That step supp
 public test-only webhook signing value because `.env.example` correctly leaves the production
 secret blank.
 
+M9 additionally builds the fixture runner from an immutable Python base-image digest and runs the
+explicit sandbox marker on the disposable GitHub Linux host. This ephemeral rootful probe is CI
+evidence only; ADR-018 requires rootless Docker on a dedicated disposable host for the durable
+fixture runner. The runner is not added to the application Compose stack and no application
+container receives its Docker socket.
+
 From M4, the same validator also rebuilds the committed synthetic dataset/baseline evidence from
 its recorded extraction-code commit and fails when the manifest, feature rows, split assignments,
 leakage report, raw predictions, thresholds or metrics drift.
@@ -2678,7 +2812,11 @@ leakage report, raw predictions, thresholds or metrics drift.
 web, worker, migration job, optional model-service, separate runner. Non-root/multi-stage/minimal where feasible; releases use immutable digests.
 
 ## Compose
-Postgres+pgvector, Redis, SeaweedFS, web, worker; MLflow M13; OTEL/Prometheus/Grafana M14; runner M9 after security gate. SeaweedFS runs single-node for local development only, with an exact image tag and OCI manifest digest, static local-only credentials, a persistent data volume and an authenticated S3 readiness/contract probe.
+Postgres+pgvector, Redis, SeaweedFS, web, worker; MLflow M13; OTEL/Prometheus/Grafana M14. The M9
+runner remains a separate trust boundary, not a sibling container with access to the Compose host
+socket. SeaweedFS runs single-node for local development only, with an exact image tag and OCI
+manifest digest, static local-only credentials, a persistent data volume and an authenticated S3
+readiness/contract probe.
 
 ## Migrations
 Migration-first deploy; expand/contract for risky schema changes. Application rollback never blindly reverses destructive migrations.
@@ -3424,6 +3562,20 @@ provide persistence and review. No formatter, type checker, test runner, patch u
 container runtime or provider is invoked on generated content in M8. Their appearance as proposed
 commands is data only. This preserves the verified M7 lock unchanged and leaves runner/backend
 selection to the RP-0801 threat review.
+
+## M9 dependency/image decision — verified 2026-09-02
+
+M9 adds no Python package. Plan/result hashing/signing, bounded process control and the Docker CLI
+adapter use the standard library; the fixture image reuses `pytest==9.1.1`. ADR-018 requires the
+verified Docker Engine 29.7.2 line on a dedicated rootless Linux host, but hosted CI may use its
+ephemeral engine only for the explicit known-fixture probes.
+
+The fixture Dockerfile pins the official multi-platform
+`python:3.13.15-slim-bookworm@sha256:ed86c82274b3c69b52fb5820f358f0bd7df0b603332063cb5c6e32bd220c3e6e`
+index resolved from Docker Hub on 2026-09-02. The built runner itself is selected by exact local
+image ID and must carry labels matching runner version `releaseproof-fixture-runner-v1` and frozen
+fixture-tree hash `d0bb7d8a86b163ecf690cee8d04616b47c756a9bfea2d43d79729c3966d82043`.
+Mutable tags are not accepted in an execution plan.
 
 ## Dependency and image management
 
@@ -4182,6 +4334,170 @@ any content/plan change invalidates that authorization.
 
 ---
 
+# SOURCE FILE: `docs/40_M9_RUNNER_THREAT_REVIEW.md`
+
+# 40 — M9 Runner Threat Review and Signoff
+
+## Scope and signoff
+
+This review gates RP-0801. The accepted scope is one exact tree hash of the in-repository fictional
+fixture plus one M8-valid add-only test. The durable backend and host assumptions are fixed by
+ADR-018. External/customer repositories, arbitrary commands, dependency installation and service
+containers are denied. Within that restricted scope there is no unmitigated Critical/High finding;
+the High shared-kernel risk for arbitrary hostile repositories is excluded and remains a hard stop.
+
+## Trust boundaries
+
+1. The Django control plane creates and persists immutable plans, approvals and safe results. It
+   never has a Docker socket and never executes repository code.
+2. An authenticated plan/input crosses to a dedicated, disposable Linux runner host. Transport and
+   key distribution are deployment responsibilities; signing keys are referenced at runtime and
+   never persisted in product rows or logs.
+3. The runner validates exact schema/hash/signature, host profile, fixture/input/image identity and
+   Docker policy before creating a candidate container.
+4. Container output is untrusted. Only a strict bounded result is accepted and persisted.
+
+## Ranked attack paths and disposition
+
+| Severity | Attack path | Required control/evidence | Disposition |
+|---|---|---|---|
+| Critical | control-plane host executes candidate or exposes Docker socket | architectural import test; runner is a separate package/deployable; no control-plane runner call | mitigated |
+| Critical | cloud/GitHub/LLM/customer credential reaches candidate | constant env allowlist, no mounts/socket/SSH agent, live parent-secret sentinel | mitigated |
+| High | container/kernel/runtime escape | dedicated rootless disposable host, default seccomp, enforcing LSM, no capabilities/privilege; source-controlled fixture scope | mitigated for M9 scope; external code disabled |
+| High | forged/tampered plan widens image/command/network/mounts/resources | strict duplicate/extra-field rejection, immutable hash and HMAC, fixed image namespace/argv/network/mount/env policies | mitigated |
+| High | cross-tenant approval/result binding | server-derived organization scope, exact snapshot/proposal/plan hashes, composite database FKs/triggers, IDOR tests | mitigated |
+| High | stale head/proposal executes under old approval | current-head/lifecycle check; changes make plan non-executable; late result is retained as stale evidence | mitigated |
+| High | network exfiltration/metadata access | Docker network `none`; loopback-only/metadata sentinel; no install phase at runtime | mitigated |
+| High | denial through CPU/memory/PID/disk/time/output exhaustion | cgroup limits, bounded tmpfs, inner/outer timeout+kill, bounded Docker logs and result excerpts | mitigated |
+| Medium | image/tag substitution | `repository@sha256` contract and local exact image-ID inspection; no mutable runtime tag | mitigated |
+| Medium | malicious output/schema/log injection | bounded UTF-8 replacement, full byte hash/size, strict JSON result parser, no raw output in audits | mitigated |
+| Medium | abandoned containers after failure/retry | random names, ownership label, `rm --force` in `finally`, cleanup fact and live enumeration | mitigated |
+| Medium | duplicate delivery creates conflicting evidence | organization idempotency key plus plan/attempt uniqueness; mismatched duplicate rejects | mitigated |
+
+## Kernel and host assumptions
+
+- Linux only; rootless Docker is mandatory for the durable profile.
+- cgroups v2 must enforce memory, CPU and PID limits.
+- Docker's built-in seccomp profile and an enforcing AppArmor/SELinux policy must remain enabled.
+- The runner host contains no production/cloud credentials, customer data, repository write token,
+  SSH agent or unrelated workloads and can be destroyed after credible compromise.
+- Docker Engine/runtime/kernel/security updates are an operator precondition. Containers are not
+  described as VM-equivalent isolation.
+
+## Secrets, network, filesystem, quotas and cleanup
+
+The only environment is four fixed non-secret Python/locale settings. Network and host binds are
+empty. The root filesystem and fixture image are read-only; `/workspace` and `/tmp` are size-bounded
+tmpfs mounts. Numeric UID/GID 65532, all capabilities dropped, `no-new-privileges`, no privilege,
+no host namespace and no Docker socket are required. The v1 ceilings are 0.5 CPU, 256 MiB memory,
+64 PIDs, 64 MiB workspace, 16 MiB `/tmp`, 60 seconds maximum wall time, 64 KiB per persisted output
+excerpt and one bounded Docker log file. The host force-removes the container in `finally`; cleanup
+failure cannot be represented as successful cleanup.
+
+## Residual risk and stop conditions
+
+Supply-chain compromise of the pinned image/build inputs, a kernel/runtime escape, or incorrect
+runner-host provisioning remains possible. Any missing rootless/seccomp/LSM/cgroup fact on the
+durable host, fixture hash mismatch, signature failure, policy mismatch, sentinel failure or
+credible escape report stops execution and produces no positive evidence. External hostile-code
+execution remains disabled until a later accepted isolation ADR.
+
+## Approval record
+
+ADR-018 is accepted for this scope on 2026-09-02. This signoff approves implementation and
+evaluation of RP-0802..RP-0805 only; it is not a production-readiness or arbitrary-code claim.
+
+
+---
+
+# SOURCE FILE: `docs/41_M9_RUNNER_EVALUATION.md`
+
+# 41 — M9 Runner Evaluation
+
+## Evidence layers
+
+The committed CC0 synthetic artifact verifies the frozen fixture tree, strict hashes/signatures,
+image/argv/environment policy and every generated Docker hardening/resource argument without
+starting a container. `python -m eng.evaluate_m9_runner --check` must reproduce it exactly.
+
+The separate `sandbox` pytest marker is the live evidence layer. On a disposable Linux CI worker it
+builds the digest-pinned fictional-fixture image and proves non-root identity, zero effective
+capabilities, no-new-privileges, read-only root, absent host mount/socket/parent secret, loopback-only
+network, blocked metadata, exact cgroup CPU/memory/PID ceilings, bounded tmpfs, timeout/kill,
+bounded output and post-run container cleanup. A tampered signature is rejected before create.
+
+The live CI profile is intentionally rootful because the hosted worker is ephemeral. Passing it
+does not qualify that host for product traffic; the durable profile separately fails closed unless
+Docker reports rootless mode.
+
+## Decision and limitations
+
+The fixture contract/policy may be enabled only after exact human execution approval. Arbitrary
+external repositories remain disabled. All examples are synthetic; no customer code, dependency
+download at runtime, hosted model or paid API is involved. No benchmark or sentinel proves absence
+of every container/kernel escape. Runner throughput, queue transport and representative cost are
+not yet measured.
+
+## Rerun
+
+```text
+uv run python -m eng.evaluate_m9_runner --check
+docker build -f runner/fixture_image/Dockerfile -t releaseproof-fixture-runner:m9 .
+RUN_SANDBOX_INTEGRATION=1 uv run pytest -m sandbox tests/sandbox
+```
+
+
+---
+
+# SOURCE FILE: `docs/42_M9_OWNER_LEARNING_NOTE.md`
+
+# 42 — M9 Owner Learning Note
+
+## 1. Concept implemented
+
+M9 implements capability-constrained execution as a separate trust boundary: immutable signed
+plans, exact human approval, a disposable fixture container, strict result evidence and append-only
+idempotent persistence.
+
+## 2. Why ReleaseProof uses it
+
+Static checks cannot make generated code trustworthy. Separating content acceptance from exact
+execution authorization and isolating the runner prevents a reviewer action or stale hash from
+silently granting broader code, image, network, mount or resource permissions.
+
+## 3. Algorithm/data assumptions
+
+The only repository is a known synthetic fixture with a frozen tree hash. The generated change is
+one M8-validated file and exact pytest argv. HMAC authenticates boundary messages but assumes safe
+runtime key distribution. Docker shares a kernel, so rootless/dedicated-host controls reduce risk
+without proving VM-equivalent hostile-code isolation.
+
+## 4. Key code paths
+
+- `packages/execution_contracts/`: strict plan/result/input schemas, hashes and signatures;
+- `apps/web/verification/execution_services.py`: current-head plan, approval and result rules;
+- `runner/docker_cli.py`: host validation, Docker hardening, timeout and cleanup;
+- `runner/fixture_image/entrypoint.py`: safe patch materialization, probes and bounded test capture;
+- `tests/sandbox/test_fixture_runner.py`: live isolation/resource/cleanup sentinels;
+- `eng/evaluate_m9_runner.py`: frozen non-live policy regression evidence.
+
+## 5. Exact experiment/test to rerun
+
+Run the commands in docs/41. Also run the unit/integration/web tests for execution contracts,
+workflow and CSRF/tenancy before interpreting live sandbox output.
+
+## 6. Likely interview question
+
+**Why is Docker not enough to claim arbitrary hostile-code isolation?**
+
+Containers share the host kernel; a runtime or kernel escape can cross the boundary. ReleaseProof
+therefore narrows M9 to a frozen fictional fixture on a dedicated rootless disposable host, layers
+seccomp/LSM/capability/network/resource controls, and keeps external repositories disabled until a
+stronger backend receives its own threat review and accepted ADR.
+
+
+---
+
 # SOURCE FILE: `docs/decisions/ADR-001_MODULAR_MONOLITH_FIRST.md`
 
 # ADR-001 — Modular Monolith First
@@ -4369,6 +4685,56 @@ Local credentials are non-production, non-empty and supplied through environment
 ReleaseProof derives organization and repository scope from the authenticated session or verified GitHub installation, never from an untrusted object identifier alone. M2 requires organization-scoped application services/querysets, object-level authorization, organization-consistent unique keys and composite foreign keys such as `(organization_id, parent_id)`, and cross-tenant tests across HTTP, Celery, admin and management-command entry points. A schema-level exception requires a documented migration rationale plus fail-closed service and security tests. Raw unscoped ORM access is restricted to audited adapters and maintenance code with explicit scope.
 
 PostgreSQL row-level security is not required for the MVP and must not be claimed as an existing boundary. Django web requests, Celery tasks, connection pooling, migrations and privileged maintenance each need a proven transaction-scoped tenant-context strategy before RLS provides dependable defense-in-depth. A future RLS change requires an ADR, fail-closed connection-context tests and evidence that owner/superuser/bypass behavior cannot defeat the intended policy. Application authorization and database constraints remain required even if RLS is later added.
+
+
+---
+
+# SOURCE FILE: `docs/decisions/ADR-018_FIXTURE_ONLY_ROOTLESS_DOCKER_RUNNER.md`
+
+# ADR-018 — Fixture-only rootless Docker runner
+
+- **Status:** Accepted
+- **Date:** 2026-09-02
+- **Deciders:** ReleaseProof owner/security review
+- **Issues:** RP-0801..RP-0805
+
+## Context
+
+M9 needs execution evidence, but a container shares a kernel with its host and is not a VM-equivalent
+boundary. The Django/Celery/control hosts must never execute repository code or receive a Docker
+socket. Ordinary shared-host Docker is therefore not approved for arbitrary hostile customer code.
+
+## Decision
+
+The M9 product runner supports only the exact, source-controlled fictional Python fixture and a
+statically accepted M8 add-only test. Its durable host is a single-purpose, disposable Linux host
+running Docker Engine in rootless mode with cgroups v2, the built-in seccomp profile, and an
+enforcing host LSM. The runner host is outside the application/Celery trust boundary.
+
+Every plan pins the fixture tree, checkout, proposal/input, runner image digest, argv, constant
+environment, no-network/no-mount policy, resources, artifacts and plan hash. Control-plane and
+runner messages are HMAC-authenticated. The candidate container is non-root, read-only, capability
+free, `no-new-privileges`, network `none`, and limited by CPU, memory, PIDs, tmpfs, wall time and
+output. It receives no host path, Docker socket, SSH agent, cloud/GitHub/LLM/customer secret, or
+ambient host environment. Cleanup is mandatory and its result is evidence.
+
+GitHub Actions may run the same source-controlled sentinel probes on its disposable rootful Linux
+worker only under the explicit `ephemeral-ci-fixture-v1` profile. That proves command-line controls
+and observed fixture behavior; it does not approve rootful CI as the durable product backend.
+
+Arbitrary external repository execution remains disabled. Enabling it requires a new threat review
+and ADR selecting a stronger boundary such as a microVM/user-space-kernel backend, plus escape
+testing and operations evidence. A plan/profile flag cannot widen the M9 scope.
+
+## Consequences
+
+- M9 provides honest execution evidence for a narrow fictional fixture without making a universal
+  sandbox claim.
+- A dedicated runner operator must verify rootless Docker, seccomp, LSM and host disposal before
+  accepting work.
+- Application services persist plans/approvals/results but never import or invoke runner code.
+- Kernel/runtime compromise of a general hostile workload remains High; disabling that workload
+  makes it outside the accepted M9 boundary rather than silently accepting the risk.
 
 
 ---

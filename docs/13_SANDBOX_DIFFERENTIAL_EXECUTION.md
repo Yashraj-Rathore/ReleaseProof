@@ -24,8 +24,20 @@ This allowlist is defense in depth, not an isolation boundary.
 Draft, review, edit and export paths never invoke a shell, subprocess, Python import, patch tool,
 Celery task, runner or repository writer. Acceptance means only `accepted_for_export`. The command
 is displayed as untrusted proposed text and is not executed. The committed M8 adversarial fixture
-and evaluator likewise perform static validation only. M9 remains blocked on RP-0801 and an
-accepted isolation ADR before any runner implementation.
+and evaluator likewise perform static validation only.
+
+### M9 implemented boundary
+
+RP-0801 is signed off in docs/40 and ADR-018. M9 supports only the exact source-controlled
+fictional fixture on a dedicated rootless disposable Linux runner; external/customer repositories
+remain disabled. Strict signed plans bind every input and policy. Reviewer execution approval is
+separate from M8 export acceptance and becomes stale after head/proposal changes. The candidate
+uses a digest-pinned image, non-root/read-only/no-capability/no-network/no-mount controls and bounded
+CPU/memory/PIDs/tmpfs/time/output. Results are strict, bounded, append-only and idempotent.
+
+The sandbox-marked CI suite runs known probes on an ephemeral rootful CI host to validate observed
+flags, secrets/network/host denial, resource enforcement, timeout/kill/output and cleanup. It does
+not qualify that host or Docker generally for arbitrary hostile code.
 
 ## Isolation requirements
 - separate runner trust boundary for real untrusted execution;

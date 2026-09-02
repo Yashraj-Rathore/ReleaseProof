@@ -134,6 +134,20 @@ container runtime or provider is invoked on generated content in M8. Their appea
 commands is data only. This preserves the verified M7 lock unchanged and leaves runner/backend
 selection to the RP-0801 threat review.
 
+## M9 dependency/image decision — verified 2026-09-02
+
+M9 adds no Python package. Plan/result hashing/signing, bounded process control and the Docker CLI
+adapter use the standard library; the fixture image reuses `pytest==9.1.1`. ADR-018 requires the
+verified Docker Engine 29.7.2 line on a dedicated rootless Linux host, but hosted CI may use its
+ephemeral engine only for the explicit known-fixture probes.
+
+The fixture Dockerfile pins the official multi-platform
+`python:3.13.15-slim-bookworm@sha256:ed86c82274b3c69b52fb5820f358f0bd7df0b603332063cb5c6e32bd220c3e6e`
+index resolved from Docker Hub on 2026-09-02. The built runner itself is selected by exact local
+image ID and must carry labels matching runner version `releaseproof-fixture-runner-v1` and frozen
+fixture-tree hash `d0bb7d8a86b163ecf690cee8d04616b47c756a9bfea2d43d79729c3966d82043`.
+Mutable tags are not accepted in an execution plan.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.

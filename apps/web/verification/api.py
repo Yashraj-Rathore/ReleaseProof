@@ -13,6 +13,12 @@ from rest_framework.views import APIView
 from apps.web.organizations.models import MembershipRole
 from apps.web.organizations.services import require_minimum_role
 from apps.web.organizations.views import active_organization
+from apps.web.verification.execution_services import (
+    ExecutionWorkflowError,
+    _load_plan,
+    approve_execution_plan,
+    serialize_execution_plan,
+)
 from apps.web.verification.models import ProposalLifecycle
 from apps.web.verification.services import (
     ProposalWorkflowError,
@@ -136,3 +142,36 @@ class ExportTestProposalView(APIView):  # type: ignore[misc]
         response["X-ReleaseProof-Proposal-SHA256"] = exported.proposal.proposal_hash
         response["X-ReleaseProof-Correlation-ID"] = str(exported.correlation_id)
         return response
+
+
+class ExecutionPlanDetailView(APIView):  # type: ignore[misc]
+    def get(self, request: Request, public_id: uuid.UUID) -> Response:
+        organization = active_organization(request._request)
+        try:
+            plan = _load_plan(organization=organization, public_id=public_id)
+        except ExecutionWorkflowError:
+            return _invalid("execution_plan_unavailable", status=404)
+        return Response(serialize_execution_plan(plan))
+
+
+class ApproveExecutionPlanView(APIView):  # type: ignore[misc]
+    def post(self, request: Request, public_id: uuid.UUID) -> Response:
+        organization = active_organization(request._request)
+        require_minimum_role(
+            user=request.user,
+            organization=organization,
+            minimum_role=MembershipRole.REVIEWER,
+        )
+        try:
+            approval = approve_execution_plan(
+                organization=organization,
+                plan_public_id=public_id,
+                actor=request.user,
+            )
+            plan = _load_plan(organization=organization, public_id=public_id)
+        except ExecutionWorkflowError as error:
+            return _invalid(error.code)
+        payload = serialize_execution_plan(plan)
+        payload["approval_created"] = approval.created
+        payload["correlation_id"] = str(approval.correlation_id)
+        return Response(payload)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import uuid
 from typing import Any, NoReturn
 
@@ -9,7 +10,12 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 
-from apps.web.changes.models import ImmutableQuerySet, validate_checksum
+from apps.web.changes.models import (
+    ImmutableQuerySet,
+    PullRequestSnapshot,
+    validate_checksum,
+    validate_sha,
+)
 from apps.web.evidence.models import EvidenceItem, EvidenceKind
 from apps.web.organizations.models import Organization
 from packages.ai_core import (
@@ -17,6 +23,14 @@ from packages.ai_core import (
     GeneratedTestProposalV1,
     ProposalGenerationMetadata,
     ProposalRisk,
+)
+from packages.execution_contracts import (
+    EXECUTION_PLAN_SCHEMA_VERSION,
+    EXECUTION_RESULT_SCHEMA_VERSION,
+    ExecutionContractError,
+    ExecutionOutcome,
+    parse_execution_plan_json,
+    parse_execution_result_json,
 )
 
 
@@ -331,3 +345,226 @@ class ProposalLifecycleEvent(models.Model):
     def delete(self, *args: object, **kwargs: object) -> NoReturn:
         del args, kwargs
         raise ValidationError("proposal lifecycle events are immutable")
+
+
+def validate_execution_plan_payload(value: Any) -> None:
+    if not isinstance(value, dict):
+        raise ValidationError("execution plan payload must be an object")
+    try:
+        parse_execution_plan_json(
+            json.dumps(value, allow_nan=False, separators=(",", ":"), sort_keys=True)
+        )
+    except (ExecutionContractError, TypeError, ValueError) as error:
+        raise ValidationError("execution plan payload is invalid") from error
+
+
+def validate_execution_result_payload(value: Any) -> None:
+    if not isinstance(value, dict):
+        raise ValidationError("execution result payload must be an object")
+    try:
+        parse_execution_result_json(
+            json.dumps(value, allow_nan=False, separators=(",", ":"), sort_keys=True)
+        )
+    except (ExecutionContractError, TypeError, ValueError) as error:
+        raise ValidationError("execution result payload is invalid") from error
+
+
+class ExecutionPlanQuerySet(ImmutableQuerySet["ExecutionPlan"]):
+    def for_organization(self, organization: Organization | int) -> ExecutionPlanQuerySet:
+        organization_id = (
+            organization.pk if isinstance(organization, Organization) else organization
+        )
+        return self.filter(organization_id=organization_id)
+
+
+class ExecutionPlan(models.Model):
+    """One immutable execution authorization target; it never starts execution itself."""
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.PROTECT, related_name="execution_plans"
+    )
+    proposal = models.ForeignKey(
+        GeneratedTestProposal, on_delete=models.PROTECT, related_name="execution_plans"
+    )
+    snapshot = models.ForeignKey(
+        PullRequestSnapshot, on_delete=models.PROTECT, related_name="execution_plans"
+    )
+    schema_version = models.CharField(max_length=64, default=EXECUTION_PLAN_SCHEMA_VERSION)
+    plan_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    proposal_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    snapshot_head_sha = models.CharField(max_length=64, validators=[validate_sha])
+    image = models.CharField(max_length=160)
+    fixture_tree_sha256 = models.CharField(max_length=64, validators=[validate_checksum])
+    payload = models.JSONField(validators=[validate_execution_plan_payload])
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="execution_plans_created"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    objects = ExecutionPlanQuerySet.as_manager()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("organization", "id"), name="verification_plan_org_id_unique"
+            ),
+            models.UniqueConstraint(
+                fields=("organization", "plan_hash"), name="verification_plan_org_hash_unique"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(schema_version=EXECUTION_PLAN_SCHEMA_VERSION),
+                name="verification_execution_plan_schema_v1",
+            ),
+        ]
+        ordering = ("-created_at", "-id")
+
+    def clean(self) -> None:
+        super().clean()
+        if self.organization_id is None or self.proposal_id is None or self.snapshot_id is None:
+            return
+        plan = parse_execution_plan_json(json.dumps(self.payload, sort_keys=True))
+        if (
+            self.proposal.organization_id != self.organization_id
+            or self.snapshot.organization_id != self.organization_id
+            or self.proposal.source_llm_evidence.snapshot_id != self.snapshot_id
+        ):
+            raise ValidationError(
+                "execution plan relationships must share the exact tenant snapshot"
+            )
+        if (
+            plan.plan_sha256 != self.plan_hash
+            or plan.proposal_hash != self.proposal_hash
+            or plan.checkout_sha != self.snapshot_head_sha
+            or plan.image != self.image
+            or plan.fixture_tree_sha256 != self.fixture_tree_sha256
+        ):
+            raise ValidationError("execution plan columns do not match its payload")
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        if self.pk is not None:
+            raise ValidationError("execution plans are immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args: object, **kwargs: object) -> NoReturn:
+        del args, kwargs
+        raise ValidationError("execution plans are immutable")
+
+
+class ExecutionApproval(models.Model):
+    """Append-only human approval bound to the exact M9 plan inputs."""
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.PROTECT, related_name="execution_approvals"
+    )
+    plan = models.OneToOneField(ExecutionPlan, on_delete=models.PROTECT, related_name="approval")
+    snapshot_head_sha = models.CharField(max_length=64, validators=[validate_sha])
+    proposal_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    plan_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    actor = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="execution_approvals"
+    )
+    correlation_id = models.UUIDField()
+    occurred_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager["ExecutionApproval"]()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("organization", "id"), name="verification_approval_org_id_unique"
+            ),
+        ]
+        ordering = ("-occurred_at", "-id")
+
+    def clean(self) -> None:
+        super().clean()
+        if self.organization_id is None or self.plan_id is None:
+            return
+        if (
+            self.plan.organization_id != self.organization_id
+            or self.snapshot_head_sha != self.plan.snapshot_head_sha
+            or self.proposal_hash != self.plan.proposal_hash
+            or self.plan_hash != self.plan.plan_hash
+        ):
+            raise ValidationError("execution approval must bind the exact tenant plan")
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        if self.pk is not None:
+            raise ValidationError("execution approvals are immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args: object, **kwargs: object) -> NoReturn:
+        del args, kwargs
+        raise ValidationError("execution approvals are immutable")
+
+
+class ExecutionRun(models.Model):
+    """Append-only, idempotent safe result evidence returned by the runner."""
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    organization = models.ForeignKey(
+        Organization, on_delete=models.PROTECT, related_name="execution_runs"
+    )
+    plan = models.ForeignKey(ExecutionPlan, on_delete=models.PROTECT, related_name="runs")
+    approval = models.ForeignKey(ExecutionApproval, on_delete=models.PROTECT, related_name="runs")
+    schema_version = models.CharField(max_length=64, default=EXECUTION_RESULT_SCHEMA_VERSION)
+    result_hash = models.CharField(max_length=64, validators=[validate_checksum])
+    attempt = models.PositiveSmallIntegerField()
+    outcome = models.CharField(
+        max_length=32, choices=[(item.value, item.value) for item in ExecutionOutcome]
+    )
+    idempotency_key = models.UUIDField()
+    stale_at_recording = models.BooleanField(default=False)
+    payload = models.JSONField(validators=[validate_execution_result_payload])
+    recorded_at = models.DateTimeField(auto_now_add=True)
+
+    objects = models.Manager["ExecutionRun"]()
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("organization", "id"), name="verification_run_org_id_unique"
+            ),
+            models.UniqueConstraint(
+                fields=("organization", "idempotency_key"), name="verification_run_org_idempotent"
+            ),
+            models.UniqueConstraint(
+                fields=("plan", "attempt"), name="verification_run_plan_attempt_unique"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(schema_version=EXECUTION_RESULT_SCHEMA_VERSION),
+                name="verification_execution_result_schema_v1",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(outcome__in=[item.value for item in ExecutionOutcome]),
+                name="verification_execution_outcome_allowed",
+            ),
+        ]
+        ordering = ("plan_id", "attempt", "id")
+
+    def clean(self) -> None:
+        super().clean()
+        if self.organization_id is None or self.plan_id is None or self.approval_id is None:
+            return
+        result = parse_execution_result_json(json.dumps(self.payload, sort_keys=True))
+        if (
+            self.plan.organization_id != self.organization_id
+            or self.approval.organization_id != self.organization_id
+            or self.approval.plan_id != self.plan_id
+            or result.plan_sha256 != self.plan.plan_hash
+            or result.result_sha256 != self.result_hash
+            or result.attempt != self.attempt
+            or result.outcome.value != self.outcome
+        ):
+            raise ValidationError("execution result must bind the exact approved tenant plan")
+
+    def save(self, *args: object, **kwargs: object) -> None:
+        if self.pk is not None:
+            raise ValidationError("execution runs are immutable")
+        super().save(*args, **kwargs)
+
+    def delete(self, *args: object, **kwargs: object) -> NoReturn:
+        del args, kwargs
+        raise ValidationError("execution runs are immutable")

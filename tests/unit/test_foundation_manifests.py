@@ -71,7 +71,7 @@ def test_ci_external_actions_are_pinned_to_full_commit_shas() -> None:
         < workflow.index(public_ci_mode)
         < workflow.index("docker compose config --quiet")
     )
-    postgres_suite = 'uv run --env-file .env.example pytest -m "not integration"'
+    postgres_suite = 'uv run --env-file .env.example pytest -m "not integration and not sandbox"'
     postgres_settings = "--ds=apps.web.releaseproof.settings.base"
     postgres_test_secret = "GITHUB_WEBHOOK_SECRET: releaseproof-ci-test-webhook-secret"  # noqa: S105
     assert (

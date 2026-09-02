@@ -10,7 +10,7 @@ COMMANDS = (
     (sys.executable, "-m", "ruff", "format", "--check", "."),
     (sys.executable, "-m", "ruff", "check", "."),
     (sys.executable, "-m", "mypy"),
-    (sys.executable, "-m", "pytest", "-m", "not integration"),
+    (sys.executable, "-m", "pytest", "-m", "not integration and not sandbox"),
     (
         sys.executable,
         "manage.py",
@@ -32,6 +32,7 @@ COMMANDS = (
     (sys.executable, "-m", "eng.evaluate_m6_retrieval", "--check"),
     (sys.executable, "-m", "eng.evaluate_m7_llm", "--check"),
     (sys.executable, "-m", "eng.evaluate_m8_proposals", "--check"),
+    (sys.executable, "-m", "eng.evaluate_m9_runner", "--check"),
 )
 
 

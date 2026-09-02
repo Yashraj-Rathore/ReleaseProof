@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><title>ReleaseProof execution plan</title></head>
+  <body>
+    <main>
+      <h1>Fixture execution plan</h1>
+      <p>This is a separate execution approval for one immutable fictional-fixture plan.</p>
+      <dl>
+        <dt>Plan hash</dt><dd><code>{{ execution_plan.plan_hash }}</code></dd>
+        <dt>Proposal hash</dt><dd><code>{{ execution_plan.proposal_hash }}</code></dd>
+        <dt>Snapshot head</dt><dd><code>{{ execution_plan.snapshot_head_sha }}</code></dd>
+        <dt>Image</dt><dd><code>{{ execution_plan.image }}</code></dd>
+        <dt>Approved</dt><dd>{{ execution_plan.execution_approved }}</dd>
+        <dt>Currently executable</dt><dd>{{ execution_plan.currently_executable }}</dd>
+      </dl>
+      {% if not execution_plan.execution_approved %}
+      <form method="post" action="{% url 'approve-execution-plan' execution_plan.id %}">
+        {% csrf_token %}
+        <button type="submit">Approve exact fixture execution</button>
+      </form>
+      {% endif %}
+    </main>
+  </body>
+</html>

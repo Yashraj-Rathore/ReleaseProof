@@ -300,6 +300,20 @@ human may accept a statically valid proposal for export, reject it, edit it into
 download its inert patch. Acceptance does not commit, enqueue, authorize or execute anything. M9
 still owns its separate threat review, immutable execution plan, execution approval and sandbox.
 
+## M9 fixture-only sandbox runner
+
+M9 implements `RP-0801..RP-0805` under the accepted ADR-018 boundary. It supports only the exact
+source-controlled fictional fixture on a dedicated rootless disposable Linux Docker host; external
+repositories remain disabled. Immutable signed plans bind the snapshot, proposal/input, fixture,
+image, argv, environment, network/mount/resource policy and plan hash. Reviewer execution approval
+is a separate CSRF/role-gated append-only event, and strict bounded results are idempotently
+persisted with explicit stale/timeout/kill/isolation/cleanup facts.
+
+The deterministic local suite does not need Docker. The explicit `sandbox` marker builds and runs
+known live sentinel probes on a disposable Linux Docker host; CI is the authoritative live evidence
+when a developer daemon is unavailable. Passing those probes is not a claim that containers safely
+isolate arbitrary hostile customer repositories. See docs/40, ADR-018 and docs/41.
+
 ```text
 uv sync --frozen --group dev --group ml --group ai
 uv run python -m eng.evaluate_m8_proposals --check

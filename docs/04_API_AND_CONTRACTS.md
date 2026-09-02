@@ -116,12 +116,24 @@ session/CSRF-protected mutations are:
 Responses expose immutable revision/hash, snapshot SHA, evidence and generation identity,
 validation results and `accepted_for_export_is_execution_approval=false`. Export is a no-store
 `text/x-diff` attachment with proposal-hash/correlation headers. It never applies the patch or
-starts a job. M9 will define a different execution-plan and approval contract.
+starts a job. M9 uses different execution-plan and approval records.
 
 ## Runner contract
-Runner accepts only immutable/signed internal `ExecutionPlanV1`: artifact hashes, image/toolchain, allowlisted commands, resource/network policy, timeout/output limits. No free-form host paths or Docker options.
+Runner accepts only immutable/HMAC-authenticated internal `releaseproof.execution-plan.v1`: exact
+fictional fixture/check-out/proposal/input hashes, a `releaseproof/fixture-runner@sha256` image,
+allowlisted argv, constant non-secret environment, bounded resources, network `none`, empty mounts
+and one expected result artifact. Duplicate/extra fields, mutable tags, host paths and free-form
+Docker options are rejected.
 
-Runner returns plan hash, image digests, command outcomes, timings/resource observations, bounded artifact refs, explicit timeout/killed/isolation failure.
+Runner returns strict `releaseproof.execution-result.v1`: plan/image/runner/attempt identity,
+outcome/exit/timing, bounded stdout/stderr excerpts with full hashes/sizes, isolation facts,
+timeout/killed/cleanup state and bounded artifact vocabulary. The control plane authenticates and
+validates it before append-only persistence.
+
+Implemented authenticated M9 routes are `GET /api/v1/execution-plans/{public_id}` and Reviewer
+`POST /api/v1/execution-plans/{public_id}/approve`, plus equivalent HTML detail/approval routes.
+They are tenant scoped and session mutations require CSRF. Plan creation/result ingestion remain
+trusted application-service boundaries; no public endpoint accepts Docker options or runner output.
 
 ## Idempotency/staleness
 GitHub delivery + snapshot identity dedupe. Manual reanalysis may use idempotency key. Old-head analysis cannot publish current-head conclusion.

@@ -44,6 +44,7 @@ DJANGO_SETTINGS_MODULE = "apps.web.releaseproof.settings.test"
 addopts = "--strict-config --strict-markers -ra -p no:cacheprovider"
 markers = [
   "integration: requires local infrastructure",
+  "sandbox: requires a local Docker Engine and executes only the controlled fixture",
 ]
 testpaths = ["tests"]
 

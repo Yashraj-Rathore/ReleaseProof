@@ -49,12 +49,17 @@ Immutable/versioned prompts and frozen evaluation cases.
 ### GeneratedTestProposal
 Analysis, immutable revision/hash, adapter, file/content artifact, rationale/evidence refs and M8
 lifecycle (`draft`, `accepted_for_export`, `rejected`, `superseded`). Editing creates a new draft
-revision. M8 acceptance permits export only. M9 will add separate execution-plan/authorization
-state bound to the current snapshot, proposal hash, execution-plan hash and approving
-Reviewer/Admin; `execution_approved` and `executed` are not M8 proposal states.
+revision. M8 acceptance permits export only. M9 adds separate immutable `ExecutionPlan`,
+`ExecutionApproval` and `ExecutionRun` records bound to the current snapshot, proposal hash,
+execution-plan hash and approving Reviewer/Admin; `execution_approved` and `executed` are not M8
+proposal states.
 
-### ExecutionPlan / ExecutionRun / Observation
-Exact SHAs/artifacts, allowed commands, resource/network limits, plan hash; runner image digest, outcomes, timings, bounded stdout/stderr/artifacts, timeout/killed/isolation state.
+### ExecutionPlan / ExecutionApproval / ExecutionRun / Observation
+The M9 plan stores exact fixture/check-out/proposal/input/image identifiers, argv, constant
+environment, empty mounts, network `none`, quotas, artifacts and plan hash. Approval separately
+repeats the exact snapshot/proposal/plan hashes. Runs are append-only and idempotent; they retain
+runner/image/plan identity, outcome, timing, bounded output hashes/excerpts, isolation checks,
+timeout/kill, cleanup and stale-at-recording state.
 
 ### DeploymentOutcome
 Optional feedback taxonomy (`no_issue`, `revert`, `hotfix`, `incident`, `manual_label`, `unknown`), source/confidence/observation window and org-training eligibility.
@@ -181,3 +186,15 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
 - Export returns only the already accepted bounded patch and appends a safe audit record. No M8
   model or service references an execution plan, execution approval, runner job or repository
   write, and no analysis job/outbox event is created by review/export.
+
+## M9 execution evidence implementation
+
+- Plan, approval and result rows are tenant-bound with composite database foreign keys/test
+  triggers and immutable at both application and database layers.
+- Plan creation is idempotent by organization/hash and neither approves nor enqueues execution.
+  Reviewer approval is separately CSRF/role gated and fails when the head/proposal is stale.
+- Result ingestion requires a valid signature and exact plan/image/attempt binding. Duplicate
+  identical requests reuse evidence; conflicting duplicates fail closed. A late result is retained
+  with `stale_at_recording=true`, never promoted as current.
+- Audits store only opaque IDs, hashes, outcome, attempt and staleness—not patches, source, secrets
+  or output excerpts.

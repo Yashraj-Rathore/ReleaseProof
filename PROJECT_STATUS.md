@@ -1,19 +1,47 @@
 # Project Status
 
-**Current state: M8 generated-test proposals complete on 2026-09-01.**
+**Current state: M9 fixture-only isolated runner implemented on 2026-09-02.**
 
-The repository now turns completed M7 evidence into strict, immutable, tenant-bound generated-test
-proposals for one controlled Python fixture. Reviewers may accept for export, reject, edit into a
-new revision or download the inert patch through CSRF-protected flows. Static parse/format/
-type-shape/safety checks run without importing or executing generated content. No patch was applied,
-no proposed command or untrusted code was executed, and no M9 execution approval, runner,
-sandbox-security or production-readiness claim exists yet.
+The repository now has the signed RP-0801 threat review and accepted ADR-018, strict plan/input/
+result contracts, a separate audited human execution approval, append-only tenant-bound result
+evidence and a hardened Docker CLI runner for the exact source-controlled fictional fixture. The
+durable profile requires a dedicated rootless disposable Linux host. External/customer repository
+execution remains disabled; M9 is not a universal sandbox or production-readiness claim.
 
 ## Next action
 
-Run `codex-prompts/09_SANDBOX.md` for `RP-0801` first. Complete the runner threat review and accept
-an isolation-backend ADR before any runner code. Stop on unresolved Critical/High concerns; keep
-M8 `accepted_for_export` separate from a future immutable M9 execution-plan approval.
+Require the pushed CI revision to pass its PostgreSQL/S3 and live Docker sentinel gates. Only then
+begin M10 (`RP-0901..RP-0905`) differential/mutation work; preserve the same fixture-only scope and
+exact base/candidate parity.
+
+## M9 evidence
+
+- Docs/40 ranks kernel/runtime escape, secret/socket/mount/network exfiltration, forged policy,
+  tenant/stale binding, resource denial, image substitution, hostile output and cleanup threats.
+  ADR-018 accepts dedicated rootless Docker only for the frozen fictional fixture and explicitly
+  disables arbitrary external repositories.
+- `releaseproof.execution-plan.v1` binds the exact snapshot/check-out, proposal/input, frozen
+  fixture tree (`d0bb7d8a...82043`), labeled image digest, argv, four constant non-secret env values,
+  network `none`, empty mounts, CPU/memory/PID/tmpfs/time/output ceilings and artifact vocabulary.
+  Duplicate/extra/tampered fields and signatures fail closed.
+- Candidate containers are numeric non-root, read-only, capability-free, no-new-privileges,
+  networkless and mountless, with 0.5 CPU, 256 MiB memory, 64 PIDs, bounded tmpfs/log/output and
+  inner/outer timeout+kill. The application/Celery boundary neither imports nor invokes runner code.
+- Immutable `ExecutionPlan`, `ExecutionApproval` and `ExecutionRun` rows use composite tenant
+  constraints/triggers. Reviewer approval separately repeats exact snapshot/proposal/plan hashes;
+  result ingest authenticates exact plan/image/attempt, reuses identical duplicates, rejects
+  conflicts and records late evidence as stale.
+- The frozen CC0 contract/policy artifact passes all ten declared controls and has file SHA-256
+  `3c40fcab342ce0fd0f6957479b8853dc28a3e1f1d1fff2e34f8694c2c637ed85` before final
+  documentation synchronization. It is non-live synthetic evidence; the sandbox-marked CI suite
+  separately checks host/secret/socket/network/metadata/resource/timeout/output/cleanup behavior.
+- The local deterministic suite passed **131 tests**, with one PostgreSQL physical-index assertion
+  skipped and live S3/sandbox tests deselected. Ruff, strict mypy (183 source files), Django and M9
+  focused checks passed. The local Docker daemon was unavailable, so the pushed GitHub Actions run
+  is the authoritative live PostgreSQL/S3/container evidence.
+- M9 adds no Python dependency, mines no data, calls no hosted/paid provider and executes no
+  customer repository. Exact threat, evaluation and learning evidence is in docs/40, docs/41 and
+  docs/42.
 
 ## M8 evidence
 

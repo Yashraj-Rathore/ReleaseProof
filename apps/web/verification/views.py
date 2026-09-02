@@ -14,6 +14,12 @@ from django.views.decorators.http import require_GET, require_POST
 from apps.web.organizations.models import MembershipRole, Organization
 from apps.web.organizations.services import require_minimum_role
 from apps.web.organizations.views import active_organization
+from apps.web.verification.execution_services import (
+    ExecutionWorkflowError,
+    _load_plan,
+    approve_execution_plan,
+    serialize_execution_plan,
+)
 from apps.web.verification.models import ProposalLifecycle
 from apps.web.verification.services import (
     ProposalWorkflowError,
@@ -147,3 +153,35 @@ def export_test_proposal_view(request: HttpRequest, public_id: uuid.UUID) -> Htt
     response["X-ReleaseProof-Proposal-SHA256"] = exported.proposal.proposal_hash
     response["X-ReleaseProof-Correlation-ID"] = str(exported.correlation_id)
     return response
+
+
+@login_required
+@require_GET
+def execution_plan_detail_view(request: HttpRequest, public_id: uuid.UUID) -> HttpResponse:
+    organization = active_organization(request)
+    try:
+        plan = _load_plan(organization=organization, public_id=public_id)
+    except ExecutionWorkflowError:
+        from django.http import Http404
+
+        raise Http404 from None
+    return render(
+        request,
+        "verification/execution_plan_detail.html",
+        {"organization": organization, "execution_plan": serialize_execution_plan(plan)},
+    )
+
+
+@login_required
+@require_POST
+def approve_execution_plan_view(request: HttpRequest, public_id: uuid.UUID) -> HttpResponse:
+    organization, actor = _reviewer(request)
+    try:
+        result = approve_execution_plan(
+            organization=organization,
+            plan_public_id=public_id,
+            actor=actor,
+        )
+    except ExecutionWorkflowError:
+        return HttpResponseBadRequest("Execution plan approval is not allowed.")
+    return redirect("execution-plan-detail", public_id=result.approval.plan.public_id)

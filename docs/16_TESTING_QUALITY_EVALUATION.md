@@ -108,3 +108,14 @@ expected-check matching 1.0 and five-run stability 1.0. Local latency covers onl
 validation. No proposal was executed and these measurements do not establish generated-test
 usefulness, sandbox safety or customer outcomes. Exact evidence is in
 `38_M8_GENERATED_TEST_EVALUATION.md`.
+
+## M9 runner evidence
+
+The frozen CC0 M9 artifact deterministically checks the fictional fixture tree hash, plan/result
+schema/hash/signature boundary and exact Docker image/argv/environment/network/mount/resource flags
+without executing code. A separately enabled `sandbox` suite builds the pinned image on a
+disposable Linux CI host and proves non-root/capability/no-new-privileges/read-only controls,
+credential/host/socket/network/metadata denial, cgroup/tmpfs quotas, timeout/kill, bounded output,
+signature rejection and cleanup. Passing is evidence only for those known probes and fixture; it
+does not establish absence of every escape or support arbitrary external repositories. Exact scope
+and rerun commands are in docs/41.

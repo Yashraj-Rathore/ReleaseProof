@@ -1,0 +1,19 @@
+{
+  "schema_version": "m9-runner-evaluation-fixture-v1",
+  "synthetic": true,
+  "license": "CC0-1.0",
+  "provenance": "authored in-repository for ReleaseProof M9 boundary evaluation",
+  "usage": "contract and policy regression tests only; not evidence of hostile customer-code isolation",
+  "expected_controls": [
+    "immutable_plan_hash",
+    "signed_boundary",
+    "pinned_image_digest",
+    "network_none",
+    "no_host_mounts",
+    "non_root",
+    "read_only_root",
+    "dropped_capabilities",
+    "no_new_privileges",
+    "cpu_memory_pid_disk_time_output_limits"
+  ]
+}

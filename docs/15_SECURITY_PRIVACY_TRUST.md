@@ -18,7 +18,10 @@ Separate metadata/diff/index/execution/LLM-trace/training retention classes. Hos
 Repo text is hostile content. It cannot change tenant/tool/sandbox/secret/budget policy. Authorization is server-enforced.
 
 ## Sandbox threats
-Container escape, fork/resource bombs, mining, network/DNS exfiltration, socket/mount access, package install scripts, archive traversal/decompression bombs, artifact poisoning, persistence. M9 blocks until isolation evidence passes.
+Container escape, fork/resource bombs, mining, network/DNS exfiltration, socket/mount access,
+package install scripts, archive traversal/decompression bombs, artifact poisoning and persistence.
+M9 addresses only the frozen fictional fixture under ADR-018; arbitrary external repository
+execution stays disabled.
 
 Human acceptance of a generated test authorizes review/export only. Execution requires the separate M9 authorization bound to immutable snapshot/proposal/plan hashes and is invalidated by any change.
 
@@ -102,3 +105,14 @@ Static AST filtering cannot make hostile code safe, so M8 deliberately has no ex
 repository credential, patch application, runner call or execution approval. Audit metadata keeps
 hash/version/lifecycle facts and excludes patch/source content. M9 must complete its independent
 threat review and isolation signoff before execution exists.
+
+## M9 sandbox boundary
+
+The signed RP-0801 review is docs/40 and the accepted backend is ADR-018. Durable execution requires
+a dedicated rootless Linux Docker host with cgroups v2, default seccomp and enforcing LSM. Plans
+cannot request network, mounts, ambient env, alternate image namespace/argv or larger-than-v1
+resources. Candidate containers receive no socket/host path/SSH agent/credential, run as numeric
+non-root with a read-only root, no capabilities and no-new-privileges, and are force-removed after
+each attempt. Live sentinels cover parent secrets, socket/mount, metadata/network, cgroup/tmpfs,
+timeout/kill/output and cleanup. These controls reduce risk for the source-controlled fixture and
+are not a universal container-isolation claim.

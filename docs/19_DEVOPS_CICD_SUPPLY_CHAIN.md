@@ -13,6 +13,12 @@ evidence; SQLite triggers remain a fast mirror, not a substitute. That step supp
 public test-only webhook signing value because `.env.example` correctly leaves the production
 secret blank.
 
+M9 additionally builds the fixture runner from an immutable Python base-image digest and runs the
+explicit sandbox marker on the disposable GitHub Linux host. This ephemeral rootful probe is CI
+evidence only; ADR-018 requires rootless Docker on a dedicated disposable host for the durable
+fixture runner. The runner is not added to the application Compose stack and no application
+container receives its Docker socket.
+
 From M4, the same validator also rebuilds the committed synthetic dataset/baseline evidence from
 its recorded extraction-code commit and fails when the manifest, feature rows, split assignments,
 leakage report, raw predictions, thresholds or metrics drift.
@@ -21,7 +27,11 @@ leakage report, raw predictions, thresholds or metrics drift.
 web, worker, migration job, optional model-service, separate runner. Non-root/multi-stage/minimal where feasible; releases use immutable digests.
 
 ## Compose
-Postgres+pgvector, Redis, SeaweedFS, web, worker; MLflow M13; OTEL/Prometheus/Grafana M14; runner M9 after security gate. SeaweedFS runs single-node for local development only, with an exact image tag and OCI manifest digest, static local-only credentials, a persistent data volume and an authenticated S3 readiness/contract probe.
+Postgres+pgvector, Redis, SeaweedFS, web, worker; MLflow M13; OTEL/Prometheus/Grafana M14. The M9
+runner remains a separate trust boundary, not a sibling container with access to the Compose host
+socket. SeaweedFS runs single-node for local development only, with an exact image tag and OCI
+manifest digest, static local-only credentials, a persistent data volume and an authenticated S3
+readiness/contract probe.
 
 ## Migrations
 Migration-first deploy; expand/contract for risky schema changes. Application rollback never blindly reverses destructive migrations.

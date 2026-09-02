@@ -12,6 +12,7 @@ from adapters.test_generation.python_fixture import build_new_test_patch
 from apps.web.analysis.models import AnalysisJob, OutboxEvent
 from apps.web.organizations.models import MembershipRole
 from apps.web.organizations.views import ACTIVE_ORGANIZATION_SESSION_KEY
+from apps.web.verification.execution_services import create_execution_plan
 from apps.web.verification.models import ProposalLifecycle
 from apps.web.verification.services import (
     create_test_proposal,
@@ -108,8 +109,7 @@ def test_browser_and_session_api_mutations_require_csrf_and_never_enqueue_execut
     client = Client(enforce_csrf_checks=True)
     client.force_login(account)
     _activate(client, organization)
-    detail = client.get(reverse("test-proposal-detail", args=[proposal.public_id]))
-    assert detail.status_code == 200
+    assert client.get(reverse("test-proposal-detail", args=[proposal.public_id])).status_code == 200
     csrf_token = client.cookies[settings.CSRF_COOKIE_NAME].value
     job_count = AnalysisJob.objects.count()
     outbox_count = OutboxEvent.objects.count()
@@ -169,3 +169,39 @@ def test_reviewer_api_edit_creates_new_revision_then_can_reject_it() -> None:
     rejected = client.post(reverse("api-reject-test-proposal", args=[revised.public_id]))
     assert rejected.status_code == 200
     assert rejected.json()["lifecycle"] == ProposalLifecycle.REJECTED
+
+
+def test_execution_approval_is_a_separate_reviewer_csrf_gated_exact_plan_action() -> None:
+    organization, account, _member, proposal = _persisted_proposal(
+        suffix="web-execution",
+        number=55,
+        role=MembershipRole.REVIEWER,
+    )
+    client = Client(enforce_csrf_checks=True)
+    client.force_login(account)
+    _activate(client, organization)
+    assert client.get(reverse("test-proposal-detail", args=[proposal.public_id])).status_code == 200
+    csrf_token = client.cookies[settings.CSRF_COOKIE_NAME].value
+    accepted = client.post(
+        reverse("api-accept-test-proposal", args=[proposal.public_id]),
+        HTTP_X_CSRFTOKEN=csrf_token,
+    )
+    assert accepted.status_code == 200
+    created = create_execution_plan(
+        organization=organization,  # type: ignore[arg-type]
+        proposal=proposal,  # type: ignore[arg-type]
+        image_digest=f"sha256:{'f' * 64}",
+        actor=account,
+    )
+    endpoint = reverse("api-approve-execution-plan", args=[created.plan.public_id])
+
+    assert (
+        client.get(reverse("api-execution-plan-detail", args=[created.plan.public_id])).status_code
+        == 200
+    )
+    assert client.post(endpoint).status_code == 403
+    approved = client.post(endpoint, HTTP_X_CSRFTOKEN=csrf_token)
+    assert approved.status_code == 200
+    assert approved.json()["execution_approved"] is True
+    assert approved.json()["currently_executable"] is True
+    assert approved.json()["plan_hash"] == created.contract.plan_sha256

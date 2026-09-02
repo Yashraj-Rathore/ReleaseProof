@@ -74,6 +74,17 @@
   export acceptance from M9 execution approval and never create execution jobs.
 - A frozen 11-case CC0 adversarial proposal suite, raw evaluation artifact and M8 Owner Learning
   Note covering schema/static checks, stability, non-execution and limitations.
+- An accepted RP-0801 threat review and ADR-018 selecting dedicated rootless Docker for only the
+  exact fictional fixture while keeping arbitrary external repository execution disabled.
+- Strict HMAC-authenticated M9 execution input/plan/result contracts with immutable hashes, pinned
+  fixture/image/argv/environment/network/mount/resource/artifact policies and bounded output.
+- Tenant-bound immutable execution plans, separate Reviewer/CSRF execution approvals and append-only
+  idempotent result evidence with stale/timeout/kill/isolation/cleanup facts and database triggers.
+- A separate Docker CLI runner/image using non-root/read-only/no-capability/no-new-privileges/
+  no-network/no-host-mount controls, cgroup/tmpfs/time/output limits and mandatory cleanup.
+- Frozen synthetic M9 policy evidence plus an explicit live CI sandbox suite for credential/host/
+  socket/network/metadata/resource/timeout/output/signature/cleanup sentinels and an Owner Learning
+  Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -109,6 +120,9 @@
   framework, and kept hosted routing disabled without an explicit compatible tenant policy.
 - Kept the dependency lock unchanged in M8: standard-library static parsing plus existing
   Django/DRF controls are sufficient, while execution tooling remains deferred to M9 threat review.
+- Kept the dependency lock unchanged in M9: the separate runner uses the standard library, Docker
+  CLI and the already pinned fixture pytest version. The runner is not placed beside application
+  services in Compose and the application host receives no Docker socket.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -131,3 +145,6 @@
 - M8 evidence is recorded in `PROJECT_STATUS.md` and docs/38; its perfect frozen-fixture figures
   validate only the controlled schema/static-filter harness. No proposal was executed, committed or
   approved for M9 execution, and real-repository usefulness/sandbox safety are not claimed.
+- M9 evidence is recorded in `PROJECT_STATUS.md` and docs/40-42. Deterministic policy and known live
+  fixture sentinels do not prove absence of all container escapes; arbitrary external repository
+  execution and general production readiness remain explicitly unvalidated.

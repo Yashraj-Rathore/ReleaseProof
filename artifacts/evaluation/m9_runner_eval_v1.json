@@ -1,0 +1,53 @@
+{
+  "controlled_repository": {
+    "matches_frozen_hash": true,
+    "path": "tests/fixtures/repositories/releaseproof_fixture",
+    "tree_sha256": "d0bb7d8a86b163ecf690cee8d04616b47c756a9bfea2d43d79729c3966d82043"
+  },
+  "decision": {
+    "external_repository_execution_enabled": false,
+    "fixture_contract_and_policy_validated": true,
+    "live_container_sentinels_required_in_ci": true
+  },
+  "fixture": {
+    "license": "CC0-1.0",
+    "path": "tests/fixtures/execution/m9_runner_cases_v1.json",
+    "sha256": "755b02bf7caaec1d7f2667b04c74e0c4182f084b35442816f86de95f0b58202a"
+  },
+  "limitations": [
+    "All inputs are synthetic and source controlled.",
+    "This stable artifact checks contracts and Docker arguments without executing a container.",
+    "The sandbox-marked CI suite provides separate live sentinel evidence on a disposable host.",
+    "Neither evidence source justifies arbitrary external repository execution."
+  ],
+  "quality": {
+    "all_checks_passed": true,
+    "all_expected_controls_present": true,
+    "checks": {
+      "cpu_memory_pid_disk_time_output_limits": true,
+      "dropped_capabilities": true,
+      "immutable_plan_hash": true,
+      "network_none": true,
+      "no_host_mounts": true,
+      "no_new_privileges": true,
+      "non_root": true,
+      "pinned_image_digest": true,
+      "read_only_root": true,
+      "signed_boundary": true
+    },
+    "expected_controls": [
+      "cpu_memory_pid_disk_time_output_limits",
+      "dropped_capabilities",
+      "immutable_plan_hash",
+      "network_none",
+      "no_host_mounts",
+      "no_new_privileges",
+      "non_root",
+      "pinned_image_digest",
+      "read_only_root",
+      "signed_boundary"
+    ]
+  },
+  "schema_version": "m9-runner-evaluation-v1",
+  "synthetic": true
+}

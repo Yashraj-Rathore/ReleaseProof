@@ -15,14 +15,18 @@ from apps.web.risk.api import CurrentModelView, SnapshotRiskView
 from apps.web.risk.views import current_model_view, snapshot_risk_view
 from apps.web.verification.api import (
     AcceptTestProposalView,
+    ApproveExecutionPlanView,
     EditTestProposalView,
+    ExecutionPlanDetailView,
     ExportTestProposalView,
     RejectTestProposalView,
     TestProposalDetailView,
 )
 from apps.web.verification.views import (
     accept_test_proposal_view,
+    approve_execution_plan_view,
     edit_test_proposal_view,
+    execution_plan_detail_view,
     export_test_proposal_view,
     reject_test_proposal_view,
     test_proposal_detail_view,
@@ -104,6 +108,26 @@ urlpatterns = [
         "app/test-proposals/<uuid:public_id>/export/",
         export_test_proposal_view,
         name="export-test-proposal",
+    ),
+    path(
+        "api/v1/execution-plans/<uuid:public_id>",
+        ExecutionPlanDetailView.as_view(),
+        name="api-execution-plan-detail",
+    ),
+    path(
+        "api/v1/execution-plans/<uuid:public_id>/approve",
+        ApproveExecutionPlanView.as_view(),
+        name="api-approve-execution-plan",
+    ),
+    path(
+        "app/execution-plans/<uuid:public_id>/",
+        execution_plan_detail_view,
+        name="execution-plan-detail",
+    ),
+    path(
+        "app/execution-plans/<uuid:public_id>/approve/",
+        approve_execution_plan_view,
+        name="approve-execution-plan",
     ),
     path(
         "app/risk/snapshots/<uuid:snapshot_public_id>/",

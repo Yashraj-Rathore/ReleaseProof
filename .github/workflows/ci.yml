@@ -54,8 +54,19 @@ jobs:
         env:
           GITHUB_WEBHOOK_SECRET: releaseproof-ci-test-webhook-secret
         run: >-
-          uv run --env-file .env.example pytest -m "not integration"
+          uv run --env-file .env.example pytest -m "not integration and not sandbox"
           --ds=apps.web.releaseproof.settings.base
+
+      - name: Build pinned fictional-fixture runner image
+        run: >-
+          docker build --file runner/fixture_image/Dockerfile
+          --tag releaseproof-fixture-runner:m9 .
+
+      - name: Prove live sandbox sentinels on the disposable CI host
+        env:
+          RUN_SANDBOX_INTEGRATION: "1"
+          RELEASEPROOF_HOST_SENTINEL: "ci-secret-must-not-enter-the-container"
+        run: uv run pytest -m sandbox tests/sandbox
 
       - name: Prove SeaweedFS bounded object contract
         env:
