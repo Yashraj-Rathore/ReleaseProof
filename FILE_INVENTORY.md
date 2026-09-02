@@ -149,7 +149,7 @@ checkout-independent.
 | `apps/web/verification/migrations/0003_tenant_lifecycle_immutability.py` | 8953 | `296c582ee86bde75fee1f97e1731700cb38594f4aae16cab722c582c24b6a8f8` |
 | `apps/web/verification/migrations/__init__.py` | 38 | `c0e63e808bb0ea25d057f787da6f5ca5800ed3890e654ffec2eb96c7b55dabb8` |
 | `apps/web/verification/models.py` | 13121 | `9486d0af93bc34b3d4fd2b317b9ba6dce904530020d99e1f9095d97d8d912125` |
-| `apps/web/verification/services.py` | 19804 | `1ed61f1642dd908a6954a014459d2f9cfb6f1c94b39606f8cb0e491d4573546f` |
+| `apps/web/verification/services.py` | 19816 | `ea90034b66f65eee438bb667aabd910d1b2382bbc6ae7468dd2603610d34f4fa` |
 | `apps/web/verification/templates/verification/test_proposal_detail.html` | 3903 | `21d2f65e22e454d143d791e9e214a333cbe85a6504751c1f7648484a261ffd1c` |
 | `apps/web/verification/views.py` | 5255 | `11376a2b87219b070cf9296f6c234ecb92bfff698b6822eb99a9b756e5b5ed24` |
 | `codex-prompts/00_REPOSITORY_ASSESSMENT.md` | 1306 | `49b4512eb09c8e2e635b1aa809be6d300049c9ea4abbcbcd1b0edc4770d8c1a2` |

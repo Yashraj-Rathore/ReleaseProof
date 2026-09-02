@@ -331,7 +331,7 @@ def get_test_proposal(
         "parent_proposal",
     )
     if lock:
-        queryset = queryset.select_for_update()
+        queryset = queryset.select_for_update(of=("self",))
     try:
         return queryset.get(public_id=normalized)
     except GeneratedTestProposal.DoesNotExist as error:
