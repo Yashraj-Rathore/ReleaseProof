@@ -9,8 +9,8 @@ checkout-independent.
 | `.dockerignore` | 213 | `5e12da69e55c1bd8bf17dfe39bd60e4e62a82f06009d79e8a0e35e619432e05d` |
 | `.editorconfig` | 225 | `a3e616bdd75f138c4ea781e25a5caf6ec708b9fba321b30103c2d9012f965629` |
 | `.env.example` | 1434 | `7370bf9f696d393ca7d45e743e14452683d9953b72b5a852d0ece3ef74d1a3a2` |
-| `.github/workflows/ci.yml` | 2743 | `288149bc458a8428d8d041c7d57c3cbcbb8d3b55108716ce2f6788078df35fd1` |
-| `.gitignore` | 638 | `15d6a6154c59cf7a305272f1ab9ef9df7cd41af6fd576503da8762dcc248d20d` |
+| `.github/workflows/ci.yml` | 2681 | `26a98cdc9a4edd6e46cffcea7e26485dcd21fe95654fe7f6ddc84210fadba270` |
+| `.gitignore` | 738 | `57967eea958ac94c409a14b7505272590f7577b42aa138f21b72e71ed57ee891` |
 | `.pre-commit-config.yaml` | 1044 | `c34ecf7f9680dc30e0dde0b178dda144231197554f42c4c6637ae7b48d40f805` |
 | `.python-version` | 8 | `861b3dd8083d28f336ef70f6755bc399538ddad627b1d095820ca34cb953cf14` |
 | `AGENTS.md` | 7313 | `0abf3b78b53895e7086b9f9851f7c4ca5cc8ce4e8c6d0c125079712fe6d02f6e` |
@@ -38,6 +38,8 @@ checkout-independent.
 | `adapters/retrieval/__init__.py` | 505 | `8ae0f58679fc31147c5e5438ecd995fc006d78ce9fa3e08f29e632c2afbd79af` |
 | `adapters/retrieval/fake.py` | 2526 | `1acc14bf266a94ca7e25ef13a1eaec7279f10910fab43333020012c2867c19a6` |
 | `adapters/retrieval/sentence_transformers.py` | 4208 | `e29e6d97ac5f62447ddac21102dc02ab1d0ac04d2e3b977fafe66fc9c3067baa` |
+| `adapters/semantic/__init__.py` | 285 | `139c5ec9e554f27e3ddbbb86a55584fbca6231e1407128f938c32816d6bda5e8` |
+| `adapters/semantic/huggingface.py` | 5044 | `fc7cf2a9c3bcd6a7e6d9db958fa202a92136197fecee3a8530f01b420bbc03d2` |
 | `adapters/tasks/__init__.py` | 200 | `7ebeda056be3d54ac67bca242a472ca62577953e13a12540c4d81773a50c871b` |
 | `adapters/tasks/celery.py` | 671 | `c7890b5bdfd4e1d5f75aa74bbc06b20651dd82640b5eb7417ad261eb84dd63ce` |
 | `adapters/tasks/fake.py` | 701 | `5b02a3d6725f07c9213c4554aefab05ba42a3c9c1684410b1d606dfa5d13b900` |
@@ -249,17 +251,19 @@ checkout-independent.
 | `eng/bootstrap_object_store.py` | 655 | `a1db247f6b1f4e56f3e9a1f7f882176f91f60d916cf364c321c546818047d5bd` |
 | `eng/configure_local.py` | 1565 | `2c194b892ebc5dd0f82da5c1cc695fa064009f281670001f424d83349b55e565` |
 | `eng/evaluate_m10_differential.py` | 7812 | `9149a1f0bd17bb0f540f5e75b61ee576da2568aa16ba4812299aad463edae253` |
+| `eng/evaluate_m11_semantic.py` | 14405 | `332e01740861e3abaf98097dfca5aadb1d4f2823e389cfff0618da6c063120ef` |
 | `eng/evaluate_m4_baseline.py` | 4321 | `3e6ff6eb2e1be2a017e3f2affba02b2e3db4a322ee56510ea03e72de01d487cb` |
 | `eng/evaluate_m5_classical.py` | 5916 | `063eb9da27504fb439da91673b7941ebc67b4659e8dfb024af1dbf6694f8bc0a` |
 | `eng/evaluate_m6_retrieval.py` | 11174 | `32f7fcf3a3b205559cab78354ab4a900db41efe0216494b1085ba46953f41c15` |
 | `eng/evaluate_m7_llm.py` | 11559 | `eeebb0517361ceadf8f4fcc383db4ffaa832c7dee1e5d59117f6797d58f1245e` |
 | `eng/evaluate_m8_proposals.py` | 10362 | `f413bf7e761a9accb332d2aae8df3d2186f410b44b80c98ea5e92d8614ca5380` |
 | `eng/evaluate_m9_runner.py` | 6313 | `ba884b9aec811a12b053c606e51bbe1360fc06b36f403f51fa94b31cf8f2ff7c` |
+| `eng/provision_m11_encoder.py` | 3052 | `1750651c2e4b37f7b0217c8920e374b656660e0501fddfb2c03a793d07c1233e` |
 | `eng/smoke_fakes.py` | 2727 | `ae06ed761ec1ac2866113f01e8c71d3373ad03e5544e030aaeae121dba61750d` |
 | `eng/smoke_object_store.py` | 1137 | `0175e58cdab9162f9d06c2cdae2ed57b791f13a8bcca1fa9bef0d734ddee53ea` |
 | `eng/sync_master_spec.py` | 2362 | `39961f3f4afdf9f2097b0b0686b50970d4806d944469eb8a3d4ff6e29e42058b` |
 | `eng/update_file_inventory.py` | 2771 | `4264055859d8f9593f6423478946a898c1d0445f31265dbbed4c4ae4f6ff97e3` |
-| `eng/validate.py` | 1636 | `0e12faebb2312ee11a6b9ff14ee736d7bad2c555515e675b80a380dcc5f7c40a` |
+| `eng/validate.py` | 1704 | `5ec86e7e5c282291e7c75298d344733d36ef375b37ecdbbdff234c253269b0ee` |
 | `manage.py` | 381 | `e069c72fcc8827847f159432a14a7344f955495f1ba5a5c9546e648fd2af4928` |
 | `models/public/m5_classical_ml_v1.json` | 56530 | `e0c58feb3f824a8d7fa7786d1ba19da8de5c0ee45b00f0401265ab9294aaa044` |
 | `notebooks/README.md` | 249 | `e225706f7b94e22e11b98186b219585d23c91d35e62d147f6e0adf8cd749181c` |
@@ -282,11 +286,12 @@ checkout-independent.
 | `packages/change_intel/graph.py` | 10849 | `4567edac0237216b52ba1c92a7e5a7d756653cfae6d20ff07f751894e306349a` |
 | `packages/change_intel/history.py` | 4217 | `c5f351ffa3500c5246284bd5b0d5977f3ce885e606f3b6efc5e9d298341a1965` |
 | `packages/change_intel/pipeline.py` | 2288 | `01e07cd7e1c99a775b03ccec332a928b8b3c4048c77df982ba11a75bd809f7ea` |
-| `packages/dataset_core/__init__.py` | 1811 | `6c241c93e4e6630ed2ef360521662eb279cbef77eacc09853c0d8b2ef145ed3a` |
+| `packages/dataset_core/__init__.py` | 2536 | `4135acd47e830bdcb8eef66d31e4a3e3685b4cccac260b961946f8ef4c218da1` |
 | `packages/dataset_core/contracts.py` | 12846 | `b3487a6b6f3533a4d4cc63f0119722779f0cc966d1873ecc1daf17524ed4dcd3` |
 | `packages/dataset_core/extraction.py` | 13606 | `e2c38a5a57ff3d6f7d68ad641f586459efe649cd2c165a3699ca941fb0cad1e0` |
 | `packages/dataset_core/labels.py` | 4789 | `3c3c6360569025986a746c2e14488afa991052e02fc54232a8fca4b3306d032d` |
 | `packages/dataset_core/materialize.py` | 8272 | `23d772c966534f2735b8e3f18feb7405800f0fd9a1a26ce8a78a2c682d0b3621` |
+| `packages/dataset_core/semantic.py` | 17946 | `1689815dc4653bb454b56beb2c6568c6b1867166a89ce2ae7bafb24b9dd60808` |
 | `packages/dataset_core/splits.py` | 5958 | `5d0d1151b520b51b20e3e023aa497f7ac848ac56218352dfb036eb2300142e0d` |
 | `packages/domain/__init__.py` | 701 | `522460d4870c64c9cc2cb04957d9042363d0f8a5778c8cdca9116d3f0a17d349` |
 | `packages/domain/object_storage.py` | 2490 | `617d1953b6dfbf55b0957e26d2c32d9c4a8f52787d323225dca2b209b7e76fda` |
@@ -301,6 +306,7 @@ checkout-independent.
 | `packages/ml_core/__init__.py` | 2029 | `6f33535bf85418c59ec2f31d3a3816dc45ff04b69d422e97d3a230c0484bab12` |
 | `packages/ml_core/baseline.py` | 17789 | `7c115d5cada27103436bb47a8c3960ed2896d2c2415fbc636d303ed693cd4542` |
 | `packages/ml_core/classical.py` | 44845 | `494bddc3096e3d74a16c4a8c7c4da1bd2b4a4880b4ba00a011c37a8d24c5a836` |
+| `packages/ml_core/semantic.py` | 44855 | `1a7e68e43592e8a8833f9c1131c87e833054e7a5ef97112e6644fb0fb015d0cc` |
 | `packages/observability/__init__.py` | 54 | `8c10bd0c30d93d39244d2019d68581fb23865eeaa001f0a57bd8f051e727f5cc` |
 | `packages/recommendation_core/__init__.py` | 654 | `19f88dc021322cf713614e2aeca875568638b3b578e9371a4c797bd58a163e5f` |
 | `packages/recommendation_core/policy.py` | 9887 | `2d118656db3f8d422b4200353ac449a003da94e43ff5a8780736b58df36f5c86` |
@@ -311,7 +317,7 @@ checkout-independent.
 | `packages/retrieval_core/evaluation.py` | 3122 | `abc9c6754fb3703410255f809b68eb73930f096841f91fb7f3f4fc802ac1c94c` |
 | `packages/retrieval_core/fusion.py` | 2469 | `06a9b7970ba88144cc6ebf7a49b6c7dfaa407f2eff5a648596b6125ac33a1214` |
 | `packages/retrieval_core/normalization.py` | 2725 | `e4e066f276e09df1a128ffebb091946eb01228abb50bfec7f782ec9737d85f3c` |
-| `pyproject.toml` | 1978 | `b5aa85b605ac17c39d0162c069b929b11448c3db41cd8aa4fe91a2bde9094069` |
+| `pyproject.toml` | 2177 | `4fba0bd6aa79b4eba2db13291e8cfa447754967f2437dc7ad8e46adfa3343ff4` |
 | `runner/__init__.py` | 75 | `0d2e23e5bd82a37b865317ca79b19165798b9e799bbf80d06bf7c06939a8a75e` |
 | `runner/docker_cli.py` | 17000 | `76cb88f08263715d2deb12ef67d474a985550d20bc450d837fffa7d4d5d3ca2d` |
 | `runner/fixture_image/Dockerfile` | 1084 | `b6dd7ab15e3025397912fcb827e592886ce9dfd452a132422eb784ff392475c4` |
@@ -326,6 +332,7 @@ checkout-independent.
 | `tests/__init__.py` | 31 | `1709eff8d5d9a5bbdb1e3ee7953eaf31cfc5f50b361911461005e871ec8413a3` |
 | `tests/change_intel_fixtures.py` | 920 | `c3a16b4fe5c9bdb9e3e1d9c171e339124b34522015e4aaf5f3ec73b10f3a611f` |
 | `tests/factories.py` | 1951 | `939e513c990581b849a60db8f9b4a9c6037df3295a6b8db03a44927cf4ad255a` |
+| `tests/fixtures/datasets/m11_semantic_annotations.json` | 2012 | `058b8bff48fbd932be1e7fae93572a7041889723a154014e9fd0c6ec64cd8196` |
 | `tests/fixtures/datasets/m4_snapshots.json` | 10484 | `67b068a5a1a37245155a96f30a6556d312ce91f799a67d17867777d4695cc8a5` |
 | `tests/fixtures/datasets/m4_source_admission.json` | 1309 | `c0ae710d313b036cb6da830e639e240e3e3490a0872ea7c5fafd7b0f232680a7` |
 | `tests/fixtures/differential/releaseproof_m10/LICENSE` | 268 | `a8a0c3e9dd0819d52881e29e372c0fb2750568207dd59de3906ece6be44471dc` |
@@ -388,6 +395,7 @@ checkout-independent.
 | `tests/unit/test_recommendation_policy.py` | 2508 | `1f89d91d1319d168e3f37de9d62d119526b16b1690fdfc1889e47bb04d971a96` |
 | `tests/unit/test_retrieval_core.py` | 6317 | `47603c69ef28b4ab25f9f5506f7f88db3dadd6fa0528f3d8945f1dc386402159` |
 | `tests/unit/test_s3_settings.py` | 1260 | `a9079ba5a6f8156399169b444569dfd9c90cb213c44fa60db0738e4fc9a38ebc` |
+| `tests/unit/test_semantic_model.py` | 8195 | `bad8ea4d6e97b989f88ec798ac7ad5aee2cf2f62f834961c288dba0bdfac8727` |
 | `tests/unit/test_smoke_fakes.py` | 536 | `00a71b94ee8da8bcdbf8122df78f935cfb630338f03e828cc1e74100cf7d58d9` |
 | `tests/unit/test_test_proposals.py` | 5017 | `3f723e7593bcf64b609e33100bda42d9a307b3a9be4a22d625b1afadeeeed279` |
 | `tests/unit/test_vendored_assets.py` | 482 | `094563a3b6a359fecfbe17e9df1335480632237eac80c9b70bf2a18da27fb47b` |
@@ -395,5 +403,5 @@ checkout-independent.
 | `tests/web/test_generated_test_proposal_workflow.py` | 8390 | `b80247279564d6bc5fad83de70f679c6c9b316040f65e24ffd60dab7c981d109` |
 | `tests/web/test_health.py` | 922 | `e35f77f8fc3841675a89b778975657c7fa584e426cd14698f3cf2d0e09bbee3d` |
 | `tests/web/test_risk_evidence.py` | 5250 | `8430a655b2b6fe2e1a48861359be5005aab5334c39318a24e1212e36591172f1` |
-| `uv.lock` | 175267 | `fae25a81d39f5e9fff50e7ee23dafa7f6a80ea10ab70e56e3329719ac762a044` |
+| `uv.lock` | 159075 | `68edd3fb99999590926d1f53b8b665a4824f716eaadadf0a41b808f32b59a9c9` |
 | `workers/__init__.py` | 85 | `b0c887d9f3382ddff695a5e967a3f15146e9746b13023a36710b42c5b92da39c` |

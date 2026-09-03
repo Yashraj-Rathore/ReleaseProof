@@ -27,6 +27,8 @@ artifacts/evaluation/*
 !artifacts/evaluation/m7_llm_eval_v1.json
 !artifacts/evaluation/m8_test_proposal_eval_v1.json
 !artifacts/evaluation/m10_differential_eval_v1.json
+!artifacts/evaluation/m11_minilm_embeddings_v1.json
+!artifacts/evaluation/m11_semantic_eval_v1.json
 mlruns/
 .minio/
 *.sqlite3

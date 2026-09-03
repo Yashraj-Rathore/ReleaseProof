@@ -30,6 +30,8 @@ ml = [
 ]
 semantic = [
   "sentence-transformers==6.0.0",
+  "torch==2.13.0",
+  "transformers==5.15.1",
 ]
 ai = [
   "openai==3.6.0",
@@ -38,6 +40,14 @@ ai = [
 [tool.uv]
 package = false
 required-version = "==0.12.6"
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "apps.web.releaseproof.settings.test"

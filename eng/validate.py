@@ -34,6 +34,7 @@ COMMANDS = (
     (sys.executable, "-m", "eng.evaluate_m8_proposals", "--check"),
     (sys.executable, "-m", "eng.evaluate_m9_runner", "--check"),
     (sys.executable, "-m", "eng.evaluate_m10_differential", "--check"),
+    (sys.executable, "-m", "eng.evaluate_m11_semantic", "--check"),
 )
 
 
