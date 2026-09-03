@@ -26,6 +26,14 @@ EXCLUDED_DIRECTORIES = {
     "node_modules",
     "secrets",
 }
+EXCLUDED_PATH_PREFIXES = (
+    ("datasets", "raw", "private"),
+    ("models", "private"),
+)
+
+
+def _has_excluded_prefix(relative: Path) -> bool:
+    return any(relative.parts[: len(prefix)] == prefix for prefix in EXCLUDED_PATH_PREFIXES)
 
 
 def source_files() -> list[Path]:
@@ -35,6 +43,8 @@ def source_files() -> list[Path]:
             continue
         relative = path.relative_to(ROOT)
         if any(part in EXCLUDED_DIRECTORIES for part in relative.parts):
+            continue
+        if _has_excluded_prefix(relative):
             continue
         if relative.name == ".env" or relative.suffix in {".log", ".pem", ".key", ".crt"}:
             continue

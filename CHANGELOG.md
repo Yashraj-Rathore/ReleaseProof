@@ -154,6 +154,8 @@
 - Kept the M11 semantic model optional and `deterministic-heuristic-v1` active because the four-row,
   one-repository synthetic holdout cannot support calibration/statistical lift and the semantic
   ensemble added no F1 or average-precision value over XGBoost.
+- Excluded ignored private model caches and raw private-dataset paths from the generated source-file
+  inventory so explicit local model provisioning remains checkout-independent and private by design.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,

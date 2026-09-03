@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 from eng.configure_local import render_seaweedfs_config
-from eng.update_file_inventory import _canonical_bytes
+from eng.update_file_inventory import _canonical_bytes, _has_excluded_prefix
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPECTED_IMAGES = {
@@ -89,6 +89,13 @@ def test_file_inventory_normalizes_text_line_endings() -> None:
     assert _canonical_bytes(b"first\nsecond\n") == b"first\nsecond\n"
     assert _canonical_bytes(b"first\r\nsecond\r\n") == b"first\nsecond\n"
     assert _canonical_bytes(b"\xff\r\n\x00") == b"\xff\r\n\x00"
+
+
+def test_file_inventory_excludes_private_dataset_and_model_caches() -> None:
+    assert _has_excluded_prefix(Path("models/private/encoder/model.safetensors"))
+    assert _has_excluded_prefix(Path("datasets/raw/private/customer.json"))
+    assert not _has_excluded_prefix(Path("models/public/model-card.json"))
+    assert not _has_excluded_prefix(Path("datasets/public/synthetic.json"))
 
 
 def test_fixture_repository_records_synthetic_provenance_and_license() -> None:

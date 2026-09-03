@@ -776,7 +776,7 @@ Do not promote the semantic candidate, enable arbitrary repository execution or 
   gates. The candidate remains unserved and unintegrated, with the deterministic heuristic active.
 - The pinned real encoder's local warm 16-row CPU batch measured median 48.50185 ms across ten
   repetitions. This excludes cold load, database, queue and service overhead and is not an SLO.
-- Canonical local validation passed **157 tests**, with one PostgreSQL physical-index assertion
+- Canonical local validation passed **158 tests**, with one PostgreSQL physical-index assertion
   skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 196
   source files, Django, migration drift, generated docs/inventory and M4-M11 evaluators passed.
   Remote CI is still pending; exact artifacts, limitations and rerun instructions are in docs/45/46.
@@ -1244,6 +1244,8 @@ and its remote M2 result is tracked in GitHub Actions.
 - Kept the M11 semantic model optional and `deterministic-heuristic-v1` active because the four-row,
   one-repository synthetic holdout cannot support calibration/statistical lift and the semantic
   ensemble added no F1 or average-precision value over XGBoost.
+- Excluded ignored private model caches and raw private-dataset paths from the generated source-file
+  inventory so explicit local model provisioning remains checkout-independent and private by design.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
