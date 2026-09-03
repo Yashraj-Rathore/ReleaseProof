@@ -183,4 +183,5 @@
   execution and general production readiness remain explicitly unvalidated.
 - M11 evidence is recorded in `PROJECT_STATUS.md` and docs/45-46. Its metrics are tiny synthetic
   harness measurements; no customer data, shared training, serving integration, probability or
-  production-quality claim is made.
+  production-quality claim is made. GitHub Actions run `33767255599` passed the exact M11
+  implementation/fix commit `0565206` and all canonical/infrastructure gates.

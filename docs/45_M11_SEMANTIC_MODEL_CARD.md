@@ -117,6 +117,12 @@ Missing/incomplete/tampered model caches, embeddings, model state or lineage fai
 normal validator rebuilds from committed embeddings without a network or model download. No hosted
 or paid provider was called, and the model cannot merge, deploy, execute code or widen a sandbox.
 
+GitHub Actions run `33767255599` passed exact commit
+`05652062d7fba69eb48427357173d05d366b83ab` on 2026-09-03, including the canonical Linux
+rebuild/tests, authoritative PostgreSQL contracts, Compose, the pinned fixture runner and live
+sandbox/SeaweedFS checks. Those non-M11 infrastructure checks guard existing boundaries; they do
+not turn this synthetic model result into a production-quality or arbitrary-code safety claim.
+
 ## Reproduction
 
 ```text

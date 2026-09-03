@@ -407,6 +407,10 @@ uv run pytest tests/unit/test_semantic_model.py
 These are synthetic harness results, not customer performance or a probability claim. Full
 lineage, errors, latency limitations, model card and learning note are in docs/45 and docs/46.
 
+GitHub Actions run `33767255599` passed exact implementation/fix commit `0565206`, including the
+canonical Linux M4-M11 rebuild, authoritative PostgreSQL contracts, Compose, pinned runner image,
+live sandbox sentinels, SeaweedFS and teardown.
+
 
 ---
 
@@ -740,7 +744,7 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M11 semantic-model experiment implemented on 2026-09-03; remote CI validation is pending.**
+**Current state: M11 semantic-model experiment implemented and CI-validated on 2026-09-03.**
 
 The repository now derives an outcome-blind semantic dataset from the frozen M4 fixture, compares
 TF-IDF and pinned real MiniLM representations, trains a deterministic CPU PyTorch multi-label head
@@ -750,8 +754,8 @@ F1/AP, probability wording is disabled and `deterministic-heuristic-v1` remains 
 
 ## Next action
 
-After M11's pushed commit passes CI, begin M12 (`RP-1101..RP-1106`) bounded LangGraph investigation.
-Do not promote the semantic candidate, enable arbitrary repository execution or begin M13.
+Begin M12 (`RP-1101..RP-1106`) bounded LangGraph investigation. Do not promote the semantic
+candidate, enable arbitrary repository execution or begin M13.
 
 ## M11 evidence
 
@@ -779,7 +783,10 @@ Do not promote the semantic candidate, enable arbitrary repository execution or 
 - Canonical local validation passed **158 tests**, with one PostgreSQL physical-index assertion
   skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 196
   source files, Django, migration drift, generated docs/inventory and M4-M11 evaluators passed.
-  Remote CI is still pending; exact artifacts, limitations and rerun instructions are in docs/45/46.
+  GitHub Actions run `33767255599` passed exact commit `0565206`: the canonical Linux suite,
+  Compose/startup, authoritative PostgreSQL constraints, pinned runner-image build, live sandbox
+  sentinels, SeaweedFS contract and teardown all succeeded. Exact artifacts, limitations and rerun
+  instructions are in docs/45/46.
 
 ## M10 evidence
 
@@ -1075,7 +1082,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
-| M11 PyTorch/HF | Complete locally - RP-1001..RP-1006; candidate not promoted; CI pending |
+| M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
 | M12 LangGraph | Not started |
 | M13 MLflow/governance | Not started |
 | M14 security/ops | Not started |
@@ -1273,7 +1280,8 @@ and its remote M2 result is tracked in GitHub Actions.
   execution and general production readiness remain explicitly unvalidated.
 - M11 evidence is recorded in `PROJECT_STATUS.md` and docs/45-46. Its metrics are tiny synthetic
   harness measurements; no customer data, shared training, serving integration, probability or
-  production-quality claim is made.
+  production-quality claim is made. GitHub Actions run `33767255599` passed the exact M11
+  implementation/fix commit `0565206` and all canonical/infrastructure gates.
 
 
 ---
@@ -5152,6 +5160,12 @@ queue and application overhead and is not a service SLO.
 Missing/incomplete/tampered model caches, embeddings, model state or lineage fail closed. The
 normal validator rebuilds from committed embeddings without a network or model download. No hosted
 or paid provider was called, and the model cannot merge, deploy, execute code or widen a sandbox.
+
+GitHub Actions run `33767255599` passed exact commit
+`05652062d7fba69eb48427357173d05d366b83ab` on 2026-09-03, including the canonical Linux
+rebuild/tests, authoritative PostgreSQL contracts, Compose, the pinned fixture runner and live
+sandbox/SeaweedFS checks. Those non-M11 infrastructure checks guard existing boundaries; they do
+not turn this synthetic model result into a production-quality or arbitrary-code safety claim.
 
 ## Reproduction
 

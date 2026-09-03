@@ -394,3 +394,7 @@ uv run pytest tests/unit/test_semantic_model.py
 
 These are synthetic harness results, not customer performance or a probability claim. Full
 lineage, errors, latency limitations, model card and learning note are in docs/45 and docs/46.
+
+GitHub Actions run `33767255599` passed exact implementation/fix commit `0565206`, including the
+canonical Linux M4-M11 rebuild, authoritative PostgreSQL contracts, Compose, pinned runner image,
+live sandbox sentinels, SeaweedFS and teardown.
