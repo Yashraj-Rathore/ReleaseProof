@@ -46,5 +46,7 @@
 | `42_M9_OWNER_LEARNING_NOTE.md` | owner-defensible M9 trust boundary, contracts and rerun path |
 | `43_M10_DIFFERENTIAL_EVALUATION.md` | differential/mutation/fusion fixture results and limitations |
 | `44_M10_OWNER_LEARNING_NOTE.md` | owner-defensible M10 parity, comparison, mutation and policy explanation |
+| `45_M11_SEMANTIC_MODEL_CARD.md` | exact semantic dataset/model lineage, measurements and non-promotion decision |
+| `46_M11_OWNER_LEARNING_NOTE.md` | owner-defensible M11 tensors, training, evaluation and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

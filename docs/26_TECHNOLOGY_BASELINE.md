@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -157,6 +157,26 @@ runner image. The M9 image gains a second exact label for
 `8e3554c97d41207213554f092e2bcb439560164ae0fcb744c5b56e6adf81f87e`; M9's original fixture hash
 and runner identity remain unchanged. No mutation framework, HTTP client/server, LLM SDK call or
 additional container/runtime dependency is needed for this bounded slice.
+
+## M11 semantic-model pins — verified and locked 2026-09-03
+
+M11 keeps CPython 3.13.15 and installs these packages only through the optional `semantic` group.
+The uv source binds Torch to the official CPU wheel index, avoiding accidental CUDA runtime
+packages. The exact lock resolved successfully with the existing M5 and M7 groups and the M11
+training, serialization and offline reproduction tests passed on CPython 3.13.15.
+
+| Package/artifact | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| PyTorch CPU | `torch==2.13.0` (`2.13.0+cpu` wheel) | The official [2.13 release](https://pytorch.org/blog/pytorch-2-13-release-blog/) and [PyPI files](https://pypi.org/project/torch/2.13.0/) provide stable CPython 3.13 wheels. The newer 2.14 line was not selected immediately after release. |
+| Transformers | `transformers==5.15.1` | The official [5.15.1 package](https://pypi.org/project/transformers/5.15.1/) requires Python 3.10+, and its [installation guide](https://huggingface.co/docs/transformers/v5.15.1/en/installation) documents testing with Python 3.10+ and PyTorch 2.5+. |
+| sentence-transformers | `sentence-transformers==6.0.0` | The official [v6 project metadata](https://github.com/huggingface/sentence-transformers/blob/v6.0.0/pyproject.toml) requires Python 3.10+, PyTorch 2.2+ and Transformers 5.x, so the selected versions are inside its declared ranges. |
+| encoder weights | `sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41` | The official [immutable revision](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/tree/1110a243fdf4706b3f48f1d95db1a4f5529b4d41) records the Apache-2.0 files; ReleaseProof verifies safetensors SHA-256 `53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db`. |
+
+PyTorch 2.14.0 and Transformers 5.16.1 were already newer at verification time, but their recency
+did not justify changing the conservative Python/Django/ML deployment intersection during M11.
+Weights are downloaded only by the explicit provisioning command, never by dependency sync, tests,
+web requests or workers. The encoder is frozen and CPU-only; no GPU serving or FastAPI deployment
+decision is made.
 
 ## Dependency and image management
 

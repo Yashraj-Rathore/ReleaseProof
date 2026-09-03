@@ -68,3 +68,12 @@ AP=0.50 and ROC-AUC=0.25. XGBoost records TP=1, FP=2, TN=0, FN=1, F1=0.40,
 AP=0.41666667 and ROC-AUC=0.25. These unstable fixture figures do not establish product value.
 Neither model defensibly improves the heuristic, so both remain candidates and
 `deterministic-heuristic-v1` remains active. The full model card is docs/32.
+
+## M11 semantic incremental-value result
+
+M11 leaves the M4 heuristic and M5 candidates immutable. Its predeclared optional ensemble takes
+the maximum of the frozen XGBoost score and the maximum of six risk-related semantic category
+scores, then compares the result only on the unchanged test split. On four synthetic rows the
+ensemble adds 0.00 F1 and 0.00 average precision over XGBoost. It also fails minimum gates of 200
+held-out rows, 50 rows per class and three repositories. Consequently the semantic candidate is not
+added to risk evidence or `recommendation-fusion-v1`; `deterministic-heuristic-v1` remains active.

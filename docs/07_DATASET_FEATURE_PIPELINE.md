@@ -96,3 +96,19 @@ M5 does not mutate the manifest, rows, labels or split assignments. Train-only p
 explicit nullable-feature imputation, missingness indicators and scaling on the six training rows;
 validation selects configurations/thresholds, and the four test rows are read only after the
 experiment declaration is frozen. The resulting artifact names the exact M4 manifest/split hashes.
+
+## M11 semantic dataset
+
+`releaseproof-m11-synthetic-semantic-v1` is a separate derivative of the admitted M4 fixture. It
+inherits the exact M4 source manifest, admission, leakage-report and frozen split hashes. Its only
+text inputs are normalized changed-file path, status and patch; outcome, proxy-label and
+post-deployment fields are explicitly blinded before annotation and extraction. Text is bounded to
+4,096 UTF-8 bytes, tokenization to 256 tokens, and exact duplicate text may not cross splits.
+
+The eight-category multi-label annotation set is explicitly outcome-blind synthetic CC0 metadata;
+the underlying fictional source remains MIT-licensed. All 16 source rows align exactly: 6 train,
+4 validation, 4 test and 2 excluded. The 14 included rows come from one repository, three
+categories have no training support and several have no held-out support. The committed manifest
+therefore validates provenance/leakage mechanics only, not real label quality, prevalence or
+repository generalization. M11 joins proxy outcomes only in a separate post-prediction incremental
+risk experiment and does not promote the semantic output.

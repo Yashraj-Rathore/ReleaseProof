@@ -1,0 +1,447 @@
+{
+  "manifest": {
+    "annotation_rule_version": "semantic-category-annotation-v1",
+    "annotation_sha256": "f39c972dfbe1b03559fe8d0059689606a9f357bc2d641070d6161f3ec6c6dcf3",
+    "categories": [
+      "api_compatibility",
+      "auth_security",
+      "concurrency_async",
+      "database_schema",
+      "dependency_configuration",
+      "performance_sensitive",
+      "test_docs_only",
+      "unknown_other"
+    ],
+    "counts": {
+      "category_positive_counts": {
+        "api_compatibility": 1,
+        "auth_security": 4,
+        "concurrency_async": 0,
+        "database_schema": 2,
+        "dependency_configuration": 4,
+        "performance_sensitive": 3,
+        "test_docs_only": 3,
+        "unknown_other": 0
+      },
+      "included_rows": 14,
+      "repository_counts": {
+        "9000001": 14
+      },
+      "split_counts": {
+        "excluded": 2,
+        "test": 4,
+        "train": 6,
+        "validation": 4
+      },
+      "total_rows": 16,
+      "truncated_rows": 0
+    },
+    "dataset_version": "releaseproof-m11-synthetic-semantic-v1",
+    "leakage_report": {
+      "limitations": [
+        "The fixture contains one repository, so repository-holdout behavior is not measured.",
+        "Outcome-blind synthetic category annotations validate the pipeline, not real label quality."
+      ],
+      "passed_checks": [
+        "source_m4_leakage_report_passed",
+        "outcome_and_proxy_fields_blinded",
+        "pre_outcome_text_field_allowlist_exact",
+        "frozen_m4_split_inherited",
+        "all_source_rows_covered_once",
+        "no_exact_text_across_splits"
+      ],
+      "report_sha256": "14479a56ed47db8a793ffb5e395e3bc641f4586ade20f8b0f9edabb50ba1ea70",
+      "repository_holdout_measured": false,
+      "schema_version": "semantic-leakage-report-v1",
+      "source_report_sha256": "d9e2602435f7afbe19205b2dfcae866726eea19628d3908dff30af2edf6a6847",
+      "violations": []
+    },
+    "license": "CC0-1.0",
+    "manifest_sha256": "eddf5fc7000fc3c459094b48a1b01acd0c10ab9bc0db3fc01616f2df50bf4645",
+    "schema_version": "semantic-dataset-v1",
+    "source_admission_sha256": "ca255d0895e55e143912c268f700228c5e5337cca28e3548e8eed4f30731e896",
+    "source_content_license": "MIT",
+    "source_dataset_version": "releaseproof-m4-synthetic-v1",
+    "source_leakage_report_sha256": "d9e2602435f7afbe19205b2dfcae866726eea19628d3908dff30af2edf6a6847",
+    "source_manifest_sha256": "eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456",
+    "source_split_sha256": "81d51ed7011c86744f2cf4bff15cb98bb1aa440b1c81ece921ed9b4a21f0c11b",
+    "synthetic": true,
+    "text_version": "semantic-change-text-v1",
+    "usage": "Synthetic, outcome-blind fixture annotations for implementation and evaluation only; not customer data or production labels."
+  },
+  "rows": [
+    {
+      "categories": [
+        "test_docs_only"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "644ad3686617bd48741f4ed37e16d68194355093f68c86f259f7ba6e031cdd42",
+      "snapshot_id": "m4-001",
+      "split": "train",
+      "text": "[FILE] docs/alpha.md\n[STATUS] modified\n[PATCH]\n+alpha documentation clarification",
+      "text_bytes": 81,
+      "text_sha256": "f158a3dca802885f6e63c7c1deb1594d1ab898bd4981e178cd8d0401851d3433",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "test_docs_only"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "31eaaafabeab19ba0c23888c467328df37da0c77a26736a71c7f138fbf3a29fe",
+      "snapshot_id": "m4-002",
+      "split": "train",
+      "text": "[FILE] tests/test_beta.py\n[STATUS] modified\n[PATCH]\n+def test_beta_discount_contract(): pass",
+      "text_bytes": 92,
+      "text_sha256": "14f874bc709599d06edb56ff565b199f676236ab62dd53b44783931821609525",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "dependency_configuration"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "f57696dbd1965a6033bf5aa49482355a10e16cc46df2bfd058ae297de3fd2ae6",
+      "snapshot_id": "m4-003",
+      "split": "train",
+      "text": "[FILE] requirements.txt\n[STATUS] modified\n[PATCH]\n+gamma-parser==2.0.0",
+      "text_bytes": 70,
+      "text_sha256": "8928f49acfb770d69382c1b4dbd3217208a7565e5a32b6550cf4998dca8c09c2",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "database_schema",
+        "performance_sensitive"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "34a0aa498598353f301d1419e9971ba8d8790e9aa88481c83cadd4e778555ece",
+      "snapshot_id": "m4-004",
+      "split": "train",
+      "text": "[FILE] src/app/migrations/0004_delta.py\n[STATUS] added\n[PATCH]\n+create_delta_audit_index",
+      "text_bytes": 88,
+      "text_sha256": "73d634c8b5ad9797ea8370f05c26b02dda05a402b6e9116aecd845b7ddd7623b",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "auth_security"
+      ],
+      "label_vector": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "46a22443c72e0d9c53b7f3d9086f72017d1630f3ae69624a14b214167a43c2b0",
+      "snapshot_id": "m4-005",
+      "split": "train",
+      "text": "[FILE] src/auth/epsilon_token.py\n[STATUS] modified\n[PATCH]\n+rotate_epsilon_signing_context safely",
+      "text_bytes": 97,
+      "text_sha256": "ada15b0a931144fe9e1c7543191cbcbc14665ed834eb6a3f5ea665ca0896b88f",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "dependency_configuration"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "c07740e15d884eebf8c73d7bbfa97e783e0e1d548cda075f0bcae0d7ce81bea3",
+      "snapshot_id": "m4-006",
+      "split": "train",
+      "text": "[FILE] config/zeta.yaml\n[STATUS] modified\n[PATCH]\n+zeta_feature_toggle: false",
+      "text_bytes": 77,
+      "text_sha256": "f56c45e081149c4de344d9413467f5c2a9f242d8d3e0e6966c023297db9fd8ee",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "auth_security"
+      ],
+      "label_vector": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "1cefb167dac6d3ba0bbfb21a934f6b45782dde83b04acb508075b53ddadc15ee",
+      "snapshot_id": "m4-007",
+      "split": "validation",
+      "text": "[FILE] src/security/eta_policy.py\n[STATUS] modified\n[PATCH]\n+enforce_eta_scope_membership",
+      "text_bytes": 89,
+      "text_sha256": "504bc6d1cda3d77bb079372d69ec22759af0c4f1640dbf79b0c256a989710b92",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "database_schema",
+        "performance_sensitive"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "717a9f446533a3463880fc82c5ffcb9eafbe6bf5dbe393de6411581ba067b9de",
+      "snapshot_id": "m4-008",
+      "split": "validation",
+      "text": "[FILE] src/app/migrations/0008_theta.py\n[STATUS] added\n[PATCH]\n+backfill_theta_projection_columns",
+      "text_bytes": 97,
+      "text_sha256": "6cb291c27046766cd86791f7b6f2c756499658101ee3402cd971a6c7dad8d2d6",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "dependency_configuration"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "a2e658752fd70cd20b7ee73e7f7deaa861782df213b6baae5866ef728b245428",
+      "snapshot_id": "m4-009",
+      "split": "validation",
+      "text": "[FILE] config/iota.yaml\n[STATUS] modified\n[PATCH]\n+iota_mode: conservative",
+      "text_bytes": 74,
+      "text_sha256": "984030f945f04db8fdcbc7a45cafe871a22202a68cddcd2141cf18b0094e7b5a",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "test_docs_only"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "2355b979e60ef7475e7efaf4d16d5ccdb1f9534cc9f8dc8392cbb57447f8a338",
+      "snapshot_id": "m4-010",
+      "split": "validation",
+      "text": "[FILE] tests/test_kappa.py\n[STATUS] added\n[PATCH]\n+def test_kappa_rounding(): pass",
+      "text_bytes": 82,
+      "text_sha256": "e5e698dd9960de42a7e4c89165e86cfcbe2a1493c52c34d32fbd3f56f4c7cd33",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "performance_sensitive"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "21762274ef9de9c0377a032578b1e362753d25ea578ae5cba61f776bc89f25e5",
+      "snapshot_id": "m4-011",
+      "split": "test",
+      "text": "[FILE] src/ledger/lambda_report.py\n[STATUS] modified\n[PATCH]\n+stream_lambda_ledger_summary",
+      "text_bytes": 90,
+      "text_sha256": "b5dc6dc8fce5921b00fd52400cdfd2c6b7fb567c5d99d925bff3b3381282824b",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "auth_security"
+      ],
+      "label_vector": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "fed5f4c8500654789b64ceb9ed7106e7115f0db291570eede8543e62146a6a09",
+      "snapshot_id": "m4-012",
+      "split": "test",
+      "text": "[FILE] src/identity/mu_session.py\n[STATUS] modified\n[PATCH]\n+bind_mu_session_to_tenant",
+      "text_bytes": 86,
+      "text_sha256": "527df8f414a3a891db996af8875afe3127fac4e0f501e336d866868cd5f60cdd",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "dependency_configuration"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "3abd05efdec7d94e372e0e730ccf089cb30d920d08f76085c83bf4a1c5cc04e2",
+      "snapshot_id": "m4-013",
+      "split": "test",
+      "text": "[FILE] uv.lock\n[STATUS] modified\n[PATCH]\n+nu-library resolution metadata",
+      "text_bytes": 72,
+      "text_sha256": "33d2a045cc9bf8d00d6f1f9c9ee55fa19a270f64fba1f22d22124fbcaed0fe55",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "api_compatibility",
+        "auth_security"
+      ],
+      "label_vector": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "ca8e6a0cc7465781e69e0a64f2be7d66854eb58460a3349b141830532b6b0d5c",
+      "snapshot_id": "m4-014",
+      "split": "test",
+      "text": "[FILE] src/auth/xi_refactor.py\n[STATUS] modified\n[PATCH]\n+rename_xi_authorization_helper",
+      "text_bytes": 88,
+      "text_sha256": "32ab3cdf0a7e9ab9eb2319771e4f26efcbb8ab846902cd28656f6ce828239546",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "auth_security",
+        "unknown_other"
+      ],
+      "label_vector": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "b22ec8927be43e60d2f075881845fbcf76f69c9172e2a8687ad64576d9e12371",
+      "snapshot_id": "m4-015",
+      "split": "excluded",
+      "text": "[FILE] src/security/omicron_policy.py\n[STATUS] modified\n[PATCH]\n+review_omicron_policy_interaction",
+      "text_bytes": 98,
+      "text_sha256": "f19d9553213586a76cb2bdf146e342e271b38867ba161fc8e5f04b83bf81e2fc",
+      "text_truncated": false
+    },
+    {
+      "categories": [
+        "test_docs_only",
+        "unknown_other"
+      ],
+      "label_vector": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1
+      ],
+      "repository_numeric_id": 9000001,
+      "row_sha256": "47d021eda0be4cf7d2f27c9da333cafe48e34c691fa2274bfc1e9e0d0f285488",
+      "snapshot_id": "m4-016",
+      "split": "excluded",
+      "text": "[FILE] docs/pi_notes.md\n[STATUS] modified\n[PATCH]\n+pi observation remains incomplete",
+      "text_bytes": 84,
+      "text_sha256": "26a93181619ec720e72d8b457559ee353d8339abe0cda4718bfe7c2d0a8ed0ce",
+      "text_truncated": false
+    }
+  ]
+}

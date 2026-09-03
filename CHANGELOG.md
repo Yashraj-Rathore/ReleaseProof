@@ -97,6 +97,12 @@
   suggestion can override deterministic HOLD.
 - A frozen four-case differential/four-case policy evaluation, live M10 sandbox test path and M10
   Owner Learning Note; no new dependency, model, provider call or external execution scope.
+- An M11 outcome-blind semantic dataset derived from only bounded pre-outcome M4 path/status/patch
+  fields while preserving exact source, admission, leakage and frozen-split lineage.
+- Explicit checksum-verified offline MiniLM provisioning, frozen real embeddings, TF-IDF/pretrained
+  representation comparison and a deterministic CPU PyTorch multi-label training pipeline.
+- Held-out per-class/per-repository errors, robustness, latency, calibration abstention, safe JSON
+  model lineage, an incremental-value gate, semantic model card and Owner Learning Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -143,6 +149,11 @@
 - Kept the dependency lock unchanged in M9: the separate runner uses the standard library, Docker
   CLI and the already pinned fixture pytest version. The runner is not placed beside application
   services in Compose and the application host receives no Docker socket.
+- Locked CPU PyTorch 2.13.0 and Transformers 5.15.1 with sentence-transformers 6.0.0 in the optional
+  semantic group after official compatibility verification on CPython 3.13.15.
+- Kept the M11 semantic model optional and `deterministic-heuristic-v1` active because the four-row,
+  one-repository synthetic holdout cannot support calibration/statistical lift and the semantic
+  ensemble added no F1 or average-precision value over XGBoost.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -168,3 +179,6 @@
 - M9 evidence is recorded in `PROJECT_STATUS.md` and docs/40-42. Deterministic policy and known live
   fixture sentinels do not prove absence of all container escapes; arbitrary external repository
   execution and general production readiness remain explicitly unvalidated.
+- M11 evidence is recorded in `PROJECT_STATUS.md` and docs/45-46. Its metrics are tiny synthetic
+  harness measurements; no customer data, shared training, serving integration, probability or
+  production-quality claim is made.

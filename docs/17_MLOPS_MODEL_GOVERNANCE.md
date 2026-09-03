@@ -60,3 +60,11 @@ result + differential plan + controlled base/candidate revisions + workload/mask
 policy must create a new decision version; it cannot rewrite historical M10 decisions. The fixture
 evaluation and live CI evidence remain distinct, and neither promotes arbitrary repository
 execution.
+
+M11 adds exact M4 source/admission/split/leakage hashes -> outcome-blind semantic annotation and
+text versions -> pinned encoder revision/license/safetensors checksum -> frozen embedding checksum
+-> training-code commit and deterministic PyTorch config/checkpoints -> held-out raw predictions,
+errors, robustness, latency and calibration abstention -> model-state/artifact checksums ->
+incremental-value gates -> `candidate_not_promoted`. The normal reproduction path uses committed
+embeddings without network access; explicit weight provisioning is separate. M13 may register this
+lineage but cannot convert the historical non-promotion into approval or a mutable `latest` alias.

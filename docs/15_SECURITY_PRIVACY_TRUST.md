@@ -130,3 +130,19 @@ Differential plans chain to the separate M9 approval and become stale with that 
 Composite database constraints prevent tenant/approval/snapshot rebinding. Recommendation inputs
 must cite same-tenant persisted evidence; deterministic HOLD has highest precedence, incomplete
 mandatory evidence becomes UNKNOWN, and `auto_merge=false` is validated and persisted.
+
+## M11 semantic-model controls
+
+The M11 committed dataset contains only the existing fictional MIT fixture plus outcome-blind CC0
+annotations. Customer code is not used for shared training. Semantic extraction uses an exact
+pre-outcome allowlist and byte/token bounds; outcome and proxy fields cannot enter the input. Model
+weights are provisioned explicitly by immutable Hugging Face revision into a Git-ignored directory,
+verified by safetensors SHA-256, loaded local-files-only with remote code disabled and never fetched
+by a web/worker request.
+
+Committed embeddings, model state and evaluation have checksum/lineage validation. The model uses
+safe JSON state rather than pickle, cannot execute source or model-supplied code, has no provider,
+network, secret, merge/deploy or sandbox authority, and is not exposed through an API. Invalid or
+missing artifacts fail closed without erasing deterministic evidence. Future customer-local
+training still requires explicit organization opt-in, tenant-isolated storage/retention and the
+M13/M14 governance controls.

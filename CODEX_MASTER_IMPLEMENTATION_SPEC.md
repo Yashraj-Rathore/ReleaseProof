@@ -382,6 +382,31 @@ Compose/startup, authoritative PostgreSQL constraints, the pinned runner-image b
 regression/identical/timeout sandbox evidence, SeaweedFS and teardown. This remains evidence for
 the controlled synthetic fixture only.
 
+## M11 PyTorch/Hugging Face semantic model
+
+M11 implements `RP-1001..RP-1006` as a provenance-controlled optional experiment. A separate
+outcome-blind semantic dataset inherits the exact M4 temporal split and derives bounded text only
+from changed-file path, status and patch. The exact Apache-2.0 MiniLM revision is provisioned
+explicitly, checksum verified and loaded offline; model weights are not committed or fetched by
+normal tests/runtime.
+
+Validation first compares train-only TF-IDF logistic regression with frozen 384-dimensional
+MiniLM embeddings. The selected representation feeds a deterministic CPU PyTorch multi-label
+linear head using `BCEWithLogitsLoss`, AdamW, checkpoints and early stopping. On the four-row
+synthetic test split it records micro-F1 0.5333333333 and macro-F1 0.35, but several categories have
+no support and calibration is prohibited. The semantic/XGBoost ensemble adds no held-out F1 or
+average-precision value, so the semantic model remains optional and active recommendations stay on
+`deterministic-heuristic-v1`.
+
+```text
+uv sync --frozen --group dev --group ml --group semantic --group ai
+uv run python -m eng.evaluate_m11_semantic --check
+uv run pytest tests/unit/test_semantic_model.py
+```
+
+These are synthetic harness results, not customer performance or a probability claim. Full
+lineage, errors, latency limitations, model card and learning note are in docs/45 and docs/46.
+
 
 ---
 
@@ -715,18 +740,46 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M10 differential/mutation verification implemented and CI-validated on 2026-09-02.**
+**Current state: M11 semantic-model experiment implemented on 2026-09-03; remote CI validation is pending.**
 
-The repository now chains strict M10 base/candidate plans to an exact separately approved M9 plan,
-replays one frozen workload under parity, compares selected HTTP/state/event evidence with explicit
-masks, evaluates two controlled mutants and persists an immutable `recommendation-fusion-v1`
-decision. The accepted ADR-018 fixture-only boundary is unchanged. External/customer repository
-execution remains disabled; this is not a universal sandbox or production-readiness claim.
+The repository now derives an outcome-blind semantic dataset from the frozen M4 fixture, compares
+TF-IDF and pinned real MiniLM representations, trains a deterministic CPU PyTorch multi-label head
+and records held-out/error/robustness/latency/calibration and incremental-value evidence. The four-row,
+one-repository synthetic holdout cannot support promotion: the semantic/XGBoost ensemble adds zero
+F1/AP, probability wording is disabled and `deterministic-heuristic-v1` remains active.
 
 ## Next action
 
-Begin M11 (`RP-1001..RP-1006`) semantic-model work from the unchanged M4/M5 dataset and promotion
-gates. Do not widen fixture execution or begin M12 agent work.
+After M11's pushed commit passes CI, begin M12 (`RP-1101..RP-1106`) bounded LangGraph investigation.
+Do not promote the semantic candidate, enable arbitrary repository execution or begin M13.
+
+## M11 evidence
+
+- `releaseproof-m11-synthetic-semantic-v1` preserves exact M4 source manifest, admission,
+  leakage-report and temporal-split hashes. It admits only bounded changed-file path/status/patch
+  text; outcome and proxy fields are blinded. The 16 annotations are explicitly synthetic,
+  outcome-blind CC0 metadata over the existing MIT fictional fixture.
+- CPU PyTorch 2.13.0, Transformers 5.15.1 and sentence-transformers 6.0.0 are exact optional pins.
+  The Apache-2.0 MiniLM revision `1110a243...` is explicitly provisioned to an ignored directory,
+  safetensors-checksum verified and loaded local-files-only with remote code disabled.
+- On four validation rows, frozen MiniLM logistic reaches micro-F1 0.5333333333/macro-F1 0.35,
+  versus TF-IDF logistic 0.4705882353/0.2666666667. Only the representation is selected; six
+  training rows are insufficient to fine-tune the encoder.
+- The deterministic 3,080-parameter PyTorch head uses `BCEWithLogitsLoss`, AdamW, seed 1729,
+  float64 CPU batches, safe JSON checkpoints, validation-selected epoch/threshold and early
+  stopping. Mixed precision is disabled because it is not verified for this profile.
+- The untouched four-row synthetic test result is micro-F1 0.5333333333, macro-F1 0.35, exact
+  match 0.0 and hamming loss 0.21875. All raw failures and per-class/per-repository support are
+  retained; collapsed-whitespace predictions agree exactly. Several categories have no support.
+- Calibration is not attempted because the 200-row gate fails; scores are not probabilities. The
+  semantic/XGBoost ensemble adds 0.00 F1 and 0.00 AP over XGBoost and fails row/class/repository
+  gates. The candidate remains unserved and unintegrated, with the deterministic heuristic active.
+- The pinned real encoder's local warm 16-row CPU batch measured median 48.50185 ms across ten
+  repetitions. This excludes cold load, database, queue and service overhead and is not an SLO.
+- Canonical local validation passed **157 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 196
+  source files, Django, migration drift, generated docs/inventory and M4-M11 evaluators passed.
+  Remote CI is still pending; exact artifacts, limitations and rerun instructions are in docs/45/46.
 
 ## M10 evidence
 
@@ -1022,7 +1075,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
-| M11 PyTorch/HF | Not started |
+| M11 PyTorch/HF | Complete locally - RP-1001..RP-1006; candidate not promoted; CI pending |
 | M12 LangGraph | Not started |
 | M13 MLflow/governance | Not started |
 | M14 security/ops | Not started |
@@ -1134,6 +1187,12 @@ and its remote M2 result is tracked in GitHub Actions.
   suggestion can override deterministic HOLD.
 - A frozen four-case differential/four-case policy evaluation, live M10 sandbox test path and M10
   Owner Learning Note; no new dependency, model, provider call or external execution scope.
+- An M11 outcome-blind semantic dataset derived from only bounded pre-outcome M4 path/status/patch
+  fields while preserving exact source, admission, leakage and frozen-split lineage.
+- Explicit checksum-verified offline MiniLM provisioning, frozen real embeddings, TF-IDF/pretrained
+  representation comparison and a deterministic CPU PyTorch multi-label training pipeline.
+- Held-out per-class/per-repository errors, robustness, latency, calibration abstention, safe JSON
+  model lineage, an incremental-value gate, semantic model card and Owner Learning Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -1180,6 +1239,11 @@ and its remote M2 result is tracked in GitHub Actions.
 - Kept the dependency lock unchanged in M9: the separate runner uses the standard library, Docker
   CLI and the already pinned fixture pytest version. The runner is not placed beside application
   services in Compose and the application host receives no Docker socket.
+- Locked CPU PyTorch 2.13.0 and Transformers 5.15.1 with sentence-transformers 6.0.0 in the optional
+  semantic group after official compatibility verification on CPython 3.13.15.
+- Kept the M11 semantic model optional and `deterministic-heuristic-v1` active because the four-row,
+  one-repository synthetic holdout cannot support calibration/statistical lift and the semantic
+  ensemble added no F1 or average-precision value over XGBoost.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -1205,6 +1269,9 @@ and its remote M2 result is tracked in GitHub Actions.
 - M9 evidence is recorded in `PROJECT_STATUS.md` and docs/40-42. Deterministic policy and known live
   fixture sentinels do not prove absence of all container escapes; arbitrary external repository
   execution and general production readiness remain explicitly unvalidated.
+- M11 evidence is recorded in `PROJECT_STATUS.md` and docs/45-46. Its metrics are tiny synthetic
+  harness measurements; no customer data, shared training, serving integration, probability or
+  production-quality claim is made.
 
 
 ---
@@ -1332,6 +1399,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `42_M9_OWNER_LEARNING_NOTE.md` | owner-defensible M9 trust boundary, contracts and rerun path |
 | `43_M10_DIFFERENTIAL_EVALUATION.md` | differential/mutation/fusion fixture results and limitations |
 | `44_M10_OWNER_LEARNING_NOTE.md` | owner-defensible M10 parity, comparison, mutation and policy explanation |
+| `45_M11_SEMANTIC_MODEL_CARD.md` | exact semantic dataset/model lineage, measurements and non-promotion decision |
+| `46_M11_OWNER_LEARNING_NOTE.md` | owner-defensible M11 tensors, training, evaluation and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -2113,6 +2182,22 @@ explicit nullable-feature imputation, missingness indicators and scaling on the 
 validation selects configurations/thresholds, and the four test rows are read only after the
 experiment declaration is frozen. The resulting artifact names the exact M4 manifest/split hashes.
 
+## M11 semantic dataset
+
+`releaseproof-m11-synthetic-semantic-v1` is a separate derivative of the admitted M4 fixture. It
+inherits the exact M4 source manifest, admission, leakage-report and frozen split hashes. Its only
+text inputs are normalized changed-file path, status and patch; outcome, proxy-label and
+post-deployment fields are explicitly blinded before annotation and extraction. Text is bounded to
+4,096 UTF-8 bytes, tokenization to 256 tokens, and exact duplicate text may not cross splits.
+
+The eight-category multi-label annotation set is explicitly outcome-blind synthetic CC0 metadata;
+the underlying fictional source remains MIT-licensed. All 16 source rows align exactly: 6 train,
+4 validation, 4 test and 2 excluded. The 14 included rows come from one repository, three
+categories have no training support and several have no held-out support. The committed manifest
+therefore validates provenance/leakage mechanics only, not real label quality, prevalence or
+repository generalization. M11 joins proxy outcomes only in a separate post-prediction incremental
+risk experiment and does not promote the semantic output.
+
 
 ---
 
@@ -2189,6 +2274,15 @@ AP=0.41666667 and ROC-AUC=0.25. These unstable fixture figures do not establish 
 Neither model defensibly improves the heuristic, so both remain candidates and
 `deterministic-heuristic-v1` remains active. The full model card is docs/32.
 
+## M11 semantic incremental-value result
+
+M11 leaves the M4 heuristic and M5 candidates immutable. Its predeclared optional ensemble takes
+the maximum of the frozen XGBoost score and the maximum of six risk-related semantic category
+scores, then compares the result only on the unchanged test split. On four synthetic rows the
+ensemble adds 0.00 F1 and 0.00 average precision over XGBoost. It also fails minimum gates of 200
+held-out rows, 50 rows per class and three repositories. Consequently the semantic candidate is not
+added to risk evidence or `recommendation-fusion-v1`; `deterministic-heuristic-v1` remains active.
+
 
 ---
 
@@ -2229,6 +2323,28 @@ Measure incremental value over deterministic/classical model before promotion.
 
 ## Serving
 Load in a worker first. Add FastAPI only if RP-1402 returns `EXTRACT_FASTAPI` under the predeclared criteria and budgets in docs/20.
+
+## Implemented M11 experiment
+
+M11 implements `RP-1001..RP-1006` as a framework-light, optional experiment. The separate semantic
+dataset inherits M4's frozen temporal split and admits only changed-file path, status and bounded
+patch text. Synthetic multi-label annotations are outcome-blind and separately licensed. Exact
+lineage, counts and leakage limitations are committed with the dataset.
+
+The selection experiment compares train-only word unigram/bigram TF-IDF logistic regression with
+the exact Apache-2.0 MiniLM representation. The frozen pretrained representation wins the
+validation comparison, but the encoder is not fine-tuned because only six training rows exist. A
+384-by-8 PyTorch linear head uses `BCEWithLogitsLoss`, AdamW, deterministic float64 CPU tensors,
+seed 1729, bounded batches, validation checkpoints and patience-based early stopping. Mixed
+precision is disabled because it is not verified for this deterministic CPU profile.
+
+The untouched four-row synthetic test result is micro-F1 0.5333333333 and macro-F1 0.35. The full
+artifact also records per-class/per-repository errors, raw predictions, whitespace robustness,
+uncalibrated score diagnostics and measured local batch latency. Calibration is not attempted and
+probability wording is prohibited. The semantic/XGBoost ensemble adds no F1 or average-precision
+value over XGBoost and fails sample/repository gates, so the semantic model remains an optional
+`candidate_not_promoted`; no Django model, serving endpoint or active recommendation change is
+introduced. See docs/45 and docs/46.
 
 
 ---
@@ -2734,6 +2850,22 @@ Composite database constraints prevent tenant/approval/snapshot rebinding. Recom
 must cite same-tenant persisted evidence; deterministic HOLD has highest precedence, incomplete
 mandatory evidence becomes UNKNOWN, and `auto_merge=false` is validated and persisted.
 
+## M11 semantic-model controls
+
+The M11 committed dataset contains only the existing fictional MIT fixture plus outcome-blind CC0
+annotations. Customer code is not used for shared training. Semantic extraction uses an exact
+pre-outcome allowlist and byte/token bounds; outcome and proxy fields cannot enter the input. Model
+weights are provisioned explicitly by immutable Hugging Face revision into a Git-ignored directory,
+verified by safetensors SHA-256, loaded local-files-only with remote code disabled and never fetched
+by a web/worker request.
+
+Committed embeddings, model state and evaluation have checksum/lineage validation. The model uses
+safe JSON state rather than pickle, cannot execute source or model-supplied code, has no provider,
+network, secret, merge/deploy or sandbox authority, and is not exposed through an API. Invalid or
+missing artifacts fail closed without erasing deterministic evidence. Future customer-local
+training still requires explicit organization opt-in, tenant-isolated storage/retention and the
+M13/M14 governance controls.
+
 
 ---
 
@@ -2875,6 +3007,21 @@ score is deliberately reported with its tiny synthetic/non-exhaustive limitation
 suite separately executes regression, identical and timeout variants in the digest-selected image
 and repeats M9 isolation checks on disposable Linux CI. Exact evidence is in docs/43.
 
+## M11 semantic-model evidence
+
+Unit tests cover outcome-blind annotation/source lineage, inherited frozen splits, text bounds,
+embedding/model checksums, missing/tampered offline model caches, deterministic PyTorch training,
+non-probability output and non-promotion. The network-free evaluator rebuilds the semantic dataset,
+head and evaluation from committed real MiniLM embeddings within a `1e-8` numeric tolerance while
+keeping artifact checksums exact.
+
+The held-out four-row synthetic result is micro-F1 0.5333333333, macro-F1 0.35 and exact match 0.0;
+all failures and per-class/per-repository support are retained. Collapsed-whitespace predictions
+agree exactly, while calibration is not attempted. The ensemble adds zero F1/AP over XGBoost and
+fails the frozen sample/repository gates. These values validate the training/evaluation harness and
+justify non-promotion; they do not measure customer quality or generalization. Exact evidence is in
+docs/45.
+
 
 ---
 
@@ -2942,6 +3089,14 @@ result + differential plan + controlled base/candidate revisions + workload/mask
 policy must create a new decision version; it cannot rewrite historical M10 decisions. The fixture
 evaluation and live CI evidence remain distinct, and neither promotes arbitrary repository
 execution.
+
+M11 adds exact M4 source/admission/split/leakage hashes -> outcome-blind semantic annotation and
+text versions -> pinned encoder revision/license/safetensors checksum -> frozen embedding checksum
+-> training-code commit and deterministic PyTorch config/checkpoints -> held-out raw predictions,
+errors, robustness, latency and calibration abstention -> model-state/artifact checksums ->
+incremental-value gates -> `candidate_not_promoted`. The normal reproduction path uses committed
+embeddings without network access; explicit weight provisioning is separate. M13 may register this
+lineage but cannot convert the historical non-promotion into approval or a mutable `latest` alias.
 
 
 ---
@@ -3621,7 +3776,7 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -3781,6 +3936,26 @@ runner image. The M9 image gains a second exact label for
 and runner identity remain unchanged. No mutation framework, HTTP client/server, LLM SDK call or
 additional container/runtime dependency is needed for this bounded slice.
 
+## M11 semantic-model pins — verified and locked 2026-09-03
+
+M11 keeps CPython 3.13.15 and installs these packages only through the optional `semantic` group.
+The uv source binds Torch to the official CPU wheel index, avoiding accidental CUDA runtime
+packages. The exact lock resolved successfully with the existing M5 and M7 groups and the M11
+training, serialization and offline reproduction tests passed on CPython 3.13.15.
+
+| Package/artifact | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| PyTorch CPU | `torch==2.13.0` (`2.13.0+cpu` wheel) | The official [2.13 release](https://pytorch.org/blog/pytorch-2-13-release-blog/) and [PyPI files](https://pypi.org/project/torch/2.13.0/) provide stable CPython 3.13 wheels. The newer 2.14 line was not selected immediately after release. |
+| Transformers | `transformers==5.15.1` | The official [5.15.1 package](https://pypi.org/project/transformers/5.15.1/) requires Python 3.10+, and its [installation guide](https://huggingface.co/docs/transformers/v5.15.1/en/installation) documents testing with Python 3.10+ and PyTorch 2.5+. |
+| sentence-transformers | `sentence-transformers==6.0.0` | The official [v6 project metadata](https://github.com/huggingface/sentence-transformers/blob/v6.0.0/pyproject.toml) requires Python 3.10+, PyTorch 2.2+ and Transformers 5.x, so the selected versions are inside its declared ranges. |
+| encoder weights | `sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41` | The official [immutable revision](https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2/tree/1110a243fdf4706b3f48f1d95db1a4f5529b4d41) records the Apache-2.0 files; ReleaseProof verifies safetensors SHA-256 `53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db`. |
+
+PyTorch 2.14.0 and Transformers 5.16.1 were already newer at verification time, but their recency
+did not justify changing the conservative Python/Django/ML deployment intersection during M11.
+Weights are downloaded only by the explicit provisioning command, never by dependency sync, tests,
+web requests or workers. The encoder is frozen and CPU-only; no GPU serving or FastAPI deployment
+decision is made.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.
@@ -3898,6 +4073,7 @@ The project is not interview-ready unless the owner can explain it without Codex
 Every AI/ML Codex completion report includes an Owner Learning Note.
 
 M5's completed explanation and rerun checkpoint is `docs/33_M5_OWNER_LEARNING_NOTE.md`.
+M11's completed explanation and rerun checkpoint is `docs/46_M11_OWNER_LEARNING_NOTE.md`.
 
 
 ---
@@ -4850,6 +5026,221 @@ A difference may be intended, and a survived mutant only indicates that this wor
 distinguish it. ReleaseProof preserves attributable facts and applies an explicit versioned policy:
 known deterministic regression evidence can HOLD, incomplete evidence becomes UNKNOWN, and weak but
 non-definitive coverage becomes REVIEW. A human still decides whether to merge or deploy.
+
+
+---
+
+# SOURCE FILE: `docs/45_M11_SEMANTIC_MODEL_CARD.md`
+
+# 45 — M11 Semantic Model Card
+
+## Artifact identity
+
+- Card version: `semantic-model-card-v1`
+- Dataset: `datasets/public/m11_semantic_dataset_v1.json`, file SHA-256
+  `c56e3ee5b97fdcec858cbe13103af8032736f58a3d83915f0b8f098d61621782`
+- Frozen embeddings: `artifacts/evaluation/m11_minilm_embeddings_v1.json`, file SHA-256
+  `ed149aa1b34c0be265d2fce90e21712ec1b20ab7bd791a4423a231bfe4ef92f7`
+- PyTorch head: `models/public/m11_semantic_head_v1.json`, file SHA-256
+  `8be3cfb757454a072a6827323f342bc43be672c3f95781e0e72049a8568a7d0c`
+- Evaluation: `artifacts/evaluation/m11_semantic_eval_v1.json`, file SHA-256
+  `fca8f5426a2c50bc6624482b71f3c331158fd6fa4f7468d2840adb3a4f019693`
+- Dataset manifest SHA-256:
+  `eddf5fc7000fc3c459094b48a1b01acd0c10ab9bc0db3fc01616f2df50bf4645`
+- Model artifact SHA-256:
+  `217ae49a7c42046db89428564b17730b730d6a694a4778f6d0d3a8755fac89cd`
+- Model-state SHA-256:
+  `6e0c7a7a944c401e6d8bc63c805c3d3f10961e51e563430308cc76b58eea33fd`
+- Training code commit: `c05854dd3d26ee2e2aa2ad2fce336263fc2c742c`
+
+The committed artifacts are small synthetic evidence. The pretrained weights are not committed;
+they must be provisioned explicitly by exact revision and checksum into the ignored private model
+directory. Load and inference are local-files-only with remote code disabled.
+
+## Intended and prohibited use
+
+The experiment classifies bounded change text into eight multi-label semantic categories. It
+validates a provenance-controlled semantic dataset, tokenization/representation comparison,
+deterministic PyTorch training, held-out evaluation, robustness checks and artifact lineage.
+
+It must not be used or described as a production risk probability, incident predictor, merge or
+deployment authority, customer-quality measurement, general code-understanding benchmark or
+representative latency result. It is not wired into active risk scoring or recommendation fusion.
+
+## Data, labels and privacy
+
+The separate dataset derives from the admitted MIT-licensed M4 fictional fixture and inherits the
+unchanged M4 temporal split and checksums: 6 train, 4 validation, 4 held-out test and 2 excluded
+rows. There is only one repository. Category annotations are explicitly synthetic, outcome-blind,
+CC0-1.0 metadata and cover all 16 source rows.
+
+Only normalized changed-file path, status and patch are admitted to semantic text. Outcome,
+proxy-label, observation-window result and deployment fields are blinded. Text is UTF-8 bounded to
+4,096 bytes, exact text cannot cross split boundaries, and tokenizer input is capped at 256 tokens.
+The fixture has no customer/private code and cannot establish annotation quality, repository
+generalization or real prevalence. `api_compatibility`, `concurrency_async` and `unknown_other`
+have no positive training examples; several test classes have no positive support.
+
+## Encoder and selection
+
+The encoder is Apache-2.0
+`sentence-transformers/all-MiniLM-L6-v2@1110a243fdf4706b3f48f1d95db1a4f5529b4d41`,
+384 dimensions. Its `model.safetensors` SHA-256 is
+`53aa51172d142c89d9012cce15ae4d6cc0ca6895895114379cacb4fab128d9db`.
+The runtime is CPython 3.13.15, CPU PyTorch 2.13.0, Transformers 5.15.1 and
+sentence-transformers 6.0.0.
+
+A train-only word unigram/bigram TF-IDF logistic baseline and a frozen MiniLM-embedding logistic
+baseline were compared on validation only. At the selected 0.3 threshold, TF-IDF produced micro-F1
+0.4705882353 and macro-F1 0.2666666667; frozen MiniLM produced micro-F1 0.5333333333 and macro-F1
+0.35. The pretrained representation was therefore selected, but the encoder was not fine-tuned:
+six training rows cannot support that complexity.
+
+## PyTorch training
+
+The multi-label head is one 384-by-8 linear layer with 3,080 trainable parameters. It uses
+`BCEWithLogitsLoss`, AdamW, seed 1729, float64 CPU tensors, batch size 2, learning rate 0.05,
+weight decay 0.01, deterministic algorithms, a 200-epoch ceiling and patience-20 early stopping.
+Mixed precision is disabled because it was not verified for this deterministic CPU profile.
+Checkpoints retain safe JSON tensor state rather than pickle; validation selected epoch 6 and
+threshold 0.3, and training stopped early.
+
+## Held-out synthetic measurements
+
+The untouched four-row test split produced exact-match 0.0, hamming loss 0.21875, micro-F1
+0.5333333333, macro-F1 0.35, micro average precision 0.767816092 and micro ROC-AUC 0.8185185185.
+These ranking figures are unstable at four rows and undefined classes are excluded only from their
+named macro summaries.
+
+| Category | Support | Precision | Recall | F1 |
+|---|---:|---:|---:|---:|
+| API compatibility | 1 | 0.0 | 0.0 | 0.0 |
+| Auth/security | 2 | 0.6666666667 | 1.0 | 0.8 |
+| Concurrency/async | 0 | 0.0 | 0.0 | 0.0 |
+| Database/schema | 0 | 0.0 | 0.0 | 0.0 |
+| Dependency/configuration | 1 | 1.0 | 1.0 | 1.0 |
+| Performance-sensitive | 1 | 1.0 | 1.0 | 1.0 |
+| Test/docs-only | 0 | 0.0 | 0.0 | 0.0 |
+| Unknown/other | 0 | 0.0 | 0.0 | 0.0 |
+
+All four held-out rows have at least one classification error. The model misses the only API
+compatibility label and over-predicts test/docs-only on every test row. Per-repository reporting is
+present, but it is the same four-row result because the dataset contains one repository. Collapsing
+whitespace preserved 100% prediction-cell and exact-row prediction agreement.
+
+## Calibration, incremental value and promotion
+
+The frozen calibration gate requires at least 200 held-out rows. Calibration is therefore not
+attempted, calibrated probability is null, and all outputs are explicitly uncalibrated model
+scores. A diagnostic Brier value is not promoted as calibration evidence.
+
+The predeclared ensemble takes the maximum of the frozen XGBoost score and the maximum score among
+six risk-related semantic categories. On the same four test rows it adds 0.00 F1 and 0.00 average
+precision over the best existing candidate. It also fails the minimum 200 rows, 50 rows per class
+and three repositories gates. The semantic model remains `candidate_not_promoted`, active
+recommendations remain unchanged, and `deterministic-heuristic-v1` remains the rollback/active
+artifact. Promotion requires a new immutable, licensed, multi-repository dataset and human review.
+
+## Environment, latency and failure behavior
+
+The recorded Windows x86-64 CPU run encoded a 16-row batch ten times after model load: median
+48.50185 ms, minimum 46.8459 ms and observed p95 52.3711 ms. This excludes cold load, database,
+queue and application overhead and is not a service SLO.
+
+Missing/incomplete/tampered model caches, embeddings, model state or lineage fail closed. The
+normal validator rebuilds from committed embeddings without a network or model download. No hosted
+or paid provider was called, and the model cannot merge, deploy, execute code or widen a sandbox.
+
+## Reproduction
+
+```text
+uv sync --frozen --group dev --group ml --group semantic --group ai
+uv run python -m eng.evaluate_m11_semantic --check
+uv run pytest tests/unit/test_semantic_model.py
+```
+
+To reproduce the original real-encoder artifact intentionally, first run
+`uv run python -m eng.provision_m11_encoder`, review the verified local manifest, then run the
+evaluator with `--write`, the explicit ignored model directory and an exact training-code commit.
+That provisioning step downloads the named public weights; it is never part of tests or implicit
+runtime behavior.
+
+
+---
+
+# SOURCE FILE: `docs/46_M11_OWNER_LEARNING_NOTE.md`
+
+# 46 — M11 Owner Learning Note
+
+## 1. Concept implemented
+
+M11 implements an outcome-blind multi-label semantic dataset, two representation baselines, an
+offline checksum-verified Hugging Face encoder, a deterministic PyTorch linear classification
+head, early stopping/checkpoints, held-out error/robustness/calibration analysis and an
+incremental-value experiment against existing risk signals.
+
+## 2. Why it is used here
+
+Tabular features capture size, paths and graph/history facts but can miss meaning inside a patch.
+A semantic encoder maps bounded path/status/diff text into a dense vector where related changes can
+be closer even without exact token overlap. A small trainable head then maps that representation to
+ReleaseProof categories. It is only useful if the added signal beats simpler baselines and improves
+the existing system on defensible held-out evidence.
+
+## 3. Algorithm and data assumptions
+
+- A tokenizer converts text to integer token IDs; MiniLM applies learned attention layers and
+  pooling to produce one normalized 384-value vector per change.
+- A batch is a group of vectors processed together. The linear layer produces eight logits. The
+  sigmoid maps each logit to a score, but each category is independent and multiple labels may be
+  active.
+- `BCEWithLogitsLoss` combines a numerically stable sigmoid and binary cross-entropy for every
+  row/category cell. Backpropagation computes parameter gradients; AdamW updates weights and bias.
+- Only training rows update parameters. Validation selects threshold/checkpoint and triggers early
+  stopping. Test rows are inspected once for final evidence.
+- The fixture's synthetic labels, one repository, six training rows and unsupported categories
+  violate assumptions needed for product generalization and calibration. Scores are not
+  probabilities.
+- Freezing the encoder limits trainable capacity and reproducibility risk. It does not make a tiny
+  dataset representative or remove biases inherited from pretrained data.
+
+## 4. Key code paths
+
+- `packages/dataset_core/semantic.py`: admitted fields, annotation validation, text derivation,
+  frozen split/lineage and leakage checks.
+- `adapters/semantic/huggingface.py`: checksum-verified local-only encoder/tokenizer boundary.
+- `packages/ml_core/semantic.py`: baselines, PyTorch training, metrics, calibration abstention,
+  artifact validation, optional inference and ensemble gate.
+- `eng/provision_m11_encoder.py`: explicit exact-revision download and local manifest.
+- `eng/evaluate_m11_semantic.py`: frozen artifact generation and network-free reproduction check.
+- `datasets/public/m11_semantic_dataset_v1.json`, `models/public/m11_semantic_head_v1.json` and
+  `artifacts/evaluation/m11_semantic_eval_v1.json`: immutable data/model/evaluation evidence.
+
+## 5. Exact experiment/test to rerun
+
+```text
+uv sync --frozen --group dev --group ml --group semantic --group ai
+uv run python -m eng.evaluate_m4_baseline --check
+uv run python -m eng.evaluate_m5_classical --check
+uv run python -m eng.evaluate_m11_semantic --check
+uv run pytest tests/unit/test_semantic_model.py
+```
+
+Inspect `benchmark`, `training`, `held_out`, `error_analysis`, `calibration_and_confidence`,
+`robustness`, `incremental_value`, `promotion` and all SHA-256 lineage fields. Do not tune after
+examining the held-out result.
+
+## 6. Likely interview question and answer
+
+**Question:** Why use a pretrained transformer but train only a linear PyTorch head, and why was it
+not promoted?
+
+**Answer:** The pretrained encoder supplies useful semantic structure that beat a train-only TF-IDF
+baseline on validation, while freezing it avoids pretending six training rows can support
+fine-tuning. The head still demonstrates tensors, batches, multi-label loss, backpropagation,
+checkpoints and inference. It was not promoted because the four-row, one-repository synthetic test
+set cannot support calibration or statistical lift, several classes have no support, and the
+semantic/XGBoost ensemble added zero F1 and average precision over XGBoost.
 
 
 ---

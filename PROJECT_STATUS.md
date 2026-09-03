@@ -1,17 +1,45 @@
 # Project Status
 
-**Current state: M10 differential/mutation verification implemented and CI-validated on 2026-09-02.**
+**Current state: M11 semantic-model experiment implemented on 2026-09-03; remote CI validation is pending.**
 
-The repository now chains strict M10 base/candidate plans to an exact separately approved M9 plan,
-replays one frozen workload under parity, compares selected HTTP/state/event evidence with explicit
-masks, evaluates two controlled mutants and persists an immutable `recommendation-fusion-v1`
-decision. The accepted ADR-018 fixture-only boundary is unchanged. External/customer repository
-execution remains disabled; this is not a universal sandbox or production-readiness claim.
+The repository now derives an outcome-blind semantic dataset from the frozen M4 fixture, compares
+TF-IDF and pinned real MiniLM representations, trains a deterministic CPU PyTorch multi-label head
+and records held-out/error/robustness/latency/calibration and incremental-value evidence. The four-row,
+one-repository synthetic holdout cannot support promotion: the semantic/XGBoost ensemble adds zero
+F1/AP, probability wording is disabled and `deterministic-heuristic-v1` remains active.
 
 ## Next action
 
-Begin M11 (`RP-1001..RP-1006`) semantic-model work from the unchanged M4/M5 dataset and promotion
-gates. Do not widen fixture execution or begin M12 agent work.
+After M11's pushed commit passes CI, begin M12 (`RP-1101..RP-1106`) bounded LangGraph investigation.
+Do not promote the semantic candidate, enable arbitrary repository execution or begin M13.
+
+## M11 evidence
+
+- `releaseproof-m11-synthetic-semantic-v1` preserves exact M4 source manifest, admission,
+  leakage-report and temporal-split hashes. It admits only bounded changed-file path/status/patch
+  text; outcome and proxy fields are blinded. The 16 annotations are explicitly synthetic,
+  outcome-blind CC0 metadata over the existing MIT fictional fixture.
+- CPU PyTorch 2.13.0, Transformers 5.15.1 and sentence-transformers 6.0.0 are exact optional pins.
+  The Apache-2.0 MiniLM revision `1110a243...` is explicitly provisioned to an ignored directory,
+  safetensors-checksum verified and loaded local-files-only with remote code disabled.
+- On four validation rows, frozen MiniLM logistic reaches micro-F1 0.5333333333/macro-F1 0.35,
+  versus TF-IDF logistic 0.4705882353/0.2666666667. Only the representation is selected; six
+  training rows are insufficient to fine-tune the encoder.
+- The deterministic 3,080-parameter PyTorch head uses `BCEWithLogitsLoss`, AdamW, seed 1729,
+  float64 CPU batches, safe JSON checkpoints, validation-selected epoch/threshold and early
+  stopping. Mixed precision is disabled because it is not verified for this profile.
+- The untouched four-row synthetic test result is micro-F1 0.5333333333, macro-F1 0.35, exact
+  match 0.0 and hamming loss 0.21875. All raw failures and per-class/per-repository support are
+  retained; collapsed-whitespace predictions agree exactly. Several categories have no support.
+- Calibration is not attempted because the 200-row gate fails; scores are not probabilities. The
+  semantic/XGBoost ensemble adds 0.00 F1 and 0.00 AP over XGBoost and fails row/class/repository
+  gates. The candidate remains unserved and unintegrated, with the deterministic heuristic active.
+- The pinned real encoder's local warm 16-row CPU batch measured median 48.50185 ms across ten
+  repetitions. This excludes cold load, database, queue and service overhead and is not an SLO.
+- Canonical local validation passed **157 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 196
+  source files, Django, migration drift, generated docs/inventory and M4-M11 evaluators passed.
+  Remote CI is still pending; exact artifacts, limitations and rerun instructions are in docs/45/46.
 
 ## M10 evidence
 
@@ -307,7 +335,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M8 generated tests | Complete - RP-0701..RP-0704; export only, no execution approval |
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
-| M11 PyTorch/HF | Not started |
+| M11 PyTorch/HF | Complete locally - RP-1001..RP-1006; candidate not promoted; CI pending |
 | M12 LangGraph | Not started |
 | M13 MLflow/governance | Not started |
 | M14 security/ops | Not started |

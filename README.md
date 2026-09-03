@@ -369,3 +369,28 @@ GitHub Actions run `33680837554` for implementation commit `14b133e` passed cano
 Compose/startup, authoritative PostgreSQL constraints, the pinned runner-image build, live
 regression/identical/timeout sandbox evidence, SeaweedFS and teardown. This remains evidence for
 the controlled synthetic fixture only.
+
+## M11 PyTorch/Hugging Face semantic model
+
+M11 implements `RP-1001..RP-1006` as a provenance-controlled optional experiment. A separate
+outcome-blind semantic dataset inherits the exact M4 temporal split and derives bounded text only
+from changed-file path, status and patch. The exact Apache-2.0 MiniLM revision is provisioned
+explicitly, checksum verified and loaded offline; model weights are not committed or fetched by
+normal tests/runtime.
+
+Validation first compares train-only TF-IDF logistic regression with frozen 384-dimensional
+MiniLM embeddings. The selected representation feeds a deterministic CPU PyTorch multi-label
+linear head using `BCEWithLogitsLoss`, AdamW, checkpoints and early stopping. On the four-row
+synthetic test split it records micro-F1 0.5333333333 and macro-F1 0.35, but several categories have
+no support and calibration is prohibited. The semantic/XGBoost ensemble adds no held-out F1 or
+average-precision value, so the semantic model remains optional and active recommendations stay on
+`deterministic-heuristic-v1`.
+
+```text
+uv sync --frozen --group dev --group ml --group semantic --group ai
+uv run python -m eng.evaluate_m11_semantic --check
+uv run pytest tests/unit/test_semantic_model.py
+```
+
+These are synthetic harness results, not customer performance or a probability claim. Full
+lineage, errors, latency limitations, model card and learning note are in docs/45 and docs/46.

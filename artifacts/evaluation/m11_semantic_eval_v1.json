@@ -1,0 +1,1086 @@
+{
+  "benchmark": {
+    "decision": {
+      "encoder_fine_tuning": false,
+      "pretrained_representation_selected_for_head": true,
+      "reason": "Use the frozen pretrained representation for a bounded PyTorch head; do not fine-tune the encoder on six training rows."
+    },
+    "pretrained_minilm_logistic": {
+      "representation": "frozen normalized 384-dimensional MiniLM embedding",
+      "threshold_candidates": [
+        {
+          "macro_f1": 0.35,
+          "micro_f1": 0.5333333333,
+          "threshold": 0.3
+        },
+        {
+          "macro_f1": 0.0,
+          "micro_f1": 0.0,
+          "threshold": 0.5
+        },
+        {
+          "macro_f1": 0.0,
+          "micro_f1": 0.0,
+          "threshold": 0.7
+        }
+      ],
+      "validation_metrics": {
+        "exact_match": 0.0,
+        "hamming_loss": 0.21875,
+        "macro_f1": 0.35,
+        "macro_pr_auc_average_precision_defined_classes": 0.9,
+        "macro_roc_auc_defined_classes": 0.9333333333,
+        "micro_f1": 0.5333333333,
+        "micro_pr_auc_average_precision": 0.6433333333,
+        "micro_roc_auc": 0.8592592593,
+        "per_class": {
+          "api_compatibility": {
+            "f1": 0.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": null,
+            "precision": 0.0,
+            "prevalence": 0.0,
+            "recall": 0.0,
+            "roc_auc": null,
+            "support": 0,
+            "true_negative": 4,
+            "true_positive": 0
+          },
+          "auth_security": {
+            "f1": 0.0,
+            "false_negative": 1,
+            "false_positive": 0,
+            "pr_auc_average_precision": 0.5,
+            "precision": 0.0,
+            "prevalence": 0.25,
+            "recall": 0.0,
+            "roc_auc": 0.6666666667,
+            "support": 1,
+            "true_negative": 3,
+            "true_positive": 0
+          },
+          "concurrency_async": {
+            "f1": 0.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": null,
+            "precision": 0.0,
+            "prevalence": 0.0,
+            "recall": 0.0,
+            "roc_auc": null,
+            "support": 0,
+            "true_negative": 4,
+            "true_positive": 0
+          },
+          "database_schema": {
+            "f1": 1.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": 1.0,
+            "precision": 1.0,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "support": 1,
+            "true_negative": 3,
+            "true_positive": 1
+          },
+          "dependency_configuration": {
+            "f1": 0.4,
+            "false_negative": 0,
+            "false_positive": 3,
+            "pr_auc_average_precision": 1.0,
+            "precision": 0.25,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "support": 1,
+            "true_negative": 0,
+            "true_positive": 1
+          },
+          "performance_sensitive": {
+            "f1": 1.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": 1.0,
+            "precision": 1.0,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "support": 1,
+            "true_negative": 3,
+            "true_positive": 1
+          },
+          "test_docs_only": {
+            "f1": 0.4,
+            "false_negative": 0,
+            "false_positive": 3,
+            "pr_auc_average_precision": 1.0,
+            "precision": 0.25,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "support": 1,
+            "true_negative": 0,
+            "true_positive": 1
+          },
+          "unknown_other": {
+            "f1": 0.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": null,
+            "precision": 0.0,
+            "prevalence": 0.0,
+            "recall": 0.0,
+            "roc_auc": null,
+            "support": 0,
+            "true_negative": 4,
+            "true_positive": 0
+          }
+        },
+        "row_count": 4,
+        "threshold": 0.3
+      }
+    },
+    "tfidf_logistic": {
+      "representation": "train-only word unigram/bigram TF-IDF capped at 256 features",
+      "threshold_candidates": [
+        {
+          "macro_f1": 0.2666666667,
+          "micro_f1": 0.4705882353,
+          "threshold": 0.3
+        },
+        {
+          "macro_f1": 0.0,
+          "micro_f1": 0.0,
+          "threshold": 0.5
+        },
+        {
+          "macro_f1": 0.0,
+          "micro_f1": 0.0,
+          "threshold": 0.7
+        }
+      ],
+      "validation_metrics": {
+        "exact_match": 0.0,
+        "hamming_loss": 0.28125,
+        "macro_f1": 0.2666666667,
+        "macro_pr_auc_average_precision_defined_classes": 0.8,
+        "macro_roc_auc_defined_classes": 0.9333333333,
+        "micro_f1": 0.4705882353,
+        "micro_pr_auc_average_precision": 0.6333333333,
+        "micro_roc_auc": 0.8888888889,
+        "per_class": {
+          "api_compatibility": {
+            "f1": 0.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": null,
+            "precision": 0.0,
+            "prevalence": 0.0,
+            "recall": 0.0,
+            "roc_auc": null,
+            "support": 0,
+            "true_negative": 4,
+            "true_positive": 0
+          },
+          "auth_security": {
+            "f1": 0.0,
+            "false_negative": 1,
+            "false_positive": 0,
+            "pr_auc_average_precision": 0.5,
+            "precision": 0.0,
+            "prevalence": 0.25,
+            "recall": 0.0,
+            "roc_auc": 0.8333333333,
+            "support": 1,
+            "true_negative": 3,
+            "true_positive": 0
+          },
+          "concurrency_async": {
+            "f1": 0.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": null,
+            "precision": 0.0,
+            "prevalence": 0.0,
+            "recall": 0.0,
+            "roc_auc": null,
+            "support": 0,
+            "true_negative": 4,
+            "true_positive": 0
+          },
+          "database_schema": {
+            "f1": 0.6666666667,
+            "false_negative": 0,
+            "false_positive": 1,
+            "pr_auc_average_precision": 1.0,
+            "precision": 0.5,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "support": 1,
+            "true_negative": 2,
+            "true_positive": 1
+          },
+          "dependency_configuration": {
+            "f1": 0.4,
+            "false_negative": 0,
+            "false_positive": 3,
+            "pr_auc_average_precision": 0.5,
+            "precision": 0.25,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 0.8333333333,
+            "support": 1,
+            "true_negative": 0,
+            "true_positive": 1
+          },
+          "performance_sensitive": {
+            "f1": 0.6666666667,
+            "false_negative": 0,
+            "false_positive": 1,
+            "pr_auc_average_precision": 1.0,
+            "precision": 0.5,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "support": 1,
+            "true_negative": 2,
+            "true_positive": 1
+          },
+          "test_docs_only": {
+            "f1": 0.4,
+            "false_negative": 0,
+            "false_positive": 3,
+            "pr_auc_average_precision": 1.0,
+            "precision": 0.25,
+            "prevalence": 0.25,
+            "recall": 1.0,
+            "roc_auc": 1.0,
+            "support": 1,
+            "true_negative": 0,
+            "true_positive": 1
+          },
+          "unknown_other": {
+            "f1": 0.0,
+            "false_negative": 0,
+            "false_positive": 0,
+            "pr_auc_average_precision": null,
+            "precision": 0.0,
+            "prevalence": 0.0,
+            "recall": 0.0,
+            "roc_auc": null,
+            "support": 0,
+            "true_negative": 4,
+            "true_positive": 0
+          }
+        },
+        "row_count": 4,
+        "threshold": 0.3
+      },
+      "vocabulary_size": 53
+    }
+  },
+  "calibration_and_confidence": {
+    "calibration": {
+      "calibrated_probability": null,
+      "minimum_rows": 200,
+      "probability_display_allowed": false,
+      "raw_score_brier_diagnostic": 0.1009335604,
+      "reason": "The held-out synthetic sample is below the frozen calibration minimum.",
+      "status": "not_attempted_insufficient_sample"
+    },
+    "confidence_score_diagnostics": {
+      "maximum_score": 0.6376563411,
+      "mean_distance_from_selected_threshold": 0.1847880844,
+      "mean_score": 0.2066639611,
+      "minimum_score": 0.006915602,
+      "wording": "uncalibrated model scores; not probabilities or certainty"
+    }
+  },
+  "dataset": {
+    "annotation_rule_version": "semantic-category-annotation-v1",
+    "annotation_sha256": "f39c972dfbe1b03559fe8d0059689606a9f357bc2d641070d6161f3ec6c6dcf3",
+    "categories": [
+      "api_compatibility",
+      "auth_security",
+      "concurrency_async",
+      "database_schema",
+      "dependency_configuration",
+      "performance_sensitive",
+      "test_docs_only",
+      "unknown_other"
+    ],
+    "counts": {
+      "category_positive_counts": {
+        "api_compatibility": 1,
+        "auth_security": 4,
+        "concurrency_async": 0,
+        "database_schema": 2,
+        "dependency_configuration": 4,
+        "performance_sensitive": 3,
+        "test_docs_only": 3,
+        "unknown_other": 0
+      },
+      "included_rows": 14,
+      "repository_counts": {
+        "9000001": 14
+      },
+      "split_counts": {
+        "excluded": 2,
+        "test": 4,
+        "train": 6,
+        "validation": 4
+      },
+      "total_rows": 16,
+      "truncated_rows": 0
+    },
+    "dataset_version": "releaseproof-m11-synthetic-semantic-v1",
+    "leakage_report": {
+      "limitations": [
+        "The fixture contains one repository, so repository-holdout behavior is not measured.",
+        "Outcome-blind synthetic category annotations validate the pipeline, not real label quality."
+      ],
+      "passed_checks": [
+        "source_m4_leakage_report_passed",
+        "outcome_and_proxy_fields_blinded",
+        "pre_outcome_text_field_allowlist_exact",
+        "frozen_m4_split_inherited",
+        "all_source_rows_covered_once",
+        "no_exact_text_across_splits"
+      ],
+      "report_sha256": "14479a56ed47db8a793ffb5e395e3bc641f4586ade20f8b0f9edabb50ba1ea70",
+      "repository_holdout_measured": false,
+      "schema_version": "semantic-leakage-report-v1",
+      "source_report_sha256": "d9e2602435f7afbe19205b2dfcae866726eea19628d3908dff30af2edf6a6847",
+      "violations": []
+    },
+    "license": "CC0-1.0",
+    "manifest_sha256": "eddf5fc7000fc3c459094b48a1b01acd0c10ab9bc0db3fc01616f2df50bf4645",
+    "schema_version": "semantic-dataset-v1",
+    "source_admission_sha256": "ca255d0895e55e143912c268f700228c5e5337cca28e3548e8eed4f30731e896",
+    "source_content_license": "MIT",
+    "source_dataset_version": "releaseproof-m4-synthetic-v1",
+    "source_leakage_report_sha256": "d9e2602435f7afbe19205b2dfcae866726eea19628d3908dff30af2edf6a6847",
+    "source_manifest_sha256": "eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456",
+    "source_split_sha256": "81d51ed7011c86744f2cf4bff15cb98bb1aa440b1c81ece921ed9b4a21f0c11b",
+    "synthetic": true,
+    "text_version": "semantic-change-text-v1",
+    "usage": "Synthetic, outcome-blind fixture annotations for implementation and evaluation only; not customer data or production labels."
+  },
+  "embedding_artifact_sha256": "deb832206f7ee8ee024942aba619971f4414a0e9a26c9c8db4bb79e91336c734",
+  "error_analysis": {
+    "failures": [
+      {
+        "actual_categories": [
+          "performance_sensitive"
+        ],
+        "false_negative_categories": [],
+        "false_positive_categories": [
+          "auth_security",
+          "database_schema",
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.0085577781,
+          "auth_security": 0.3322548118,
+          "concurrency_async": 0.0085577781,
+          "database_schema": 0.4137921759,
+          "dependency_configuration": 0.2324204463,
+          "performance_sensitive": 0.4137921759,
+          "test_docs_only": 0.4409687674,
+          "unknown_other": 0.0085577781
+        },
+        "predicted_categories": [
+          "auth_security",
+          "database_schema",
+          "performance_sensitive",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-011"
+      },
+      {
+        "actual_categories": [
+          "auth_security"
+        ],
+        "false_negative_categories": [],
+        "false_positive_categories": [
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.0123917685,
+          "auth_security": 0.6376563411,
+          "concurrency_async": 0.0123917685,
+          "database_schema": 0.2805065491,
+          "dependency_configuration": 0.1281016617,
+          "performance_sensitive": 0.2805065491,
+          "test_docs_only": 0.3940802324,
+          "unknown_other": 0.0123917685
+        },
+        "predicted_categories": [
+          "auth_security",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-012"
+      },
+      {
+        "actual_categories": [
+          "dependency_configuration"
+        ],
+        "false_negative_categories": [],
+        "false_positive_categories": [
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.006915602,
+          "auth_security": 0.2670287515,
+          "concurrency_async": 0.006915602,
+          "database_schema": 0.0737913083,
+          "dependency_configuration": 0.5679148452,
+          "performance_sensitive": 0.0737913083,
+          "test_docs_only": 0.4010187597,
+          "unknown_other": 0.006915602
+        },
+        "predicted_categories": [
+          "dependency_configuration",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-013"
+      },
+      {
+        "actual_categories": [
+          "api_compatibility",
+          "auth_security"
+        ],
+        "false_negative_categories": [
+          "api_compatibility"
+        ],
+        "false_positive_categories": [
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.0073632468,
+          "auth_security": 0.5420646957,
+          "concurrency_async": 0.0073632468,
+          "database_schema": 0.2250637792,
+          "dependency_configuration": 0.2580547092,
+          "performance_sensitive": 0.2250637792,
+          "test_docs_only": 0.3196899223,
+          "unknown_other": 0.0073632468
+        },
+        "predicted_categories": [
+          "auth_security",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-014"
+      }
+    ],
+    "per_repository": {
+      "9000001": {
+        "error_snapshot_ids": [
+          "m4-011",
+          "m4-012",
+          "m4-013",
+          "m4-014"
+        ],
+        "metrics": {
+          "exact_match": 0.0,
+          "hamming_loss": 0.21875,
+          "macro_f1": 0.35,
+          "macro_pr_auc_average_precision_defined_classes": 0.8333333333,
+          "macro_roc_auc_defined_classes": 0.8333333333,
+          "micro_f1": 0.5333333333,
+          "micro_pr_auc_average_precision": 0.767816092,
+          "micro_roc_auc": 0.8185185185,
+          "per_class": {
+            "api_compatibility": {
+              "f1": 0.0,
+              "false_negative": 1,
+              "false_positive": 0,
+              "pr_auc_average_precision": 0.3333333333,
+              "precision": 0.0,
+              "prevalence": 0.25,
+              "recall": 0.0,
+              "roc_auc": 0.3333333333,
+              "support": 1,
+              "true_negative": 3,
+              "true_positive": 0
+            },
+            "auth_security": {
+              "f1": 0.8,
+              "false_negative": 0,
+              "false_positive": 1,
+              "pr_auc_average_precision": 1.0,
+              "precision": 0.6666666667,
+              "prevalence": 0.5,
+              "recall": 1.0,
+              "roc_auc": 1.0,
+              "support": 2,
+              "true_negative": 1,
+              "true_positive": 2
+            },
+            "concurrency_async": {
+              "f1": 0.0,
+              "false_negative": 0,
+              "false_positive": 0,
+              "pr_auc_average_precision": null,
+              "precision": 0.0,
+              "prevalence": 0.0,
+              "recall": 0.0,
+              "roc_auc": null,
+              "support": 0,
+              "true_negative": 4,
+              "true_positive": 0
+            },
+            "database_schema": {
+              "f1": 0.0,
+              "false_negative": 0,
+              "false_positive": 1,
+              "pr_auc_average_precision": null,
+              "precision": 0.0,
+              "prevalence": 0.0,
+              "recall": 0.0,
+              "roc_auc": null,
+              "support": 0,
+              "true_negative": 3,
+              "true_positive": 0
+            },
+            "dependency_configuration": {
+              "f1": 1.0,
+              "false_negative": 0,
+              "false_positive": 0,
+              "pr_auc_average_precision": 1.0,
+              "precision": 1.0,
+              "prevalence": 0.25,
+              "recall": 1.0,
+              "roc_auc": 1.0,
+              "support": 1,
+              "true_negative": 3,
+              "true_positive": 1
+            },
+            "performance_sensitive": {
+              "f1": 1.0,
+              "false_negative": 0,
+              "false_positive": 0,
+              "pr_auc_average_precision": 1.0,
+              "precision": 1.0,
+              "prevalence": 0.25,
+              "recall": 1.0,
+              "roc_auc": 1.0,
+              "support": 1,
+              "true_negative": 3,
+              "true_positive": 1
+            },
+            "test_docs_only": {
+              "f1": 0.0,
+              "false_negative": 0,
+              "false_positive": 4,
+              "pr_auc_average_precision": null,
+              "precision": 0.0,
+              "prevalence": 0.0,
+              "recall": 0.0,
+              "roc_auc": null,
+              "support": 0,
+              "true_negative": 0,
+              "true_positive": 0
+            },
+            "unknown_other": {
+              "f1": 0.0,
+              "false_negative": 0,
+              "false_positive": 0,
+              "pr_auc_average_precision": null,
+              "precision": 0.0,
+              "prevalence": 0.0,
+              "recall": 0.0,
+              "roc_auc": null,
+              "support": 0,
+              "true_negative": 4,
+              "true_positive": 0
+            }
+          },
+          "row_count": 4,
+          "threshold": 0.3
+        },
+        "row_count": 4
+      }
+    },
+    "unseen_training_categories": [
+      "api_compatibility",
+      "concurrency_async",
+      "unknown_other"
+    ]
+  },
+  "evaluation_version": "semantic-evaluation-v1",
+  "held_out": {
+    "metrics": {
+      "exact_match": 0.0,
+      "hamming_loss": 0.21875,
+      "macro_f1": 0.35,
+      "macro_pr_auc_average_precision_defined_classes": 0.8333333333,
+      "macro_roc_auc_defined_classes": 0.8333333333,
+      "micro_f1": 0.5333333333,
+      "micro_pr_auc_average_precision": 0.767816092,
+      "micro_roc_auc": 0.8185185185,
+      "per_class": {
+        "api_compatibility": {
+          "f1": 0.0,
+          "false_negative": 1,
+          "false_positive": 0,
+          "pr_auc_average_precision": 0.3333333333,
+          "precision": 0.0,
+          "prevalence": 0.25,
+          "recall": 0.0,
+          "roc_auc": 0.3333333333,
+          "support": 1,
+          "true_negative": 3,
+          "true_positive": 0
+        },
+        "auth_security": {
+          "f1": 0.8,
+          "false_negative": 0,
+          "false_positive": 1,
+          "pr_auc_average_precision": 1.0,
+          "precision": 0.6666666667,
+          "prevalence": 0.5,
+          "recall": 1.0,
+          "roc_auc": 1.0,
+          "support": 2,
+          "true_negative": 1,
+          "true_positive": 2
+        },
+        "concurrency_async": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 4,
+          "true_positive": 0
+        },
+        "database_schema": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 1,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 3,
+          "true_positive": 0
+        },
+        "dependency_configuration": {
+          "f1": 1.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": 1.0,
+          "precision": 1.0,
+          "prevalence": 0.25,
+          "recall": 1.0,
+          "roc_auc": 1.0,
+          "support": 1,
+          "true_negative": 3,
+          "true_positive": 1
+        },
+        "performance_sensitive": {
+          "f1": 1.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": 1.0,
+          "precision": 1.0,
+          "prevalence": 0.25,
+          "recall": 1.0,
+          "roc_auc": 1.0,
+          "support": 1,
+          "true_negative": 3,
+          "true_positive": 1
+        },
+        "test_docs_only": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 4,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 0,
+          "true_positive": 0
+        },
+        "unknown_other": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 4,
+          "true_positive": 0
+        }
+      },
+      "row_count": 4,
+      "threshold": 0.3
+    },
+    "raw_predictions": [
+      {
+        "actual_categories": [
+          "performance_sensitive"
+        ],
+        "false_negative_categories": [],
+        "false_positive_categories": [
+          "auth_security",
+          "database_schema",
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.0085577781,
+          "auth_security": 0.3322548118,
+          "concurrency_async": 0.0085577781,
+          "database_schema": 0.4137921759,
+          "dependency_configuration": 0.2324204463,
+          "performance_sensitive": 0.4137921759,
+          "test_docs_only": 0.4409687674,
+          "unknown_other": 0.0085577781
+        },
+        "predicted_categories": [
+          "auth_security",
+          "database_schema",
+          "performance_sensitive",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-011"
+      },
+      {
+        "actual_categories": [
+          "auth_security"
+        ],
+        "false_negative_categories": [],
+        "false_positive_categories": [
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.0123917685,
+          "auth_security": 0.6376563411,
+          "concurrency_async": 0.0123917685,
+          "database_schema": 0.2805065491,
+          "dependency_configuration": 0.1281016617,
+          "performance_sensitive": 0.2805065491,
+          "test_docs_only": 0.3940802324,
+          "unknown_other": 0.0123917685
+        },
+        "predicted_categories": [
+          "auth_security",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-012"
+      },
+      {
+        "actual_categories": [
+          "dependency_configuration"
+        ],
+        "false_negative_categories": [],
+        "false_positive_categories": [
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.006915602,
+          "auth_security": 0.2670287515,
+          "concurrency_async": 0.006915602,
+          "database_schema": 0.0737913083,
+          "dependency_configuration": 0.5679148452,
+          "performance_sensitive": 0.0737913083,
+          "test_docs_only": 0.4010187597,
+          "unknown_other": 0.006915602
+        },
+        "predicted_categories": [
+          "dependency_configuration",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-013"
+      },
+      {
+        "actual_categories": [
+          "api_compatibility",
+          "auth_security"
+        ],
+        "false_negative_categories": [
+          "api_compatibility"
+        ],
+        "false_positive_categories": [
+          "test_docs_only"
+        ],
+        "model_scores": {
+          "api_compatibility": 0.0073632468,
+          "auth_security": 0.5420646957,
+          "concurrency_async": 0.0073632468,
+          "database_schema": 0.2250637792,
+          "dependency_configuration": 0.2580547092,
+          "performance_sensitive": 0.2250637792,
+          "test_docs_only": 0.3196899223,
+          "unknown_other": 0.0073632468
+        },
+        "predicted_categories": [
+          "auth_security",
+          "test_docs_only"
+        ],
+        "repository_numeric_id": 9000001,
+        "snapshot_id": "m4-014"
+      }
+    ],
+    "test_rows_used_once_after_selection": true
+  },
+  "incremental_value": {
+    "active_recommendation_changed": false,
+    "candidate_configuration": {
+      "combination": "max(frozen_xgboost_score, semantic_risky_category_max_score)",
+      "risk_categories": [
+        "api_compatibility",
+        "auth_security",
+        "concurrency_async",
+        "database_schema",
+        "dependency_configuration",
+        "performance_sensitive"
+      ],
+      "semantic_category_threshold": 0.3,
+      "version": "semantic-risk-ensemble-v1"
+    },
+    "decision": "keep_semantic_optional_not_integrated",
+    "gate_checks": {
+      "f1_gain_at_least_0_02": false,
+      "held_out_rows_at_least_200": false,
+      "pr_auc_gain_at_least_0_02": false,
+      "recall_not_reduced": true,
+      "repositories_at_least_3": false,
+      "rows_per_class_at_least_50": false
+    },
+    "metrics": {
+      "deterministic_heuristic": {
+        "f1": 0.0,
+        "false_negative": 2,
+        "false_positive": 1,
+        "pr_auc_average_precision": 0.4166666667,
+        "precision": 0.0,
+        "prevalence": 0.5,
+        "recall": 0.0,
+        "roc_auc": 0.125,
+        "row_count": 4,
+        "threshold": 0.5,
+        "true_negative": 1,
+        "true_positive": 0
+      },
+      "semantic_xgboost_candidate": {
+        "f1": 0.4,
+        "false_negative": 1,
+        "false_positive": 2,
+        "pr_auc_average_precision": 0.4166666667,
+        "precision": 0.3333333333,
+        "prevalence": 0.5,
+        "recall": 0.5,
+        "roc_auc": 0.25,
+        "row_count": 4,
+        "threshold": 0.5,
+        "true_negative": 0,
+        "true_positive": 1
+      },
+      "xgboost_candidate": {
+        "f1": 0.4,
+        "false_negative": 1,
+        "false_positive": 2,
+        "pr_auc_average_precision": 0.4166666667,
+        "precision": 0.3333333333,
+        "prevalence": 0.5,
+        "recall": 0.5,
+        "roc_auc": 0.25,
+        "row_count": 4,
+        "threshold": 0.5,
+        "true_negative": 0,
+        "true_positive": 1
+      }
+    },
+    "observed_deltas": {
+      "f1_vs_best_existing": 0.0,
+      "pr_auc_vs_best_existing": 0.0
+    },
+    "reason": "The synthetic four-row, one-repository holdout fails mandatory sample, repository, calibration, and defensible incremental-value gates.",
+    "source_artifacts": {
+      "m4_evaluation_sha256": "84778a60b8d38df43e59b7fbf461591cf6ac6aed3bce242f72c0e982a1e03ebb",
+      "m5_artifact_sha256": "cb552fd83b257d67248d804c931cf604942d76bac245069b64f58048bfa9a8d6",
+      "m5_xgboost_artifact_sha256": "1eb6f54d30d97baee0b8d57cd2f7b9b4b690ffce34d01db8169e20181cec2f78"
+    }
+  },
+  "limitations": [
+    "The dataset is explicitly synthetic and contains only 14 included rows.",
+    "One repository cannot measure repository-holdout generalization.",
+    "Several semantic categories have no training or held-out support.",
+    "Proxy outcomes used only by the separate ensemble evaluation are not incidents.",
+    "The frozen encoder was not fine-tuned; only a small linear head was trained.",
+    "Model scores are uncalibrated and must not be presented as probabilities.",
+    "No customer code, public repository, GPU, hosted provider, or model service was used."
+  ],
+  "model_artifact_sha256": "217ae49a7c42046db89428564b17730b730d6a694a4778f6d0d3a8755fac89cd",
+  "model_card_version": "semantic-model-card-v1",
+  "promotion": {
+    "active_model_changed": false,
+    "decision": "candidate_not_promoted",
+    "human_approval_required": true,
+    "rollback": "deterministic-heuristic-v1"
+  },
+  "robustness": {
+    "perturbation": "collapse whitespace while retaining the same bounded path/status/patch tokens",
+    "prediction_cell_agreement": 1.0,
+    "row_exact_prediction_agreement": 1.0,
+    "variant_metrics": {
+      "exact_match": 0.0,
+      "hamming_loss": 0.21875,
+      "macro_f1": 0.35,
+      "macro_pr_auc_average_precision_defined_classes": 0.8333333333,
+      "macro_roc_auc_defined_classes": 0.8333333333,
+      "micro_f1": 0.5333333333,
+      "micro_pr_auc_average_precision": 0.767816092,
+      "micro_roc_auc": 0.8185185185,
+      "per_class": {
+        "api_compatibility": {
+          "f1": 0.0,
+          "false_negative": 1,
+          "false_positive": 0,
+          "pr_auc_average_precision": 0.3333333333,
+          "precision": 0.0,
+          "prevalence": 0.25,
+          "recall": 0.0,
+          "roc_auc": 0.3333333333,
+          "support": 1,
+          "true_negative": 3,
+          "true_positive": 0
+        },
+        "auth_security": {
+          "f1": 0.8,
+          "false_negative": 0,
+          "false_positive": 1,
+          "pr_auc_average_precision": 1.0,
+          "precision": 0.6666666667,
+          "prevalence": 0.5,
+          "recall": 1.0,
+          "roc_auc": 1.0,
+          "support": 2,
+          "true_negative": 1,
+          "true_positive": 2
+        },
+        "concurrency_async": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 4,
+          "true_positive": 0
+        },
+        "database_schema": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 1,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 3,
+          "true_positive": 0
+        },
+        "dependency_configuration": {
+          "f1": 1.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": 1.0,
+          "precision": 1.0,
+          "prevalence": 0.25,
+          "recall": 1.0,
+          "roc_auc": 1.0,
+          "support": 1,
+          "true_negative": 3,
+          "true_positive": 1
+        },
+        "performance_sensitive": {
+          "f1": 1.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": 1.0,
+          "precision": 1.0,
+          "prevalence": 0.25,
+          "recall": 1.0,
+          "roc_auc": 1.0,
+          "support": 1,
+          "true_negative": 3,
+          "true_positive": 1
+        },
+        "test_docs_only": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 4,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 0,
+          "true_positive": 0
+        },
+        "unknown_other": {
+          "f1": 0.0,
+          "false_negative": 0,
+          "false_positive": 0,
+          "pr_auc_average_precision": null,
+          "precision": 0.0,
+          "prevalence": 0.0,
+          "recall": 0.0,
+          "roc_auc": null,
+          "support": 0,
+          "true_negative": 4,
+          "true_positive": 0
+        }
+      },
+      "row_count": 4,
+      "threshold": 0.3
+    }
+  },
+  "root_sha256": "dfd608ba73796c0ca9f104c47e86d6ed8d33b182a30af5c89f1ecc9d2c48b18b",
+  "runtime_compatibility": {
+    "python": "3.13.15",
+    "sentence-transformers": "6.0.0",
+    "torch": "2.13.0",
+    "transformers": "5.15.1"
+  },
+  "schema_version": "semantic-evaluation-v1",
+  "synthetic": true,
+  "tokenization": {
+    "max_observed_tokens": 37,
+    "max_tokens": 256,
+    "mean_observed_tokens": 30.625,
+    "rows_truncated": 0,
+    "tokenizer_source": "exact local encoder revision"
+  },
+  "training_code_commit": "c05854dd3d26ee2e2aa2ad2fce336263fc2c742c"
+}

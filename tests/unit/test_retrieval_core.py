@@ -165,11 +165,25 @@ def test_model_artifact_revision_and_checksum_are_not_mutable_aliases() -> None:
         replace(RERANKER_ARTIFACT, safetensors_sha256="not-a-checksum")
 
 
-def test_m6_runtime_and_optional_semantic_dependencies_are_exact() -> None:
+def test_m6_m11_runtime_and_optional_semantic_dependencies_are_exact() -> None:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
 
     assert "pgvector==0.5.0" in project["project"]["dependencies"]
-    assert project["dependency-groups"]["semantic"] == ["sentence-transformers==6.0.0"]
+    assert project["dependency-groups"]["semantic"] == [
+        "sentence-transformers==6.0.0",
+        "torch==2.13.0",
+        "transformers==5.15.1",
+    ]
+    assert project["tool"]["uv"]["sources"]["torch"] == {"index": "pytorch-cpu"}
+    assert project["tool"]["uv"]["index"] == [
+        {
+            "explicit": True,
+            "name": "pytorch-cpu",
+            "url": "https://download.pytorch.org/whl/cpu",
+        }
+    ]
     lock = (ROOT / "uv.lock").read_text(encoding="utf-8")
     assert 'name = "pgvector"\nversion = "0.5.0"' in lock
     assert 'name = "sentence-transformers"\nversion = "6.0.0"' in lock
+    assert 'name = "torch"\nversion = "2.13.0+cpu"' in lock
+    assert 'name = "transformers"\nversion = "5.15.1"' in lock

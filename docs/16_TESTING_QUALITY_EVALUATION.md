@@ -133,3 +133,18 @@ pass deterministically. Its two controlled mutations yield one killed and one su
 score is deliberately reported with its tiny synthetic/non-exhaustive limitation. The sandbox
 suite separately executes regression, identical and timeout variants in the digest-selected image
 and repeats M9 isolation checks on disposable Linux CI. Exact evidence is in docs/43.
+
+## M11 semantic-model evidence
+
+Unit tests cover outcome-blind annotation/source lineage, inherited frozen splits, text bounds,
+embedding/model checksums, missing/tampered offline model caches, deterministic PyTorch training,
+non-probability output and non-promotion. The network-free evaluator rebuilds the semantic dataset,
+head and evaluation from committed real MiniLM embeddings within a `1e-8` numeric tolerance while
+keeping artifact checksums exact.
+
+The held-out four-row synthetic result is micro-F1 0.5333333333, macro-F1 0.35 and exact match 0.0;
+all failures and per-class/per-repository support are retained. Collapsed-whitespace predictions
+agree exactly, while calibration is not attempted. The ensemble adds zero F1/AP over XGBoost and
+fails the frozen sample/repository gates. These values validate the training/evaluation harness and
+justify non-promotion; they do not measure customer quality or generalization. Exact evidence is in
+docs/45.
