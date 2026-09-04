@@ -103,6 +103,17 @@
   representation comparison and a deterministic CPU PyTorch multi-label training pipeline.
 - Held-out per-class/per-repository errors, robustness, latency, calibration abstention, safe JSON
   model lineage, an incremental-value gate, semantic model card and Owner Learning Note.
+- M12 `agent-state-v1` immutable evidence/node/result contracts and a fixed
+  `bounded-investigation-graph-v1` over feature, graph, retrieval, risk, test and optional execution
+  evidence.
+- A six-tool read-only agent allowlist with cancellation, step/tool/provider/token/cost/wall/node
+  budgets, repeated-state loop detection and explicit partial UNKNOWN behavior that preserves HOLD.
+- An independent deterministic critic for schema, citation existence, exact structured fact
+  entailment, missing-evidence confidence and recommendation-policy consistency.
+- Local deterministic agent-node provider, append-only tenant-bound agent evidence, and authenticated
+  read-only API/HTML trace views without prompts, source blobs, raw output or hidden reasoning.
+- A frozen seven-case CC0 agent evaluation and Owner Learning Note; no incremental quality lift over
+  M7 was measured, so the graph remains optional and disabled by default.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -118,6 +129,8 @@
   Linux checkouts validate the same committed source bytes.
 - Kept generated local S3 credentials owner-only while making only CI's ephemeral, public-example
   credential file readable by the pinned SeaweedFS container's non-root user.
+- Locked LangGraph 1.2.11 in the optional `agent` group without adding a LangChain meta-package,
+  remote tracing/deployment or native graph checkpoints.
 - Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
   opaque author familiarity input without exposing identity as a predictor.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific

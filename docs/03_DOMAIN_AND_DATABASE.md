@@ -29,7 +29,7 @@ Snapshot, requested components/policy snapshot, lifecycle, timestamps, correlati
 Authoritative job/idempotency key, owning organization/run, requested task type/version, bounded attempt state, availability time and terminal outcome; transactional outbox topic/payload version/published state. The outbox contains identifiers, not raw source. Redis/Celery result state is never authoritative.
 
 ### EvidenceItem
-Append-only: kind (`deterministic`, `ml`, `retrieval`, `llm`, `test`, `execution`, `security`, `unknown`), severity/confidence vocabulary, title, structured payload, source refs, producer/version.
+Append-only: kind (`deterministic`, `ml`, `retrieval`, `llm`, `agent`, `test`, `execution`, `security`, `unknown`), severity/confidence vocabulary, title, structured payload, source refs, producer/version.
 
 ### RiskScore
 Analysis, model/baseline artifact, feature version, raw score, calibrated probability nullable, band, threshold policy, explanation.
@@ -219,3 +219,18 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
   invariants, not UI conventions.
 - Composite foreign keys/triggers reject cross-tenant plan, approval, run and snapshot rebinding.
   Database triggers reject raw update/delete of all three M10 record types.
+
+## M12 agent investigation evidence implementation
+
+- M12 reuses append-only `EvidenceItem` with kind `agent`; it does not create mutable agent memory
+  or a second authoritative run store. The row is organization/snapshot/feature-bound by the
+  existing composite constraints and immutable triggers.
+- The idempotency identity hashes graph/state versions, selected immutable evidence IDs/categories,
+  exact deterministic policy inputs, limits, local provider identity, cancellation and injected
+  tool-failure controls.
+- Persisted JSON contains only the advisory recommendation, termination/partial status, request and
+  policy hashes, bounded usage counters, structured critic result, citations and concise trace
+  summaries. It excludes prompts, source/diff/chunk bodies, raw provider responses, arbitrary
+  exceptions, credentials and hidden chain-of-thought.
+- LangGraph native checkpoints are disabled in M12. Later durable resume support requires a
+  retention/privacy design and migration; it may not silently serialize full graph state.

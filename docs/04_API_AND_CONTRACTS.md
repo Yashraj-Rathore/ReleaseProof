@@ -21,6 +21,7 @@ Never return stack traces, secrets, raw provider payloads, or arbitrary source.
 - `POST /api/v1/execution-plans/{id}/approve` (M9+, separate execution authorization)
 - `GET /api/v1/models/current`
 - `GET /api/v1/evaluations/latest`
+- `GET /api/v1/agent-investigations/{public_id}`
 Mutations require session + CSRF + role checks.
 
 Implemented M2 routes are `GET /api/v1/me`, `GET /api/v1/repositories/{public_id}`,
@@ -115,6 +116,19 @@ token usage, cost in integer micro-USD and elapsed time. Requests bind prompt/sc
 hostile evidence as serialized data, conservative byte/token/output/cost budgets, separate
 connect/read timeouts, bounded attempts/backoff and cancellation. This is an internal M7 service;
 no public browser/API mutation is introduced.
+
+## M12 agent investigation contract and routes
+
+`agent-state-v1` uses immutable safe evidence references and explicit node input/output,
+termination, critic, usage and trace contracts. `bounded-investigation-graph-v1` permits only six
+read tools: feature, graph, historical retrieval, risk, test-result and execution-evidence reads.
+There is no execution request, repository mutation, merge or deploy contract.
+
+The authenticated routes `GET /api/v1/agent-investigations/{public_id}` and
+`/app/agent-investigations/{public_id}/` read an already persisted tenant-scoped result. They expose
+safe node/tool/result summaries, evidence IDs, elapsed times, counters, deterministic critic result,
+policy/request hashes and advisory recommendation. They never expose prompts, evidence contents,
+provider raw output or hidden reasoning, and no M12 HTTP route starts or resumes the graph.
 
 ## Generated-test proposal contract and routes
 

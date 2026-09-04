@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -178,12 +178,24 @@ Weights are downloaded only by the explicit provisioning command, never by depen
 web requests or workers. The encoder is frozen and CPU-only; no GPU serving or FastAPI deployment
 decision is made.
 
+## M12 agent pin — verified and locked 2026-09-04
+
+| Package | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| LangGraph | `langgraph==1.2.11` | The official [PyPI release](https://pypi.org/project/langgraph/1.2.11/) is classified stable, requires Python 3.10+ and lists CPython 3.13 support. The official [release](https://github.com/langchain-ai/langgraph/releases/tag/1.2.11) identifies the exact tag, and the [overview](https://docs.langchain.com/oss/python/langgraph/overview) documents LangGraph as the low-level orchestration layer for stateful, controlled workflows. |
+
+The package lives in the optional `agent` group and resolves with CPython 3.13.15 and all existing
+groups. ReleaseProof imports the low-level graph API directly; it does not add the LangChain
+meta-package or a provider integration. The resolution includes LangGraph's own transitive packages,
+but M12 does not enable remote deployment, LangSmith transmission or native checkpoint persistence.
+The only implemented node provider is local and deterministic.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.
 - Set `.python-version` to `3.13.15` and configure uv's required version as `0.12.6`.
 - Direct runtime/development requirements use exact pins; `uv.lock` records the complete transitive resolution.
-- Separate later `ml`, `semantic`, `ai`, `e2e` and `observability` groups and create them only in the owning milestone.
+- Separate later `ml`, `semantic`, `ai`, `agent`, `e2e` and `observability` groups and create them only in the owning milestone.
 - Release and Compose images use exact tags plus OCI manifest digests. Resolve digests on the actual target architecture during M1; do not invent them in documentation.
 - Model artifacts use exact registry identifiers/checksums; prompts, FTS, features and schemas use semantic version plus content hash.
 - Upgrade intentionally with unit/integration/security tests and relevant frozen ML/RAG/LLM evaluation; never float production dependencies.

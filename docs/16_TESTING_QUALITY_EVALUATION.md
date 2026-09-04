@@ -148,3 +148,19 @@ agree exactly, while calibration is not attempted. The ensemble adds zero F1/AP 
 fails the frozen sample/repository gates. These values validate the training/evaluation harness and
 justify non-promotion; they do not measure customer quality or generalization. Exact evidence is in
 docs/45.
+
+## M12 bounded-agent evidence
+
+Unit tests cover immutable state/evidence contracts, every read-only tool, evidence bounds,
+cancellation, step/tool/provider/token/cost/wall/node limits, repeated-state loop detection,
+provider identity failure, UNKNOWN degradation and deterministic critic rejection. Django/web
+tests cover local-only provider enforcement, tenant-scoped evidence selection, idempotent append-only
+safe persistence, immutability, cross-tenant denial and safe API/HTML rendering without raw context
+or hidden reasoning.
+
+The frozen seven-case CC0 synthetic harness includes four direct comparisons plus tool-failure,
+step-budget and cancellation controls. Both the graph and simpler M7 path score 1.0 task success
+and 1.0 citation-groundedness on the four shared cases; the graph uses 20 provider-node calls and 28
+steps versus four single-pass calls/steps. It therefore shows no incremental quality value and is
+not promoted. Local fake latency/cost and all limitations are recorded in
+`47_M12_AGENT_EVALUATION.md`.

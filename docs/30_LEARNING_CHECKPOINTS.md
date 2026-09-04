@@ -15,3 +15,4 @@ Every AI/ML Codex completion report includes an Owner Learning Note.
 
 M5's completed explanation and rerun checkpoint is `docs/33_M5_OWNER_LEARNING_NOTE.md`.
 M11's completed explanation and rerun checkpoint is `docs/46_M11_OWNER_LEARNING_NOTE.md`.
+M12's completed explanation and rerun checkpoint is `docs/48_M12_OWNER_LEARNING_NOTE.md`.

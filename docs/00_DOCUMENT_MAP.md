@@ -48,5 +48,7 @@
 | `44_M10_OWNER_LEARNING_NOTE.md` | owner-defensible M10 parity, comparison, mutation and policy explanation |
 | `45_M11_SEMANTIC_MODEL_CARD.md` | exact semantic dataset/model lineage, measurements and non-promotion decision |
 | `46_M11_OWNER_LEARNING_NOTE.md` | owner-defensible M11 tensors, training, evaluation and rerun path |
+| `47_M12_AGENT_EVALUATION.md` | bounded graph/non-agent comparison, controls, measurements and activation decision |
+| `48_M12_OWNER_LEARNING_NOTE.md` | owner-defensible M12 state, tools, guards, critic and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

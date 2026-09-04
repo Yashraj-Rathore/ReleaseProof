@@ -29,6 +29,7 @@ class EvidenceKind(models.TextChoices):
     ML = "ml", "Machine learning"
     RETRIEVAL = "retrieval", "Retrieval"
     LLM = "llm", "LLM"
+    AGENT = "agent", "Agent investigation"
     TEST = "test", "Test"
     EXECUTION = "execution", "Execution"
     SECURITY = "security", "Security"

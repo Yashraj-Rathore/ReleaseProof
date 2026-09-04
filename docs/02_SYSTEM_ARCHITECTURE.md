@@ -67,3 +67,12 @@ Verifier failure reduces confidence and is visible:
 5. optional Kubernetes when resource scheduling/replica evidence exists.
 
 Kafka is deliberately absent. Introducing it requires a new issue and ADR with a reproducible benchmark showing that the PostgreSQL outbox plus Celery transport cannot meet a stated ordering, replay or throughput requirement.
+
+## M12 agent boundary
+
+`packages/agent_core` owns the versioned state, read-only tool facade, guards, deterministic critic
+and LangGraph state machine. `adapters/agent` owns node-provider implementations; M12 supplies only
+a local deterministic fake. `apps/web/analysis/agent_investigation.py` derives safe references from
+already tenant-authorized immutable evidence and persists the bounded result. LangGraph does not
+import Django, control Celery tasks, contact the runner or checkpoint raw graph state. The only M12
+HTTP surface is an authenticated tenant-scoped read of an already persisted investigation.

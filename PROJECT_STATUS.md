@@ -1,17 +1,40 @@
 # Project Status
 
-**Current state: M11 semantic-model experiment implemented and CI-validated on 2026-09-03.**
+**Current state: M12 bounded LangGraph investigation implemented and locally validated on 2026-09-04.**
 
-The repository now derives an outcome-blind semantic dataset from the frozen M4 fixture, compares
-TF-IDF and pinned real MiniLM representations, trains a deterministic CPU PyTorch multi-label head
-and records held-out/error/robustness/latency/calibration and incremental-value evidence. The four-row,
-one-repository synthetic holdout cannot support promotion: the semantic/XGBoost ensemble adds zero
-F1/AP, probability wording is disabled and `deterministic-heuristic-v1` remains active.
+The repository now includes a typed, bounded, read-only LangGraph investigation with independent
+deterministic citation/fact/policy criticism and safe append-only tenant-scoped traces. Its frozen
+synthetic comparison shows no task-success or groundedness lift over M7's simpler path, so the graph
+is optional and disabled by default. Remote CI evidence for the M12 commit is pending this push.
 
 ## Next action
 
-Begin M12 (`RP-1101..RP-1106`) bounded LangGraph investigation. Do not promote the semantic
-candidate, enable arbitrary repository execution or begin M13.
+Begin M13 (`RP-1201..RP-1206`) MLflow/evaluation/feedback governance. Do not enable the M12 graph by
+default, add a hosted agent provider, enable arbitrary repository execution or begin M14.
+
+## M12 evidence
+
+- `bounded-investigation-graph-v1` uses typed `agent-state-v1` inputs/results, immutable bounded
+  evidence references and a fixed change/history/risk/test/optional-execution/critic/composer flow.
+- The only tools read already authorized feature, graph, retrieval, risk, test-result and execution
+  evidence. No merge/deploy/repository-write/execution-request/runner/filesystem/secret capability
+  exists, and only the local deterministic node provider is enabled.
+- Guards enforce cancellation, wall/node time, repeated node/state detection and exact step/tool/
+  provider/token/cost budgets. Failure returns explicit partial UNKNOWN, while deterministic HOLD
+  remains HOLD.
+- The model-independent critic checks typed schema, tool-returned citations, exact structured fact
+  entailment, missing-evidence confidence and `recommendation-fusion-v1`; it cannot create evidence.
+- Safe agent results persist idempotently as immutable tenant/snapshot/feature-bound `EvidenceItem`
+  rows. API/HTML GET views expose decisions, counters, latency and citations, not raw source/prompt/
+  provider output or hidden reasoning. Native graph checkpoints are disabled.
+- The seven-case CC0 fixture has four comparison cases plus tool-failure, step-budget and cancellation
+  controls. M12 and M7 both record 1.0 task success and groundedness on shared cases. M12 is not
+  promoted because it adds orchestration calls/steps and local latency without quality lift.
+- LangGraph 1.2.11 is isolated in the optional `agent` dependency group. No paid/hosted provider,
+  customer/public code, model download or sandbox execution was used for M12.
+- Canonical local validation passed **170 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 208 source
+  files, Django, migration drift, generated docs/inventory and M4-M12 evaluators passed.
 
 ## M11 evidence
 
@@ -339,7 +362,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
-| M12 LangGraph | Not started |
+| M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; local validation complete |
 | M13 MLflow/governance | Not started |
 | M14 security/ops | Not started |
 | M15 containers/CI/model serving | Not started |

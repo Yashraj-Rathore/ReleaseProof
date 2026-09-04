@@ -1,0 +1,239 @@
+{
+  "configuration": {
+    "agent_graph": "bounded-investigation-graph-v1",
+    "agent_provider": "deterministic-agent-node-v1",
+    "critic": "deterministic-structured-evidence-critic-v1",
+    "non_agent_provider": "deterministic-evidence-synthesizer-v1",
+    "recommendation_policy": "recommendation-fusion-v1"
+  },
+  "decision": {
+    "agent_enabled_by_default": false,
+    "agent_promoted": false,
+    "deterministic_fake_only": true,
+    "hosted_provider_executed": false,
+    "reason": "The synthetic comparison shows no task-success or groundedness improvement over the simpler M7 path, while the graph uses more orchestration calls/steps and has higher measured local latency. Keep it optional."
+  },
+  "fixture": {
+    "case_count": 7,
+    "license": "CC0-1.0",
+    "path": "tests/fixtures/agents/m12_investigation_v1.json",
+    "sha256": "bb96cc2af3e1df7943a406a3d5782236b2ce4b66c7819a9be76519620528c4e1",
+    "usage": "Deterministic agent contract and comparison fixture only; not customer or hosted-model evidence."
+  },
+  "latency_evidence": {
+    "agent": {
+      "median_ms": 25.8216,
+      "minimum_ms": 24.9142,
+      "p95_ms": 30.6005
+    },
+    "environment": {
+      "platform": "Windows-11-10.0.22631-SP0",
+      "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+      "python": "3.13.15"
+    },
+    "limitations": "In-process deterministic fake latency excludes provider, database, queue, network, and sandbox time.",
+    "measurement": "single-process four-case synthetic local-only comparison",
+    "non_agent_m7": {
+      "median_ms": 0.6696,
+      "minimum_ms": 0.6346,
+      "p95_ms": 0.7948
+    },
+    "repetitions": 25
+  },
+  "limitations": [
+    "All cases, facts, expected outcomes, and summaries are synthetic CC0 controls.",
+    "No paid/hosted provider, customer code, public repository, or sandbox execution ran.",
+    "Structured fact-code entailment does not establish free-text semantic entailment.",
+    "The tiny deterministic suite validates controls, not customer usefulness or safety."
+  ],
+  "quality": {
+    "comparison": {
+      "agent": {
+        "counts": {
+          "cases": 4,
+          "claims": 20,
+          "grounded_claims": 20,
+          "tool_calls": 24,
+          "tool_errors": 0
+        },
+        "groundedness_rate": 1.0,
+        "task_success_rate": 1.0,
+        "tool_error_rate": 0.0,
+        "usage_totals": {
+          "cost_microusd": 0,
+          "input_tokens": 4555,
+          "llm_calls": 20,
+          "output_tokens": 2080,
+          "steps": 28,
+          "tool_calls": 24,
+          "tool_errors": 0
+        }
+      },
+      "non_agent_m7": {
+        "counts": {
+          "cases": 4,
+          "claims": 8,
+          "grounded_claims": 8,
+          "tool_calls": 0,
+          "tool_errors": 0
+        },
+        "groundedness_rate": 1.0,
+        "task_success_rate": 1.0,
+        "tool_error_rate": 0.0,
+        "usage_totals": {
+          "cost_microusd": 0,
+          "input_tokens": 12037,
+          "llm_calls": 4,
+          "output_tokens": 2697,
+          "steps": 4,
+          "tool_calls": 0,
+          "tool_errors": 0
+        }
+      }
+    },
+    "controls": {
+      "all_expected_outcomes_matched": true,
+      "budget_stop_count": 1,
+      "cancelled_stop_count": 1,
+      "tool_failure_stop_count": 1
+    },
+    "per_case": [
+      {
+        "case_id": "complete-ship",
+        "claims": 5,
+        "comparison": true,
+        "critic_passed": true,
+        "grounded_claims": 5,
+        "recommendation": "SHIP",
+        "task_success": true,
+        "termination": "completed",
+        "usage": {
+          "cost_microusd": 0,
+          "input_tokens": 1146,
+          "llm_calls": 5,
+          "output_tokens": 520,
+          "steps": 7,
+          "tool_calls": 6,
+          "tool_errors": 0
+        }
+      },
+      {
+        "case_id": "deterministic-hold",
+        "claims": 5,
+        "comparison": true,
+        "critic_passed": true,
+        "grounded_claims": 5,
+        "recommendation": "HOLD",
+        "task_success": true,
+        "termination": "completed",
+        "usage": {
+          "cost_microusd": 0,
+          "input_tokens": 1254,
+          "llm_calls": 5,
+          "output_tokens": 520,
+          "steps": 7,
+          "tool_calls": 6,
+          "tool_errors": 0
+        }
+      },
+      {
+        "case_id": "missing-retrieval",
+        "claims": 5,
+        "comparison": true,
+        "critic_passed": true,
+        "grounded_claims": 5,
+        "recommendation": "UNKNOWN",
+        "task_success": true,
+        "termination": "completed",
+        "usage": {
+          "cost_microusd": 0,
+          "input_tokens": 966,
+          "llm_calls": 5,
+          "output_tokens": 520,
+          "steps": 7,
+          "tool_calls": 6,
+          "tool_errors": 0
+        }
+      },
+      {
+        "case_id": "mutation-review",
+        "claims": 5,
+        "comparison": true,
+        "critic_passed": true,
+        "grounded_claims": 5,
+        "recommendation": "REVIEW",
+        "task_success": true,
+        "termination": "completed",
+        "usage": {
+          "cost_microusd": 0,
+          "input_tokens": 1189,
+          "llm_calls": 5,
+          "output_tokens": 520,
+          "steps": 7,
+          "tool_calls": 6,
+          "tool_errors": 0
+        }
+      },
+      {
+        "case_id": "tool-failure-control",
+        "claims": 5,
+        "comparison": false,
+        "critic_passed": true,
+        "grounded_claims": 5,
+        "recommendation": "UNKNOWN",
+        "task_success": true,
+        "termination": "tool_failure",
+        "usage": {
+          "cost_microusd": 0,
+          "input_tokens": 1014,
+          "llm_calls": 5,
+          "output_tokens": 520,
+          "steps": 7,
+          "tool_calls": 6,
+          "tool_errors": 1
+        }
+      },
+      {
+        "case_id": "step-budget-control",
+        "claims": 0,
+        "comparison": false,
+        "critic_passed": true,
+        "grounded_claims": 0,
+        "recommendation": "UNKNOWN",
+        "task_success": true,
+        "termination": "step_budget_exceeded",
+        "usage": {
+          "cost_microusd": 0,
+          "input_tokens": 321,
+          "llm_calls": 2,
+          "output_tokens": 208,
+          "steps": 2,
+          "tool_calls": 3,
+          "tool_errors": 0
+        }
+      },
+      {
+        "case_id": "cancelled-control",
+        "claims": 0,
+        "comparison": false,
+        "critic_passed": true,
+        "grounded_claims": 0,
+        "recommendation": "UNKNOWN",
+        "task_success": true,
+        "termination": "cancelled",
+        "usage": {
+          "cost_microusd": 0,
+          "input_tokens": 0,
+          "llm_calls": 0,
+          "output_tokens": 0,
+          "steps": 0,
+          "tool_calls": 0,
+          "tool_errors": 0
+        }
+      }
+    ]
+  },
+  "root_sha256": "2b3dd96716539d884e5edab6a2f3624bf3909801d0acc6382b3f3ec44427f782",
+  "schema_version": "m12-agent-eval-v1",
+  "synthetic": true
+}

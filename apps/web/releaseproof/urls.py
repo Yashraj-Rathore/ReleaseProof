@@ -5,6 +5,8 @@ from __future__ import annotations
 from django.contrib import admin
 from django.urls import path
 
+from apps.web.analysis.api import AgentInvestigationDetailView
+from apps.web.analysis.views import agent_investigation_detail_view
 from apps.web.changes.views import github_webhook
 from apps.web.identity.api import MeView
 from apps.web.identity.views import login_view, logout_view
@@ -37,6 +39,11 @@ urlpatterns = [
     path("accounts/login/", login_view, name="login"),
     path("accounts/logout/", logout_view, name="logout"),
     path("api/v1/me", MeView.as_view(), name="api-me"),
+    path(
+        "api/v1/agent-investigations/<uuid:public_id>",
+        AgentInvestigationDetailView.as_view(),
+        name="api-agent-investigation-detail",
+    ),
     path("api/v1/models/current", CurrentModelView.as_view(), name="api-current-model"),
     path(
         "api/v1/risk/snapshots/<uuid:snapshot_public_id>",
@@ -59,6 +66,11 @@ urlpatterns = [
         name="select-organization",
     ),
     path("app/models/current/", current_model_view, name="current-model"),
+    path(
+        "app/agent-investigations/<uuid:public_id>/",
+        agent_investigation_detail_view,
+        name="agent-investigation-detail",
+    ),
     path(
         "api/v1/test-proposals/<uuid:public_id>",
         TestProposalDetailView.as_view(),

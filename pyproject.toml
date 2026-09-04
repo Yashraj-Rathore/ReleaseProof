@@ -36,6 +36,9 @@ semantic = [
 ai = [
   "openai==3.6.0",
 ]
+agent = [
+  "langgraph==1.2.11",
+]
 
 [tool.uv]
 package = false

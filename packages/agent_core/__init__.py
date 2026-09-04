@@ -1,1 +1,61 @@
-"""Bounded agent graph contracts; implemented in M12."""
+"""Framework-light contracts and controls for bounded M12 investigations."""
+
+from packages.agent_core.contracts import (
+    AGENT_EVALUATION_VERSION,
+    AGENT_GRAPH_VERSION,
+    AGENT_STATE_SCHEMA_VERSION,
+    AgentClaim,
+    AgentDraft,
+    AgentLimits,
+    AgentNode,
+    AgentNodeProvider,
+    AgentTraceEvent,
+    AgentUsage,
+    CriticResult,
+    CriticVerdict,
+    EvidenceCategory,
+    EvidenceReference,
+    InvestigationRequest,
+    InvestigationResult,
+    NodeInput,
+    NodeOutput,
+    NodeProviderUsage,
+    TerminationReason,
+    ToolName,
+    ToolStatus,
+)
+from packages.agent_core.critic import critique_draft
+from packages.agent_core.graph import run_investigation
+from packages.agent_core.guards import AgentStopError, BudgetGuard
+from packages.agent_core.tools import BoundedInvestigationTools, ToolResult
+
+__all__ = (
+    "AGENT_EVALUATION_VERSION",
+    "AGENT_GRAPH_VERSION",
+    "AGENT_STATE_SCHEMA_VERSION",
+    "AgentClaim",
+    "AgentDraft",
+    "AgentLimits",
+    "AgentNode",
+    "AgentNodeProvider",
+    "AgentStopError",
+    "AgentTraceEvent",
+    "AgentUsage",
+    "BoundedInvestigationTools",
+    "BudgetGuard",
+    "CriticResult",
+    "CriticVerdict",
+    "EvidenceCategory",
+    "EvidenceReference",
+    "InvestigationRequest",
+    "InvestigationResult",
+    "NodeInput",
+    "NodeOutput",
+    "NodeProviderUsage",
+    "TerminationReason",
+    "ToolName",
+    "ToolResult",
+    "ToolStatus",
+    "critique_draft",
+    "run_investigation",
+)

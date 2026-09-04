@@ -411,6 +411,29 @@ GitHub Actions run `33767255599` passed exact implementation/fix commit `0565206
 canonical Linux M4-M11 rebuild, authoritative PostgreSQL contracts, Compose, pinned runner image,
 live sandbox sentinels, SeaweedFS and teardown.
 
+## M12 bounded LangGraph investigation
+
+M12 implements `RP-1101..RP-1106` as `bounded-investigation-graph-v1`: typed immutable evidence
+references and state, six bounded read-only tools, cancellation plus step/tool/provider/token/cost/
+time/loop guards, an independent deterministic critic and concise append-only tenant-scoped trace
+evidence. The graph has no merge, deploy, repository-write, execution-request, runner-control,
+filesystem or secret tool. Native LangGraph checkpointing is disabled, and persisted results contain
+no raw prompt/source/provider output or hidden chain-of-thought.
+
+The committed seven-case CC0 synthetic harness compares four shared SHIP/REVIEW/HOLD/UNKNOWN cases
+against M7's single-pass fake-provider path and separately verifies tool failure, step exhaustion and
+cancellation. Both paths score 1.0 task success and 1.0 citation-groundedness on the shared cases;
+M12 adds calls, steps and local latency without measured quality lift. It therefore remains optional
+and disabled by default. No hosted provider, customer/public code or sandbox execution was used.
+
+```text
+uv sync --frozen --group dev --group ai --group agent
+uv run python -m eng.evaluate_m12_agent --check
+uv run pytest tests/unit/test_agent_core.py tests/integration/test_agent_investigation_persistence.py tests/web/test_agent_investigation.py
+```
+
+Exact measurements, limitations and the owner explanation are in docs/47 and docs/48.
+
 
 ---
 
@@ -744,18 +767,41 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M11 semantic-model experiment implemented and CI-validated on 2026-09-03.**
+**Current state: M12 bounded LangGraph investigation implemented and locally validated on 2026-09-04.**
 
-The repository now derives an outcome-blind semantic dataset from the frozen M4 fixture, compares
-TF-IDF and pinned real MiniLM representations, trains a deterministic CPU PyTorch multi-label head
-and records held-out/error/robustness/latency/calibration and incremental-value evidence. The four-row,
-one-repository synthetic holdout cannot support promotion: the semantic/XGBoost ensemble adds zero
-F1/AP, probability wording is disabled and `deterministic-heuristic-v1` remains active.
+The repository now includes a typed, bounded, read-only LangGraph investigation with independent
+deterministic citation/fact/policy criticism and safe append-only tenant-scoped traces. Its frozen
+synthetic comparison shows no task-success or groundedness lift over M7's simpler path, so the graph
+is optional and disabled by default. Remote CI evidence for the M12 commit is pending this push.
 
 ## Next action
 
-Begin M12 (`RP-1101..RP-1106`) bounded LangGraph investigation. Do not promote the semantic
-candidate, enable arbitrary repository execution or begin M13.
+Begin M13 (`RP-1201..RP-1206`) MLflow/evaluation/feedback governance. Do not enable the M12 graph by
+default, add a hosted agent provider, enable arbitrary repository execution or begin M14.
+
+## M12 evidence
+
+- `bounded-investigation-graph-v1` uses typed `agent-state-v1` inputs/results, immutable bounded
+  evidence references and a fixed change/history/risk/test/optional-execution/critic/composer flow.
+- The only tools read already authorized feature, graph, retrieval, risk, test-result and execution
+  evidence. No merge/deploy/repository-write/execution-request/runner/filesystem/secret capability
+  exists, and only the local deterministic node provider is enabled.
+- Guards enforce cancellation, wall/node time, repeated node/state detection and exact step/tool/
+  provider/token/cost budgets. Failure returns explicit partial UNKNOWN, while deterministic HOLD
+  remains HOLD.
+- The model-independent critic checks typed schema, tool-returned citations, exact structured fact
+  entailment, missing-evidence confidence and `recommendation-fusion-v1`; it cannot create evidence.
+- Safe agent results persist idempotently as immutable tenant/snapshot/feature-bound `EvidenceItem`
+  rows. API/HTML GET views expose decisions, counters, latency and citations, not raw source/prompt/
+  provider output or hidden reasoning. Native graph checkpoints are disabled.
+- The seven-case CC0 fixture has four comparison cases plus tool-failure, step-budget and cancellation
+  controls. M12 and M7 both record 1.0 task success and groundedness on shared cases. M12 is not
+  promoted because it adds orchestration calls/steps and local latency without quality lift.
+- LangGraph 1.2.11 is isolated in the optional `agent` dependency group. No paid/hosted provider,
+  customer/public code, model download or sandbox execution was used for M12.
+- Canonical local validation passed **170 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 208 source
+  files, Django, migration drift, generated docs/inventory and M4-M12 evaluators passed.
 
 ## M11 evidence
 
@@ -1083,7 +1129,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
-| M12 LangGraph | Not started |
+| M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; local validation complete |
 | M13 MLflow/governance | Not started |
 | M14 security/ops | Not started |
 | M15 containers/CI/model serving | Not started |
@@ -1200,6 +1246,17 @@ and its remote M2 result is tracked in GitHub Actions.
   representation comparison and a deterministic CPU PyTorch multi-label training pipeline.
 - Held-out per-class/per-repository errors, robustness, latency, calibration abstention, safe JSON
   model lineage, an incremental-value gate, semantic model card and Owner Learning Note.
+- M12 `agent-state-v1` immutable evidence/node/result contracts and a fixed
+  `bounded-investigation-graph-v1` over feature, graph, retrieval, risk, test and optional execution
+  evidence.
+- A six-tool read-only agent allowlist with cancellation, step/tool/provider/token/cost/wall/node
+  budgets, repeated-state loop detection and explicit partial UNKNOWN behavior that preserves HOLD.
+- An independent deterministic critic for schema, citation existence, exact structured fact
+  entailment, missing-evidence confidence and recommendation-policy consistency.
+- Local deterministic agent-node provider, append-only tenant-bound agent evidence, and authenticated
+  read-only API/HTML trace views without prompts, source blobs, raw output or hidden reasoning.
+- A frozen seven-case CC0 agent evaluation and Owner Learning Note; no incremental quality lift over
+  M7 was measured, so the graph remains optional and disabled by default.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -1215,6 +1272,8 @@ and its remote M2 result is tracked in GitHub Actions.
   Linux checkouts validate the same committed source bytes.
 - Kept generated local S3 credentials owner-only while making only CI's ephemeral, public-example
   credential file readable by the pinned SeaweedFS container's non-root user.
+- Locked LangGraph 1.2.11 in the optional `agent` group without adding a LangChain meta-package,
+  remote tracing/deployment or native graph checkpoints.
 - Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
   opaque author familiarity input without exposing identity as a predictor.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
@@ -1411,6 +1470,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `44_M10_OWNER_LEARNING_NOTE.md` | owner-defensible M10 parity, comparison, mutation and policy explanation |
 | `45_M11_SEMANTIC_MODEL_CARD.md` | exact semantic dataset/model lineage, measurements and non-promotion decision |
 | `46_M11_OWNER_LEARNING_NOTE.md` | owner-defensible M11 tensors, training, evaluation and rerun path |
+| `47_M12_AGENT_EVALUATION.md` | bounded graph/non-agent comparison, controls, measurements and activation decision |
+| `48_M12_OWNER_LEARNING_NOTE.md` | owner-defensible M12 state, tools, guards, critic and rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1560,6 +1621,15 @@ Verifier failure reduces confidence and is visible:
 
 Kafka is deliberately absent. Introducing it requires a new issue and ADR with a reproducible benchmark showing that the PostgreSQL outbox plus Celery transport cannot meet a stated ordering, replay or throughput requirement.
 
+## M12 agent boundary
+
+`packages/agent_core` owns the versioned state, read-only tool facade, guards, deterministic critic
+and LangGraph state machine. `adapters/agent` owns node-provider implementations; M12 supplies only
+a local deterministic fake. `apps/web/analysis/agent_investigation.py` derives safe references from
+already tenant-authorized immutable evidence and persists the bounded result. LangGraph does not
+import Django, control Celery tasks, contact the runner or checkpoint raw graph state. The only M12
+HTTP surface is an authenticated tenant-scoped read of an already persisted investigation.
+
 
 ---
 
@@ -1596,7 +1666,7 @@ Snapshot, requested components/policy snapshot, lifecycle, timestamps, correlati
 Authoritative job/idempotency key, owning organization/run, requested task type/version, bounded attempt state, availability time and terminal outcome; transactional outbox topic/payload version/published state. The outbox contains identifiers, not raw source. Redis/Celery result state is never authoritative.
 
 ### EvidenceItem
-Append-only: kind (`deterministic`, `ml`, `retrieval`, `llm`, `test`, `execution`, `security`, `unknown`), severity/confidence vocabulary, title, structured payload, source refs, producer/version.
+Append-only: kind (`deterministic`, `ml`, `retrieval`, `llm`, `agent`, `test`, `execution`, `security`, `unknown`), severity/confidence vocabulary, title, structured payload, source refs, producer/version.
 
 ### RiskScore
 Analysis, model/baseline artifact, feature version, raw score, calibrated probability nullable, band, threshold policy, explanation.
@@ -1787,6 +1857,21 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
 - Composite foreign keys/triggers reject cross-tenant plan, approval, run and snapshot rebinding.
   Database triggers reject raw update/delete of all three M10 record types.
 
+## M12 agent investigation evidence implementation
+
+- M12 reuses append-only `EvidenceItem` with kind `agent`; it does not create mutable agent memory
+  or a second authoritative run store. The row is organization/snapshot/feature-bound by the
+  existing composite constraints and immutable triggers.
+- The idempotency identity hashes graph/state versions, selected immutable evidence IDs/categories,
+  exact deterministic policy inputs, limits, local provider identity, cancellation and injected
+  tool-failure controls.
+- Persisted JSON contains only the advisory recommendation, termination/partial status, request and
+  policy hashes, bounded usage counters, structured critic result, citations and concise trace
+  summaries. It excludes prompts, source/diff/chunk bodies, raw provider responses, arbitrary
+  exceptions, credentials and hidden chain-of-thought.
+- LangGraph native checkpoints are disabled in M12. Later durable resume support requires a
+  retention/privacy design and migration; it may not silently serialize full graph state.
+
 
 ---
 
@@ -1815,6 +1900,7 @@ Never return stack traces, secrets, raw provider payloads, or arbitrary source.
 - `POST /api/v1/execution-plans/{id}/approve` (M9+, separate execution authorization)
 - `GET /api/v1/models/current`
 - `GET /api/v1/evaluations/latest`
+- `GET /api/v1/agent-investigations/{public_id}`
 Mutations require session + CSRF + role checks.
 
 Implemented M2 routes are `GET /api/v1/me`, `GET /api/v1/repositories/{public_id}`,
@@ -1909,6 +1995,19 @@ token usage, cost in integer micro-USD and elapsed time. Requests bind prompt/sc
 hostile evidence as serialized data, conservative byte/token/output/cost budgets, separate
 connect/read timeouts, bounded attempts/backoff and cancellation. This is an internal M7 service;
 no public browser/API mutation is introduced.
+
+## M12 agent investigation contract and routes
+
+`agent-state-v1` uses immutable safe evidence references and explicit node input/output,
+termination, critic, usage and trace contracts. `bounded-investigation-graph-v1` permits only six
+read tools: feature, graph, historical retrieval, risk, test-result and execution-evidence reads.
+There is no execution request, repository mutation, merge or deploy contract.
+
+The authenticated routes `GET /api/v1/agent-investigations/{public_id}` and
+`/app/agent-investigations/{public_id}/` read an already persisted tenant-scoped result. They expose
+safe node/tool/result summaries, evidence IDs, elapsed times, counters, deterministic critic result,
+policy/request hashes and advisory recommendation. They never expose prompts, evidence contents,
+provider raw output or hidden reasoning, and no M12 HTTP route starts or resumes the graph.
 
 ## Generated-test proposal contract and routes
 
@@ -2559,6 +2658,44 @@ Checks that claims cite allowed evidence or are hypotheses; execution failures a
 ## Human visibility
 Expose structured node events/evidence summaries, not hidden chain-of-thought. Human retains merge/deploy authority.
 
+## M12 implemented boundary
+
+M12 implements `RP-1101..RP-1106` with `bounded-investigation-graph-v1` and
+`agent-state-v1`. The graph state carries only an opaque run/snapshot identity, immutable bounded
+evidence references, structured facts, missing categories, counters, safe errors, a draft, critic
+result and safe trace. It never carries credentials, raw source/diff blobs, provider raw output or
+hidden reasoning.
+
+The fixed graph uses change analyst, historical investigator, risk synthesizer, test planner,
+optional execution reader, deterministic evidence critic and recommendation composer nodes. Its
+tool allowlist is exactly feature read, graph read, historical retrieval, risk read, test-result
+read and execution-evidence read. M12 deliberately does not expose the broader target-state
+`request execution` capability: RP-1102 is read-only, and M9 execution still requires its separate
+human approval and immutable plan. There is no merge, deploy, repository write, arbitrary
+filesystem, cloud-secret or runner-control tool.
+
+Every node checks cancellation, graph wall time, per-node time, repeated node/state signatures and
+step/tool/provider/token/cost limits. Stops return a typed partial result. A partial result preserves
+a deterministic HOLD but otherwise degrades to UNKNOWN; provider or tool failure can never become
+SHIP. Providers receive the remaining output/time limits through their node request and must apply
+their own transport timeout inside that bound.
+
+The independent critic does not call the generating provider. It checks the typed draft, verifies
+that every factual citation was returned by a tool, proves structured source entailment by requiring
+each claimed fact code to exist in its cited evidence, checks missing-evidence confidence and
+re-runs the immutable `recommendation-fusion-v1` decision. This deliberately narrow fact-code
+entailment is not claimed to solve free-text semantic entailment.
+
+Only the local deterministic provider is enabled. LangGraph native checkpoint persistence is off;
+the application persists one append-only, tenant/snapshot/feature-bound `EvidenceItem` of kind
+`agent` containing the final safe result, hashes, counters, citations and concise trace. Authenticated
+tenant-scoped API and HTML GET routes expose that record. No public route starts an investigation.
+
+The frozen M12 evaluation finds no task-success or groundedness improvement over M7's simpler
+single-pass fake-provider path. The graph therefore remains optional and disabled by default. Exact
+measurements and limitations are in `47_M12_AGENT_EVALUATION.md`; the learning checkpoint is
+`48_M12_OWNER_LEARNING_NOTE.md`.
+
 
 ---
 
@@ -3031,6 +3168,22 @@ agree exactly, while calibration is not attempted. The ensemble adds zero F1/AP 
 fails the frozen sample/repository gates. These values validate the training/evaluation harness and
 justify non-promotion; they do not measure customer quality or generalization. Exact evidence is in
 docs/45.
+
+## M12 bounded-agent evidence
+
+Unit tests cover immutable state/evidence contracts, every read-only tool, evidence bounds,
+cancellation, step/tool/provider/token/cost/wall/node limits, repeated-state loop detection,
+provider identity failure, UNKNOWN degradation and deterministic critic rejection. Django/web
+tests cover local-only provider enforcement, tenant-scoped evidence selection, idempotent append-only
+safe persistence, immutability, cross-tenant denial and safe API/HTML rendering without raw context
+or hidden reasoning.
+
+The frozen seven-case CC0 synthetic harness includes four direct comparisons plus tool-failure,
+step-budget and cancellation controls. Both the graph and simpler M7 path score 1.0 task success
+and 1.0 citation-groundedness on the four shared cases; the graph uses 20 provider-node calls and 28
+steps versus four single-pass calls/steps. It therefore shows no incremental quality value and is
+not promoted. Local fake latency/cost and all limitations are recorded in
+`47_M12_AGENT_EVALUATION.md`.
 
 
 ---
@@ -3786,7 +3939,7 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -3966,12 +4119,24 @@ Weights are downloaded only by the explicit provisioning command, never by depen
 web requests or workers. The encoder is frozen and CPU-only; no GPU serving or FastAPI deployment
 decision is made.
 
+## M12 agent pin — verified and locked 2026-09-04
+
+| Package | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| LangGraph | `langgraph==1.2.11` | The official [PyPI release](https://pypi.org/project/langgraph/1.2.11/) is classified stable, requires Python 3.10+ and lists CPython 3.13 support. The official [release](https://github.com/langchain-ai/langgraph/releases/tag/1.2.11) identifies the exact tag, and the [overview](https://docs.langchain.com/oss/python/langgraph/overview) documents LangGraph as the low-level orchestration layer for stateful, controlled workflows. |
+
+The package lives in the optional `agent` group and resolves with CPython 3.13.15 and all existing
+groups. ReleaseProof imports the low-level graph API directly; it does not add the LangChain
+meta-package or a provider integration. The resolution includes LangGraph's own transitive packages,
+but M12 does not enable remote deployment, LangSmith transmission or native checkpoint persistence.
+The only implemented node provider is local and deterministic.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.
 - Set `.python-version` to `3.13.15` and configure uv's required version as `0.12.6`.
 - Direct runtime/development requirements use exact pins; `uv.lock` records the complete transitive resolution.
-- Separate later `ml`, `semantic`, `ai`, `e2e` and `observability` groups and create them only in the owning milestone.
+- Separate later `ml`, `semantic`, `ai`, `agent`, `e2e` and `observability` groups and create them only in the owning milestone.
 - Release and Compose images use exact tags plus OCI manifest digests. Resolve digests on the actual target architecture during M1; do not invent them in documentation.
 - Model artifacts use exact registry identifiers/checksums; prompts, FTS, features and schemas use semantic version plus content hash.
 - Upgrade intentionally with unit/integration/security tests and relevant frozen ML/RAG/LLM evaluation; never float production dependencies.
@@ -4084,6 +4249,7 @@ Every AI/ML Codex completion report includes an Owner Learning Note.
 
 M5's completed explanation and rerun checkpoint is `docs/33_M5_OWNER_LEARNING_NOTE.md`.
 M11's completed explanation and rerun checkpoint is `docs/46_M11_OWNER_LEARNING_NOTE.md`.
+M12's completed explanation and rerun checkpoint is `docs/48_M12_OWNER_LEARNING_NOTE.md`.
 
 
 ---
@@ -5257,6 +5423,161 @@ fine-tuning. The head still demonstrates tensors, batches, multi-label loss, bac
 checkpoints and inference. It was not promoted because the four-row, one-repository synthetic test
 set cannot support calibration or statistical lift, several classes have no support, and the
 semantic/XGBoost ensemble added zero F1 and average precision over XGBoost.
+
+
+---
+
+# SOURCE FILE: `docs/47_M12_AGENT_EVALUATION.md`
+
+# 47 — M12 Bounded Agent Evaluation
+
+## Scope and identity
+
+- Evaluation schema: `m12-agent-eval-v1`
+- Graph/state: `bounded-investigation-graph-v1` / `agent-state-v1`
+- Agent provider: local `deterministic-agent-node-v1`
+- Independent critic: deterministic structured schema/citation/fact/policy checks
+- Comparison: M7 `deterministic-evidence-synthesizer-v1` plus the same
+  `recommendation-fusion-v1`
+- Fixture: `tests/fixtures/agents/m12_investigation_v1.json`, seven synthetic CC0-1.0 cases
+- Artifact: `artifacts/evaluation/m12_agent_eval_v1.json`, root SHA-256
+  `2b3dd96716539d884e5edab6a2f3624bf3909801d0acc6382b3f3ec44427f782`
+
+No customer code, public repository, paid/hosted provider, model download or sandbox execution was
+used. The fixture's expected decisions are deterministic contract assertions, not production
+labels or customer outcomes.
+
+## Predeclared comparison
+
+The four shared cases cover SHIP, deterministic HOLD, missing-evidence UNKNOWN and mutation-driven
+REVIEW. Task success requires the exact expected deterministic recommendation and clean critic/
+schema result. Groundedness counts factual claims whose citations exist and whose structured fact
+codes occur in the cited tool result. Tool error rate is recorded separately. Calls, steps,
+input/output tokens and integer micro-USD cost are raw fake-provider counters.
+
+The agent promotion condition requires a task-success or groundedness improvement without worse
+tool-error rate. Equality is not improvement. This intentionally prevents orchestration complexity
+from being promoted merely because it exists.
+
+## Frozen synthetic results
+
+| Metric | M12 graph | M7 non-agent |
+|---|---:|---:|
+| Shared cases | 4 | 4 |
+| Task success | 1.0 | 1.0 |
+| Citation/fact groundedness | 1.0 (20/20) | 1.0 (8/8 citation checks) |
+| Tool error rate | 0.0 (0/24) | 0.0 (no tools) |
+| Provider calls | 20 | 4 |
+| Orchestration steps | 28 | 4 |
+| Input tokens, conservative fake units | 4,555 | 12,037 |
+| Output tokens, conservative fake units | 2,080 | 2,697 |
+| Cost, micro-USD | 0 | 0 |
+
+All three separate guard controls matched their expected safe termination: one read-tool failure
+returned `tool_failure`/UNKNOWN, one two-step limit returned `step_budget_exceeded`/UNKNOWN and one
+pre-cancelled request returned `cancelled`/UNKNOWN without a provider call. A deterministic HOLD
+would remain HOLD on a partial path.
+
+Across 25 local repetitions of all four shared cases, the graph measured median 25.8216 ms and p95
+30.6005 ms; the non-agent path measured median 0.6696 ms and p95 0.7948 ms. This is Windows/
+CPython 3.13.15 in-process fake latency. It excludes real provider, database, queue, network,
+sandbox and cold-start time and is not an SLO.
+
+## Decision and limitations
+
+M12 is not promoted and remains disabled by default. It produced no shared-case task-success or
+groundedness lift while adding tool/provider calls, graph steps and local latency. The graph is
+available as an optional evidence investigation for later representative evaluation.
+
+- Seven designed cases are too small to establish usefulness, safety or generalization.
+- M12's exact fact-code check is independently reproducible, but it is not free-text semantic
+  entailment.
+- The M7 grounding comparison validates citation existence rather than M12's stronger structured
+  fact check; the counts are reported separately and are not interchangeable semantic scores.
+- Zero fake cost says nothing about hosted-provider billing; no hosted route is enabled.
+- Native LangGraph checkpointing is off, so resume/durable-memory behavior is not evaluated.
+
+## Reproduction
+
+```text
+uv sync --frozen --group dev --group ai --group agent
+uv run python -m eng.evaluate_m7_llm --check
+uv run python -m eng.evaluate_m12_agent --check
+uv run pytest tests/unit/test_agent_core.py tests/integration/test_agent_investigation_persistence.py tests/web/test_agent_investigation.py
+```
+
+
+---
+
+# SOURCE FILE: `docs/48_M12_OWNER_LEARNING_NOTE.md`
+
+# 48 — M12 Owner Learning Note
+
+## 1. Concept implemented
+
+M12 implements a typed LangGraph state machine whose nodes use a fixed read-only tool allowlist,
+hard execution/provider budgets, cancellation and loop guards, a deterministic evidence critic,
+safe append-only trace persistence and a frozen comparison with the simpler M7 path.
+
+## 2. Why it is used here
+
+A graph makes a multi-stage investigation explicit: collect change/graph evidence, retrieve
+history, inspect risk and tests, optionally read execution evidence, criticize the draft, then
+compose a human-facing recommendation. Explicit state and transitions make budgets, missing facts,
+failures and citations testable. That structure is useful only if it adds value; it does not grant
+the model authority or justify replacing a simpler pipeline.
+
+## 3. Algorithm and data assumptions
+
+- Nodes are bounded state transitions, not autonomous actors. A fixed directed acyclic graph avoids
+  open-ended planning; a repeated node/state fingerprint is still rejected as a loop.
+- Tools read only already authorized immutable evidence references. They do not run code, request
+  execution, write repositories, merge or deploy.
+- Each factual claim carries citations and machine-checkable fact codes. The critic accepts a claim
+  only when every cited ID was returned by a tool and its fact code exists in that cited source.
+- The critic independently rechecks deterministic policy. A generated recommendation cannot
+  override HOLD/UNKNOWN rules, and same-model self-critique would not count as validation.
+- Cancellation, time, step, tool, provider-call, token and cost counters are checked at node
+  boundaries. Provider adapters must also enforce their supplied transport timeout.
+- The fixture is synthetic and the provider is a local deterministic fake. Perfect fixture scores
+  validate contracts, not model intelligence or customer value.
+- Because the four-case comparison ties M7 on quality and adds orchestration cost, the graph stays
+  optional and disabled by default.
+
+## 4. Key code paths
+
+- `packages/agent_core/contracts.py`: versioned immutable evidence/state/node/result contracts.
+- `packages/agent_core/tools.py`: six-method read-only allowlist and per-tool result bounds.
+- `packages/agent_core/guards.py`: cancellation, time, step/tool/provider/token/cost and loop guards.
+- `packages/agent_core/critic.py`: deterministic citation, structured-entailment and policy checks.
+- `packages/agent_core/graph.py`: fixed LangGraph transitions and safe partial-result behavior.
+- `adapters/agent/fake.py`: deterministic local-only node provider.
+- `apps/web/analysis/agent_investigation.py`: tenant selection, idempotency and safe append-only
+  evidence persistence.
+- `eng/evaluate_m12_agent.py`: frozen agent/non-agent comparison and guard controls.
+
+## 5. Exact experiment/test to rerun
+
+```text
+uv sync --frozen --group dev --group ai --group agent
+uv run python -m eng.evaluate_m7_llm --check
+uv run python -m eng.evaluate_m12_agent --check
+uv run pytest tests/unit/test_agent_core.py tests/integration/test_agent_investigation_persistence.py tests/web/test_agent_investigation.py
+```
+
+Inspect comparison task success/groundedness/tool errors, usage totals, latency evidence, every
+termination control and `decision.agent_promoted`. Do not enable a hosted provider or default graph
+path from these synthetic results.
+
+## 6. Likely interview question and answer
+
+**Question:** Why is your critic independent, and why did you keep LangGraph optional?
+
+**Answer:** The critic uses deterministic schemas, citation membership, exact structured fact codes
+and the existing recommendation policy, so it does not ask the generating model to grade itself or
+invent missing evidence. The frozen comparison tied the simpler M7 path on task success and
+groundedness while adding calls, steps and latency. The right engineering decision was therefore to
+retain the bounded graph as an optional experiment, not force complexity into the default path.
 
 
 ---

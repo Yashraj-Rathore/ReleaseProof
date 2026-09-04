@@ -1,0 +1,125 @@
+{
+  "schema_version": "m12-agent-fixture-v1",
+  "synthetic": true,
+  "license": "CC0-1.0",
+  "usage": "Deterministic agent contract and comparison fixture only; not customer or hosted-model evidence.",
+  "cases": [
+    {
+      "case_id": "complete-ship",
+      "comparison": true,
+      "policy_case": "ship",
+      "expected_recommendation": "SHIP",
+      "expected_termination": "completed",
+      "cancelled": false,
+      "failed_tools": [],
+      "limit_overrides": {},
+      "evidence": [
+        {"category": "feature", "fact_code": "feature:bounded"},
+        {"category": "graph", "fact_code": "graph:complete"},
+        {"category": "retrieval", "fact_code": "retrieval:match"},
+        {"category": "risk", "fact_code": "risk:clear"},
+        {"category": "test_result", "fact_code": "test:pass"},
+        {"category": "execution", "fact_code": "execution:pass"}
+      ]
+    },
+    {
+      "case_id": "deterministic-hold",
+      "comparison": true,
+      "policy_case": "hold",
+      "expected_recommendation": "HOLD",
+      "expected_termination": "completed",
+      "cancelled": false,
+      "failed_tools": [],
+      "limit_overrides": {},
+      "evidence": [
+        {"category": "feature", "fact_code": "feature:bounded"},
+        {"category": "graph", "fact_code": "graph:complete"},
+        {"category": "retrieval", "fact_code": "retrieval:match"},
+        {"category": "risk", "fact_code": "risk:warning"},
+        {"category": "test_result", "fact_code": "test:fail"},
+        {"category": "execution", "fact_code": "execution:failed"}
+      ]
+    },
+    {
+      "case_id": "missing-retrieval",
+      "comparison": true,
+      "policy_case": "unknown",
+      "expected_recommendation": "UNKNOWN",
+      "expected_termination": "completed",
+      "cancelled": false,
+      "failed_tools": [],
+      "limit_overrides": {},
+      "evidence": [
+        {"category": "feature", "fact_code": "feature:bounded"},
+        {"category": "graph", "fact_code": "graph:complete"},
+        {"category": "risk", "fact_code": "risk:clear"},
+        {"category": "test_result", "fact_code": "test:pass"},
+        {"category": "execution", "fact_code": "execution:pass"}
+      ]
+    },
+    {
+      "case_id": "mutation-review",
+      "comparison": true,
+      "policy_case": "review",
+      "expected_recommendation": "REVIEW",
+      "expected_termination": "completed",
+      "cancelled": false,
+      "failed_tools": [],
+      "limit_overrides": {},
+      "evidence": [
+        {"category": "feature", "fact_code": "feature:bounded"},
+        {"category": "graph", "fact_code": "graph:complete"},
+        {"category": "retrieval", "fact_code": "retrieval:match"},
+        {"category": "risk", "fact_code": "risk:review"},
+        {"category": "test_result", "fact_code": "test:pass"},
+        {"category": "execution", "fact_code": "execution:pass"}
+      ]
+    },
+    {
+      "case_id": "tool-failure-control",
+      "comparison": false,
+      "policy_case": "ship",
+      "expected_recommendation": "UNKNOWN",
+      "expected_termination": "tool_failure",
+      "cancelled": false,
+      "failed_tools": ["search_history"],
+      "limit_overrides": {},
+      "evidence": [
+        {"category": "feature", "fact_code": "feature:bounded"},
+        {"category": "graph", "fact_code": "graph:complete"},
+        {"category": "retrieval", "fact_code": "retrieval:match"},
+        {"category": "risk", "fact_code": "risk:clear"},
+        {"category": "test_result", "fact_code": "test:pass"},
+        {"category": "execution", "fact_code": "execution:pass"}
+      ]
+    },
+    {
+      "case_id": "step-budget-control",
+      "comparison": false,
+      "policy_case": "ship",
+      "expected_recommendation": "UNKNOWN",
+      "expected_termination": "step_budget_exceeded",
+      "cancelled": false,
+      "failed_tools": [],
+      "limit_overrides": {"max_steps": 2},
+      "evidence": [
+        {"category": "feature", "fact_code": "feature:bounded"},
+        {"category": "graph", "fact_code": "graph:complete"},
+        {"category": "retrieval", "fact_code": "retrieval:match"}
+      ]
+    },
+    {
+      "case_id": "cancelled-control",
+      "comparison": false,
+      "policy_case": "ship",
+      "expected_recommendation": "UNKNOWN",
+      "expected_termination": "cancelled",
+      "cancelled": true,
+      "failed_tools": [],
+      "limit_overrides": {},
+      "evidence": [
+        {"category": "feature", "fact_code": "feature:bounded"}
+      ]
+    }
+  ]
+}

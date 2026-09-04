@@ -398,3 +398,26 @@ lineage, errors, latency limitations, model card and learning note are in docs/4
 GitHub Actions run `33767255599` passed exact implementation/fix commit `0565206`, including the
 canonical Linux M4-M11 rebuild, authoritative PostgreSQL contracts, Compose, pinned runner image,
 live sandbox sentinels, SeaweedFS and teardown.
+
+## M12 bounded LangGraph investigation
+
+M12 implements `RP-1101..RP-1106` as `bounded-investigation-graph-v1`: typed immutable evidence
+references and state, six bounded read-only tools, cancellation plus step/tool/provider/token/cost/
+time/loop guards, an independent deterministic critic and concise append-only tenant-scoped trace
+evidence. The graph has no merge, deploy, repository-write, execution-request, runner-control,
+filesystem or secret tool. Native LangGraph checkpointing is disabled, and persisted results contain
+no raw prompt/source/provider output or hidden chain-of-thought.
+
+The committed seven-case CC0 synthetic harness compares four shared SHIP/REVIEW/HOLD/UNKNOWN cases
+against M7's single-pass fake-provider path and separately verifies tool failure, step exhaustion and
+cancellation. Both paths score 1.0 task success and 1.0 citation-groundedness on the shared cases;
+M12 adds calls, steps and local latency without measured quality lift. It therefore remains optional
+and disabled by default. No hosted provider, customer/public code or sandbox execution was used.
+
+```text
+uv sync --frozen --group dev --group ai --group agent
+uv run python -m eng.evaluate_m12_agent --check
+uv run pytest tests/unit/test_agent_core.py tests/integration/test_agent_investigation_persistence.py tests/web/test_agent_investigation.py
+```
+
+Exact measurements, limitations and the owner explanation are in docs/47 and docs/48.

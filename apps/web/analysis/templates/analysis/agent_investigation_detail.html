@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Agent investigation | ReleaseProof</title>
+  </head>
+  <body>
+    <main>
+      <h1>Bounded agent investigation</h1>
+      <p>Organization: {{ organization.name }}</p>
+      <p>This trace is advisory evidence for a human reviewer. It cannot merge or deploy.</p>
+      <dl>
+        <dt>Recommendation</dt><dd>{{ investigation.result.recommendation }}</dd>
+        <dt>Termination</dt><dd>{{ investigation.result.termination_reason }}</dd>
+        <dt>Partial</dt><dd>{{ investigation.result.partial|yesno:"yes,no" }}</dd>
+        <dt>Graph version</dt><dd>{{ investigation.result.graph_version }}</dd>
+        <dt>State schema</dt><dd>{{ investigation.result.state_schema_version }}</dd>
+      </dl>
+      <h2>Safe trace</h2>
+      <ol>
+        {% for event in investigation.result.trace %}
+          <li>
+            <strong>{{ event.node }} / {{ event.event_type }} / {{ event.status }}</strong>
+            <p>{{ event.summary }}</p>
+            {% if event.evidence_ids %}
+              <p>Evidence: {{ event.evidence_ids|join:", " }}</p>
+            {% endif %}
+            <p>Elapsed: {{ event.elapsed_ms }} ms</p>
+          </li>
+        {% empty %}
+          <li>No node trace was recorded.</li>
+        {% endfor %}
+      </ol>
+      <h2>Budget usage</h2>
+      <dl>
+        <dt>Steps</dt><dd>{{ investigation.result.usage.steps }}</dd>
+        <dt>Tool calls</dt><dd>{{ investigation.result.usage.tool_calls }}</dd>
+        <dt>Tool errors</dt><dd>{{ investigation.result.usage.tool_errors }}</dd>
+        <dt>Provider calls</dt><dd>{{ investigation.result.usage.llm_calls }}</dd>
+        <dt>Input tokens</dt><dd>{{ investigation.result.usage.input_tokens }}</dd>
+        <dt>Output tokens</dt><dd>{{ investigation.result.usage.output_tokens }}</dd>
+        <dt>Cost (micro-USD)</dt><dd>{{ investigation.result.usage.cost_microusd }}</dd>
+      </dl>
+      <p>Hidden chain-of-thought is neither stored nor displayed.</p>
+    </main>
+  </body>
+</html>
