@@ -421,3 +421,7 @@ uv run pytest tests/unit/test_agent_core.py tests/integration/test_agent_investi
 ```
 
 Exact measurements, limitations and the owner explanation are in docs/47 and docs/48.
+
+GitHub Actions run `33886498047` passed exact M12 implementation commit `0d6a255`, including
+canonical Linux validation, Compose, authoritative PostgreSQL constraints, the pinned runner image,
+live sandbox sentinels, SeaweedFS and teardown.

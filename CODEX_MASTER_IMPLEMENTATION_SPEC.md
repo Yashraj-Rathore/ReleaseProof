@@ -434,6 +434,10 @@ uv run pytest tests/unit/test_agent_core.py tests/integration/test_agent_investi
 
 Exact measurements, limitations and the owner explanation are in docs/47 and docs/48.
 
+GitHub Actions run `33886498047` passed exact M12 implementation commit `0d6a255`, including
+canonical Linux validation, Compose, authoritative PostgreSQL constraints, the pinned runner image,
+live sandbox sentinels, SeaweedFS and teardown.
+
 
 ---
 
@@ -767,12 +771,12 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M12 bounded LangGraph investigation implemented and locally validated on 2026-09-04.**
+**Current state: M12 bounded LangGraph investigation implemented and CI-validated on 2026-09-04.**
 
 The repository now includes a typed, bounded, read-only LangGraph investigation with independent
 deterministic citation/fact/policy criticism and safe append-only tenant-scoped traces. Its frozen
 synthetic comparison shows no task-success or groundedness lift over M7's simpler path, so the graph
-is optional and disabled by default. Remote CI evidence for the M12 commit is pending this push.
+is optional and disabled by default.
 
 ## Next action
 
@@ -802,6 +806,9 @@ default, add a hosted agent provider, enable arbitrary repository execution or b
 - Canonical local validation passed **170 tests**, with one PostgreSQL physical-index assertion
   skipped and three live infrastructure/sandbox tests deselected. Ruff, strict mypy over 208 source
   files, Django, migration drift, generated docs/inventory and M4-M12 evaluators passed.
+- GitHub Actions run `33886498047` passed exact M12 implementation commit `0d6a255`, including
+  canonical Linux validation, Compose, authoritative PostgreSQL constraints, the pinned runner
+  image, live sandbox sentinels, SeaweedFS and teardown.
 
 ## M11 evidence
 
@@ -1129,7 +1136,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M9 sandbox | Complete - RP-0801..RP-0805; fixture-only boundary, live CI validated |
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
-| M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; local validation complete |
+| M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
 | M13 MLflow/governance | Not started |
 | M14 security/ops | Not started |
 | M15 containers/CI/model serving | Not started |
