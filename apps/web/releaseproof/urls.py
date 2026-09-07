@@ -13,7 +13,7 @@ from apps.web.identity.views import login_view, logout_view
 from apps.web.organizations.views import select_organization
 from apps.web.releaseproof import health
 from apps.web.repositories.api import RepositoryDetailView, RepositoryLifecycleView
-from apps.web.risk.api import CurrentModelView, SnapshotRiskView
+from apps.web.risk.api import CurrentModelView, LatestEvaluationsView, SnapshotRiskView
 from apps.web.risk.views import current_model_view, snapshot_risk_view
 from apps.web.verification.api import (
     AcceptTestProposalView,
@@ -45,6 +45,11 @@ urlpatterns = [
         name="api-agent-investigation-detail",
     ),
     path("api/v1/models/current", CurrentModelView.as_view(), name="api-current-model"),
+    path(
+        "api/v1/evaluations/latest",
+        LatestEvaluationsView.as_view(),
+        name="api-latest-evaluations",
+    ),
     path(
         "api/v1/risk/snapshots/<uuid:snapshot_public_id>",
         SnapshotRiskView.as_view(),

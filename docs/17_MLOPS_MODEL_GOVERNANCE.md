@@ -8,7 +8,8 @@ Every promoted model links:
 `code commit -> dataset manifest -> feature version -> training config -> evaluation -> artifact checksum -> promotion decision`.
 
 ## Lifecycle
-Candidate -> approved -> retired. No mutable “latest” in inference. Promotion/rollback is explicit/human-controlled.
+Candidate -> staging -> active -> retired. Approval is immutable transition evidence rather than a
+lifecycle state. No mutable “latest” in inference. Promotion/rollback is explicit/human-controlled.
 
 ## Versioned AI configuration
 Prompts, embedding model, chunking, fusion, reranker, agent graph and recommendation policy all have versions and evaluation gates.
@@ -68,3 +69,22 @@ errors, robustness, latency and calibration abstention -> model-state/artifact c
 incremental-value gates -> `candidate_not_promoted`. The normal reproduction path uses committed
 embeddings without network access; explicit weight provisioning is separate. M13 may register this
 lineage but cannot convert the historical non-promotion into approval or a mutable `latest` alias.
+
+## M13 implementation
+
+`formal-experiment-v1` and `evaluation-registry-entry-v1` make complete lineage mandatory and
+checksum the canonical record. MLflow 3.15.2 runs in a separate pinned local container with
+PostgreSQL metadata and proxied SeaweedFS artifacts. The application uses
+`mlflow-skinny==3.15.2`; full MLflow cannot share M5's pandas 3.0.5 environment because the full
+package requires pandas below 3. Exact client/server versions are checked before registration.
+
+M4/M5/M11 formal histories and M6/M7/M12 evaluation histories are imported as safe synthetic
+metadata without rewriting their source artifacts or promotion decisions. The deterministic
+heuristic stays active. `GovernedModelArtifact` and append-only transition events bind every
+candidate/staging/active/retired/rollback action to evaluation, compatibility and reviewer
+evidence; an atomic deployment pointer preserves a known rollback.
+
+Delayed 30–365 day outcomes remain separate from immutable predictions and are never shared-
+training eligible. Aggregate drift checks cover exact schema, missingness, PSI distribution shift
+and labeled performance drop with sample-size gates. Non-pass decisions require human review and
+cannot automatically retrain or promote. Exact evidence and limitations are in docs/49.

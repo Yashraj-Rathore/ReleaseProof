@@ -114,6 +114,17 @@
   read-only API/HTML trace views without prompts, source blobs, raw output or hidden reasoning.
 - A frozen seven-case CC0 agent evaluation and Owner Learning Note; no incremental quality lift over
   M7 was measured, so the graph remains optional and disabled by default.
+- Exact `formal-experiment-v1` lineage for M4/M5/M11 and a customer-code-free aggregate
+  `evaluation-registry-entry-v1` registry for M6/M7/M12, with a frozen M13 governance artifact.
+- A pinned MLflow 3.15.2 Compose service using PostgreSQL and proxied SeaweedFS artifacts plus an
+  exact-version/idempotent smoke; the application uses the isolated `mlflow-skinny` client group.
+- Tenant-bound immutable model artifacts and lifecycle events, six-check approval evidence,
+  candidate/staging/active/retired transitions and atomic active/rollback deployment pointers.
+- Append-only delayed deployment outcomes that preserve original predictions, require explicit
+  organization-local learning opt-in and can never enter shared training.
+- Versioned schema/missingness/PSI/performance drift assessment with sample gates, append-only human
+  reviews and database-enforced prohibition of automatic retraining/promotion.
+- An authenticated safe latest-evaluation API, M13 evaluation report and Owner Learning Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -131,6 +142,8 @@
   credential file readable by the pinned SeaweedFS container's non-root user.
 - Locked LangGraph 1.2.11 in the optional `agent` group without adding a LangChain meta-package,
   remote tracing/deployment or native graph checkpoints.
+- Resolved the lifecycle shorthand to `candidate/staging/active/retired`, with approval represented
+  as transition evidence, and isolated full MLflow from the pandas 3.0.5 application environment.
 - Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
   opaque author familiarity input without exposing identity as a predictor.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific

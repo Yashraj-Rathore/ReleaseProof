@@ -146,3 +146,20 @@ network, secret, merge/deploy or sandbox authority, and is not exposed through a
 missing artifacts fail closed without erasing deterministic evidence. Future customer-local
 training still requires explicit organization opt-in, tenant-isolated storage/retention and the
 M13/M14 governance controls.
+
+## M13 model-governance controls
+
+The local MLflow development service is unauthenticated and therefore loopback-published only. Its
+adapter accepts only validated public/synthetic metadata and rejects organization-local/customer-
+code experiment records. The full server is isolated in its own exact container dependency set;
+the application uses the exact-version lightweight remote client. PostgreSQL stores tracking
+metadata and the server proxies artifacts to SeaweedFS, so browser/client processes do not receive
+object-store credentials.
+
+Governed model transitions require Owner/Admin membership, exact evaluation and compatibility
+hashes, and tenant-scoped artifact resolution. Artifacts/events/outcomes/drift reviews are
+append-only with database tenant constraints. Delayed outcomes are org-local opt-in only and have
+`shared_training_eligible=false`. Drift can request human review or a separately governed
+experiment, but cannot invoke training, promotion, deployment, source access, provider calls or a
+sandbox. Production MLflow authentication/workspaces, retention and authorization remain M14/M15
+work; the local profile must not be exposed beyond loopback.

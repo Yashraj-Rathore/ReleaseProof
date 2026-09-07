@@ -164,3 +164,19 @@ and 1.0 citation-groundedness on the four shared cases; the graph uses 20 provid
 steps versus four single-pass calls/steps. It therefore shows no incremental quality value and is
 not promoted. Local fake latency/cost and all limitations are recorded in
 `47_M12_AGENT_EVALUATION.md`.
+
+## M13 governance evidence
+
+Unit tests cover strict formal-experiment/evaluation schemas and hashes, customer-code rejection,
+exact lifecycle transitions, passing compatibility evidence, delayed outcome eligibility, all four
+drift decisions, no automatic action, MLflow metadata completeness and idempotency. Django tests
+exercise two-artifact activation/rollback, Owner/Admin and tenant scope, append-only database
+triggers, outcome/prediction lineage, never-shared learning, drift review and idempotency. Web tests
+cover active-organization authentication and the safe evaluation-registry response.
+
+The committed CC0 aggregate fixture produces `pass`, `review`, `insufficient_data` and
+`incompatible_schema`; the shifted case catches missingness/distribution/performance signals. It is
+a deterministic control, not measured production drift. `eng.evaluate_m13_governance --check`
+also verifies three historical experiment records, three safe retrieval/LLM/agent entries and a
+five-transition rollback drill. Live CI starts the exact MLflow service, bootstraps SeaweedFS and
+runs the version/idempotent-registration smoke. See docs/49.

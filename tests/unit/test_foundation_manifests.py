@@ -14,6 +14,7 @@ EXPECTED_IMAGES = {
     "redis:8.10.1-alpine@sha256:becdda6c7f4b3fb42e42fd7f120bbf5c54c4caaaf16f26da24e4563d2c1f0576",
     "chrislusf/seaweedfs:4.44@sha256:"
     "e67e8c385484120b78bff47ba5f4debbca47fbd27ed1a39f016f47e8baea615b",
+    "releaseproof-mlflow:3.15.2",
 }
 
 
@@ -32,11 +33,19 @@ def test_compose_images_are_exact_and_ports_are_loopback_only() -> None:
     assert {
         line.strip().removeprefix("image: ") for line in compose.splitlines() if "image:" in line
     } == EXPECTED_IMAGES
-    assert compose.count('"127.0.0.1:${') == 3
+    assert compose.count('"127.0.0.1:${') == 4
     assert "postgres_data:/var/lib/postgresql\n" in compose
     assert "postgres_data:/var/lib/postgresql/data" not in compose
     assert "dir/status?pretty=y" in compose
     assert '"Url": "seaweedfs:8080"' in compose
+    assert "MLFLOW_SERVER_ALLOWED_HOSTS" in compose
+    assert "--backend-store-uri" in compose
+    assert "--artifacts-destination" in compose
+    mlflow_dockerfile = (ROOT / "deploy" / "mlflow" / "Dockerfile").read_text(encoding="utf-8")
+    assert '"mlflow==3.15.2"' in mlflow_dockerfile
+    assert '"mlflow-skinny==3.15.2"' in (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert "python:3.13.15-slim-bookworm@sha256:" in mlflow_dockerfile
+    assert "USER 65532:65532" in mlflow_dockerfile
 
 
 def test_local_seaweedfs_config_is_rendered_from_environment_template() -> None:

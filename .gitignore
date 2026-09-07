@@ -30,6 +30,7 @@ artifacts/evaluation/*
 !artifacts/evaluation/m11_minilm_embeddings_v1.json
 !artifacts/evaluation/m11_semantic_eval_v1.json
 !artifacts/evaluation/m12_agent_eval_v1.json
+!artifacts/evaluation/m13_governance_eval_v1.json
 mlruns/
 .minio/
 *.sqlite3

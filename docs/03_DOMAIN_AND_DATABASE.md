@@ -41,7 +41,10 @@ Document/chunk: org/repo, source type/id/version/hash, content metadata, version
 Version/hash, provenance, extraction/label rules, feature version, split rule, counts/class balance/unknowns, usage/license notes, synthetic flag.
 
 ### ModelArtifact
-MLflow/model identifier, algorithm, dataset manifest, feature version, metrics summary, lifecycle (`candidate/approved/retired`), checksum.
+MLflow/model identifier, algorithm, dataset manifest, feature/input schema, runtime compatibility,
+formal-experiment hash and exact artifact checksum. The operational lifecycle is
+`candidate/staging/active/retired`; human approval is immutable evidence on each transition, not a
+state. `ModelDeployment` holds the transactionally updated active/rollback pointers and generation.
 
 ### PromptVersion / EvaluationSuite
 Immutable/versioned prompts and frozen evaluation cases.
@@ -71,6 +74,12 @@ historical decisions are never rewritten when a later policy is introduced.
 
 ### DeploymentOutcome
 Optional feedback taxonomy (`no_issue`, `revert`, `hotfix`, `incident`, `manual_label`, `unknown`), source/confidence/observation window and org-training eligibility.
+
+### DriftAssessment / DriftReview
+Immutable aggregate reference/current profile hashes, schema/missingness/distribution/performance
+results, policy/decision and explicit no-automation flags. A separate append-only Reviewer+
+decision records human disposition; approval permits an experiment only, never automatic training
+or promotion.
 
 ### AuditLog
 Append-only actor/org/action/resource/correlation and safe metadata. Never raw source/secrets.
@@ -141,6 +150,17 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
+
+## M13 governance persistence
+
+- `GovernedModelArtifact`, `ModelLifecycleEvent`, `DeploymentOutcome`, `DriftAssessmentRecord` and
+  `DriftReview` are append-only in the ORM and by PostgreSQL/SQLite triggers.
+- Composite organization/parent foreign keys prevent cross-tenant model events, deployment
+  pointers, outcomes, predictions, drift records and reviews.
+- Outcome records retain the original snapshot/prediction relationship and result hash. They never
+  overwrite a prediction and can never be eligible for shared training.
+- `ModelDeployment` alone is mutable because atomic active/rollback pointer swaps are its purpose;
+  immutable lifecycle events retain every historical transition and approval.
 
 ### M6 implemented retrieval evidence
 

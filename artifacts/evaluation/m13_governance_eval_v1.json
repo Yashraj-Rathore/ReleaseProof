@@ -1,0 +1,437 @@
+{
+  "drift": {
+    "cases": {
+      "insufficient": {
+        "automatic_promotion_allowed": false,
+        "automatic_retraining_allowed": false,
+        "current_profile_sha256": "10d7be0583e2699fffef5827f6a819f74d48236fa95a39d1e773e79c6f5e2b1b",
+        "decision": "insufficient_data",
+        "human_review_required": true,
+        "missingness_delta": {
+          "files_changed": -0.05,
+          "lines_added": -0.05
+        },
+        "performance_drop": 0.02,
+        "policy": {
+          "maximum_missingness_delta": 0.1,
+          "maximum_performance_drop": 0.05,
+          "maximum_population_stability_index": 0.2,
+          "minimum_labeled_rows": 100,
+          "minimum_rows": 100,
+          "version": "data-quality-drift-policy-v1"
+        },
+        "population_stability_index": {
+          "files_changed": 0.09806990967,
+          "lines_added": 0.46361950125
+        },
+        "reason_codes": [
+          "distribution_shift",
+          "insufficient_feature_rows",
+          "insufficient_labeled_outcomes"
+        ],
+        "reference_profile_sha256": "7a293b3346426bbe1379ad2cb13bde605e6caacf3c255235b2ca18856ddc046b",
+        "row_count": 5,
+        "schema_match": true,
+        "schema_version": "data-quality-drift-assessment-v1"
+      },
+      "schema_mismatch": {
+        "automatic_promotion_allowed": false,
+        "automatic_retraining_allowed": false,
+        "current_profile_sha256": "9b2d8766616f9c0cf5d92b844767c3a926543e6308be4d42b833274c96b8e6b3",
+        "decision": "incompatible_schema",
+        "human_review_required": true,
+        "missingness_delta": {},
+        "performance_drop": null,
+        "policy": {
+          "maximum_missingness_delta": 0.1,
+          "maximum_performance_drop": 0.05,
+          "maximum_population_stability_index": 0.2,
+          "minimum_labeled_rows": 100,
+          "minimum_rows": 100,
+          "version": "data-quality-drift-policy-v1"
+        },
+        "population_stability_index": {},
+        "reason_codes": [
+          "feature_schema_mismatch"
+        ],
+        "reference_profile_sha256": "7a293b3346426bbe1379ad2cb13bde605e6caacf3c255235b2ca18856ddc046b",
+        "row_count": 100,
+        "schema_match": false,
+        "schema_version": "data-quality-drift-assessment-v1"
+      },
+      "shifted": {
+        "automatic_promotion_allowed": false,
+        "automatic_retraining_allowed": false,
+        "current_profile_sha256": "5615d2c84334cf1c90eb736e3f35d161a4f7861ef98df09c253a44545932463a",
+        "decision": "review",
+        "human_review_required": true,
+        "missingness_delta": {
+          "files_changed": 0.15,
+          "lines_added": 0.15
+        },
+        "performance_drop": 0.13,
+        "policy": {
+          "maximum_missingness_delta": 0.1,
+          "maximum_performance_drop": 0.05,
+          "maximum_population_stability_index": 0.2,
+          "minimum_labeled_rows": 100,
+          "minimum_rows": 100,
+          "version": "data-quality-drift-policy-v1"
+        },
+        "population_stability_index": {
+          "files_changed": 1.352428327274,
+          "lines_added": 0.987768235484
+        },
+        "reason_codes": [
+          "missingness_shift",
+          "distribution_shift",
+          "performance_shift"
+        ],
+        "reference_profile_sha256": "7a293b3346426bbe1379ad2cb13bde605e6caacf3c255235b2ca18856ddc046b",
+        "row_count": 100,
+        "schema_match": true,
+        "schema_version": "data-quality-drift-assessment-v1"
+      },
+      "stable": {
+        "automatic_promotion_allowed": false,
+        "automatic_retraining_allowed": false,
+        "current_profile_sha256": "7be80a9b9e954683aa321f3e33c8e349c974d6194d66ebb7953b1bd23869698b",
+        "decision": "pass",
+        "human_review_required": false,
+        "missingness_delta": {
+          "files_changed": 0.0,
+          "lines_added": 0.0
+        },
+        "performance_drop": 0.01,
+        "policy": {
+          "maximum_missingness_delta": 0.1,
+          "maximum_performance_drop": 0.05,
+          "maximum_population_stability_index": 0.2,
+          "minimum_labeled_rows": 100,
+          "minimum_rows": 100,
+          "version": "data-quality-drift-policy-v1"
+        },
+        "population_stability_index": {
+          "files_changed": 0.000509195624,
+          "lines_added": 0.000533091924
+        },
+        "reason_codes": [],
+        "reference_profile_sha256": "7a293b3346426bbe1379ad2cb13bde605e6caacf3c255235b2ca18856ddc046b",
+        "row_count": 100,
+        "schema_match": true,
+        "schema_version": "data-quality-drift-assessment-v1"
+      }
+    },
+    "fixture": {
+      "license": "CC0-1.0",
+      "path": "tests/fixtures/governance/m13_drift_profiles_v1.json",
+      "sha256": "125df6d9836962b9f83672c5b170452392f52c6b565dd5a06fbfdbb847f59775",
+      "synthetic": true,
+      "usage": "Deterministic aggregate data-quality and drift controls only; not customer or production-distribution evidence."
+    },
+    "policy": {
+      "maximum_missingness_delta": 0.1,
+      "maximum_performance_drop": 0.05,
+      "maximum_population_stability_index": 0.2,
+      "minimum_labeled_rows": 100,
+      "minimum_rows": 100,
+      "version": "data-quality-drift-policy-v1"
+    }
+  },
+  "evaluation_registry": [
+    {
+      "aggregate_metrics": {
+        "mrr_at_3": 1.0,
+        "ndcg_at_3": 0.950262129022,
+        "recall_at_3": 0.9
+      },
+      "component": "retrieval",
+      "configuration_versions": {
+        "embedding": "deterministic-hash-embedding-v1",
+        "fts": "postgres-simple-code-v1",
+        "fusion": "rrf-v1-k60",
+        "normalizer": "code-aware-normalizer-v1"
+      },
+      "contains_customer_code": false,
+      "evaluation_dataset_sha256": "c6ec6c4473b264a027ca7ab9482a31ed0b2d9ea1f0d76a3247d76fc694ac9976",
+      "evaluation_dataset_version": "m6-relevance-fixture-v1",
+      "license_spdx": "CC0-1.0",
+      "record_sha256": "9128135b4aace2198872e8f5442b9144f688a6eb6c33eb4591e26e9fbdd9ae33",
+      "result_artifact": {
+        "role": "evaluation",
+        "sha256": "f7e9009bdc7547b3fb677013b0f7752d5a28ea1071f92a17754d36af3d107b70",
+        "uri": "artifact://releaseproof/evaluations/m6-retrieval-eval-v1"
+      },
+      "schema_version": "evaluation-registry-entry-v1",
+      "synthetic": true
+    },
+    {
+      "aggregate_metrics": {
+        "citation_support_rate": 1.0,
+        "schema_validity_rate": 1.0,
+        "unsupported_claim_rate": 0.0
+      },
+      "component": "llm",
+      "configuration_versions": {
+        "model": "deterministic-evidence-synthesizer-v1",
+        "prompt_sha256": "de5399fe7640da726411cfcd0dadad0e5e58b6423202590458e35a95a82a0374",
+        "prompt_version": "change-analysis-prompt-v1",
+        "schema_sha256": "9fcf0e4be678643081726e579e2ed6df5ac17a45c5598c0c6c23ea0151a5f296",
+        "schema_version": "analysis-suggestion-v1"
+      },
+      "contains_customer_code": false,
+      "evaluation_dataset_sha256": "e7a3a35c38e5fae9fc9f7c76be4136a8fcaa6eb76ef45f265cdc2a96682a213a",
+      "evaluation_dataset_version": "m7-grounding-fixture-v1",
+      "license_spdx": "CC0-1.0",
+      "record_sha256": "b231c1f4e076fc09df5069a4b2505320a1008b59c81a044294089854c0fd7229",
+      "result_artifact": {
+        "role": "evaluation",
+        "sha256": "5e4f7abc185842fc914b58872ca42971bef4641d6cc81d04ab7dce6564c3eca4",
+        "uri": "artifact://releaseproof/evaluations/m7-llm-eval-v1"
+      },
+      "schema_version": "evaluation-registry-entry-v1",
+      "synthetic": true
+    },
+    {
+      "aggregate_metrics": {
+        "agent_groundedness_rate": 1.0,
+        "agent_task_success_rate": 1.0,
+        "agent_tool_error_rate": 0.0,
+        "non_agent_task_success_rate": 1.0
+      },
+      "component": "agent",
+      "configuration_versions": {
+        "critic": "deterministic-structured-evidence-critic-v1",
+        "graph": "bounded-investigation-graph-v1",
+        "provider": "deterministic-agent-node-v1",
+        "recommendation_policy": "recommendation-fusion-v1"
+      },
+      "contains_customer_code": false,
+      "evaluation_dataset_sha256": "bb96cc2af3e1df7943a406a3d5782236b2ce4b66c7819a9be76519620528c4e1",
+      "evaluation_dataset_version": "m12-agent-fixture-v1",
+      "license_spdx": "CC0-1.0",
+      "record_sha256": "265ce859e936d99ae5e0d9e9b7921c11bb0bccf6d913c8034b50120061fbdb30",
+      "result_artifact": {
+        "role": "evaluation",
+        "sha256": "2b3dd96716539d884e5edab6a2f3624bf3909801d0acc6382b3f3ec44427f782",
+        "uri": "artifact://releaseproof/evaluations/m12-agent-eval-v1"
+      },
+      "schema_version": "evaluation-registry-entry-v1",
+      "synthetic": true
+    }
+  ],
+  "feedback": {
+    "minimum_observation_window_days": 30,
+    "organization_learning_requires_explicit_opt_in": true,
+    "original_prediction_mutable": false,
+    "shared_training_eligible": false
+  },
+  "formal_experiments": [
+    {
+      "artifacts": [
+        {
+          "role": "baseline",
+          "sha256": "9677412a4e18098c2b822fe5f9427a1cf56886c0e3f1adea4e8934613fa9829d",
+          "uri": "artifact://releaseproof/models/deterministic-heuristic-v1"
+        },
+        {
+          "role": "evaluation",
+          "sha256": "84778a60b8d38df43e59b7fbf461591cf6ac6aed3bce242f72c0e982a1e03ebb",
+          "uri": "artifact://releaseproof/evaluations/m4-synthetic-evidence-v1"
+        }
+      ],
+      "code_sha": "3448b1f879682d2b12a212d4c82d8fee87e33a12",
+      "contains_customer_code": false,
+      "data_scope": "public_synthetic",
+      "dataset_manifest_sha256": "eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456",
+      "dataset_version": "releaseproof-m4-synthetic-v1",
+      "environment": {
+        "python": "3.13.15",
+        "registration": "m13_historical_import"
+      },
+      "experiment_name": "releaseproof-risk-baselines",
+      "feature_schema_version": "change-features-v1",
+      "kind": "heuristic",
+      "metrics": {
+        "test_f1": 0.66666667,
+        "test_precision": 0.5,
+        "test_prevalence": 0.5,
+        "test_recall": 1.0
+      },
+      "parameters": {
+        "artifact_version": "deterministic-heuristic-v1",
+        "leakage_report_sha256": "d9e2602435f7afbe19205b2dfcae866726eea19628d3908dff30af2edf6a6847",
+        "selected_threshold": 30,
+        "threshold_policy": "deterministic-threshold-v1"
+      },
+      "record_sha256": "9a9a9b9f3f51bd005ac8dc1b6ffc1b7eb04696c979ca1e51de523f24f369a924",
+      "run_name": "m4-deterministic-heuristic-v1",
+      "schema_version": "formal-experiment-v1",
+      "synthetic": true
+    },
+    {
+      "artifacts": [
+        {
+          "role": "model_bundle",
+          "sha256": "cb552fd83b257d67248d804c931cf604942d76bac245069b64f58048bfa9a8d6",
+          "uri": "artifact://releaseproof/models/m5-classical-risk-v1"
+        },
+        {
+          "role": "dataset_manifest",
+          "sha256": "eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456",
+          "uri": "artifact://releaseproof/datasets/releaseproof-m4-synthetic-v1"
+        }
+      ],
+      "code_sha": "e63fcff3b2afd18775cd3a1cb01bb4688db316a3",
+      "contains_customer_code": false,
+      "data_scope": "public_synthetic",
+      "dataset_manifest_sha256": "eab561cbce6cc9986e5b8d9a248b268e3709407dff7f23b111c36c932dd86456",
+      "dataset_version": "releaseproof-m4-synthetic-v1",
+      "environment": {
+        "numpy": "2.5.2",
+        "pandas": "3.0.5",
+        "python": "3.13.15",
+        "scikit-learn": "1.9.0",
+        "xgboost": "3.4.1"
+      },
+      "experiment_name": "releaseproof-risk-candidates",
+      "feature_schema_version": "change-features-v1",
+      "kind": "classical",
+      "metrics": {
+        "logistic_test_f1": 0.5,
+        "logistic_test_recall": 0.5,
+        "xgboost_test_f1": 0.4,
+        "xgboost_test_recall": 0.5
+      },
+      "parameters": {
+        "experiment_version": "classical-risk-experiment-v1",
+        "preprocessor_version": "classical-preprocessor-v1",
+        "split_sha256": "81d51ed7011c86744f2cf4bff15cb98bb1aa440b1c81ece921ed9b4a21f0c11b"
+      },
+      "record_sha256": "c5295dd332cacfcab7fcbdea101f8ad9dc9250b919f92234f799a35bf0d1c57f",
+      "run_name": "m5-classical-risk-v1",
+      "schema_version": "formal-experiment-v1",
+      "synthetic": true
+    },
+    {
+      "artifacts": [
+        {
+          "role": "model",
+          "sha256": "217ae49a7c42046db89428564b17730b730d6a694a4778f6d0d3a8755fac89cd",
+          "uri": "artifact://releaseproof/models/m11-semantic-minilm-linear-head-v1"
+        },
+        {
+          "role": "evaluation",
+          "sha256": "dfd608ba73796c0ca9f104c47e86d6ed8d33b182a30af5c89f1ecc9d2c48b18b",
+          "uri": "artifact://releaseproof/evaluations/m11-semantic-eval-v1"
+        },
+        {
+          "role": "dataset_manifest",
+          "sha256": "eddf5fc7000fc3c459094b48a1b01acd0c10ab9bc0db3fc01616f2df50bf4645",
+          "uri": "artifact://releaseproof/datasets/releaseproof-m11-synthetic-semantic-v1"
+        }
+      ],
+      "code_sha": "c05854dd3d26ee2e2aa2ad2fce336263fc2c742c",
+      "contains_customer_code": false,
+      "data_scope": "public_synthetic",
+      "dataset_manifest_sha256": "eddf5fc7000fc3c459094b48a1b01acd0c10ab9bc0db3fc01616f2df50bf4645",
+      "dataset_version": "releaseproof-m11-synthetic-semantic-v1",
+      "environment": {
+        "python": "3.13.15",
+        "sentence-transformers": "6.0.0",
+        "torch": "2.13.0",
+        "transformers": "5.15.1"
+      },
+      "experiment_name": "releaseproof-semantic-candidates",
+      "feature_schema_version": "semantic-change-text-v1",
+      "kind": "semantic",
+      "metrics": {
+        "test_exact_match": 0.0,
+        "test_hamming_loss": 0.21875,
+        "test_macro_f1": 0.35,
+        "test_micro_f1": 0.5333333333
+      },
+      "parameters": {
+        "encoder_model": "sentence-transformers/all-MiniLM-L6-v2",
+        "encoder_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "experiment_version": "semantic-risk-experiment-v1",
+        "threshold_policy": "semantic-threshold-v1"
+      },
+      "record_sha256": "5f085c519dbf20885b6c90a2c39fd4706ee7fc92b80ad5c2e4296cfcb61abd83",
+      "run_name": "m11-semantic-minilm-linear-head-v1",
+      "schema_version": "formal-experiment-v1",
+      "synthetic": true
+    }
+  ],
+  "limitations": [
+    "All registered experiment, evaluation, drift and rollback evidence is synthetic fixture evidence.",
+    "The local MLflow service has no application tenant authentication and rejects customer-data records by policy.",
+    "No learned model passed promotion; deterministic-heuristic-v1 remains active for the fixture/demo path.",
+    "The rollback drill validates lifecycle mechanics only and does not deploy or serve a model.",
+    "Drift thresholds and aggregate profiles are synthetic controls, not estimates of a production distribution.",
+    "No automatic retraining, model promotion, hosted provider call or customer-data pooling occurred."
+  ],
+  "mlflow": {
+    "artifact_store": "s3://releaseproof-local/mlflow",
+    "backend_store": "postgresql://postgres/releaseproof",
+    "client_server_exact_version_required": true,
+    "local_customer_data_allowed": false,
+    "pinned_version": "3.15.2",
+    "service_authentication": "none_loopback_only"
+  },
+  "model_registry": {
+    "active": {
+      "artifact_sha256": "9677412a4e18098c2b822fe5f9427a1cf56886c0e3f1adea4e8934613fa9829d",
+      "artifact_version": "deterministic-heuristic-v1",
+      "formal_experiment_sha256": "9a9a9b9f3f51bd005ac8dc1b6ffc1b7eb04696c979ca1e51de523f24f369a924",
+      "lifecycle": "active",
+      "probability_display_allowed": false,
+      "scope": "fixture_demo"
+    },
+    "automatic_promotion_allowed": false,
+    "candidates_remain_unpromoted": [
+      "logistic-risk-v1",
+      "xgboost-risk-v1",
+      "semantic-minilm-linear-head-v1"
+    ],
+    "rollback_target": null,
+    "rollback_target_reason": "No second artifact has passed the promotion gate."
+  },
+  "rollback_drill": {
+    "final_state": "active",
+    "lifecycle_policy_version": "model-lifecycle-v1",
+    "product_model_changed": false,
+    "synthetic": true,
+    "transition_count": 5,
+    "transitions": [
+      {
+        "action": "register",
+        "from": null,
+        "to": "candidate"
+      },
+      {
+        "action": "promote_to_staging",
+        "from": "candidate",
+        "to": "staging"
+      },
+      {
+        "action": "activate",
+        "from": "staging",
+        "to": "active"
+      },
+      {
+        "action": "retire",
+        "from": "active",
+        "to": "retired"
+      },
+      {
+        "action": "rollback",
+        "from": "retired",
+        "to": "active"
+      }
+    ]
+  },
+  "root_sha256": "b399c842d816932d4de007067f351bc1b34f0d384c34d3c15464ca5bda503f44",
+  "schema_version": "m13-governance-evaluation-v1",
+  "synthetic": true
+}

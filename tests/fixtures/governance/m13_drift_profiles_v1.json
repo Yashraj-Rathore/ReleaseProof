@@ -1,0 +1,48 @@
+{
+  "license": "CC0-1.0",
+  "profiles": {
+    "insufficient": {
+      "feature_schema_version": "change-features-v1",
+      "features": [
+        {"histogram": [2, 2, 1], "missing_count": 0, "name": "files_changed", "row_count": 5},
+        {"histogram": [1, 2, 2], "missing_count": 0, "name": "lines_added", "row_count": 5}
+      ],
+      "performance": {"labeled_row_count": 5, "metric_name": "proxy_f1", "value": 0.66}
+    },
+    "reference": {
+      "feature_schema_version": "change-features-v1",
+      "features": [
+        {"histogram": [50, 35, 10], "missing_count": 5, "name": "files_changed", "row_count": 100},
+        {"histogram": [45, 35, 15], "missing_count": 5, "name": "lines_added", "row_count": 100}
+      ],
+      "performance": {"labeled_row_count": 100, "metric_name": "proxy_f1", "value": 0.68}
+    },
+    "schema_mismatch": {
+      "feature_schema_version": "change-features-v2",
+      "features": [
+        {"histogram": [50, 35, 10], "missing_count": 5, "name": "files_changed", "row_count": 100},
+        {"histogram": [45, 35, 15], "missing_count": 5, "name": "lines_added", "row_count": 100}
+      ],
+      "performance": {"labeled_row_count": 100, "metric_name": "proxy_f1", "value": 0.68}
+    },
+    "shifted": {
+      "feature_schema_version": "change-features-v1",
+      "features": [
+        {"histogram": [10, 25, 45], "missing_count": 20, "name": "files_changed", "row_count": 100},
+        {"histogram": [10, 25, 45], "missing_count": 20, "name": "lines_added", "row_count": 100}
+      ],
+      "performance": {"labeled_row_count": 100, "metric_name": "proxy_f1", "value": 0.55}
+    },
+    "stable": {
+      "feature_schema_version": "change-features-v1",
+      "features": [
+        {"histogram": [49, 36, 10], "missing_count": 5, "name": "files_changed", "row_count": 100},
+        {"histogram": [44, 36, 15], "missing_count": 5, "name": "lines_added", "row_count": 100}
+      ],
+      "performance": {"labeled_row_count": 100, "metric_name": "proxy_f1", "value": 0.67}
+    }
+  },
+  "schema_version": "m13-drift-fixture-v1",
+  "synthetic": true,
+  "usage": "Deterministic aggregate data-quality and drift controls only; not customer or production-distribution evidence."
+}

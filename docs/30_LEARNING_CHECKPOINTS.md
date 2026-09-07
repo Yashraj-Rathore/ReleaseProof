@@ -13,6 +13,9 @@ The project is not interview-ready unless the owner can explain it without Codex
 
 Every AI/ML Codex completion report includes an Owner Learning Note.
 
+M13's completed lineage, lifecycle, feedback/drift and rollback explanation is
+`docs/50_M13_OWNER_LEARNING_NOTE.md`; the exact synthetic evidence is in docs/49.
+
 M5's completed explanation and rerun checkpoint is `docs/33_M5_OWNER_LEARNING_NOTE.md`.
 M11's completed explanation and rerun checkpoint is `docs/46_M11_OWNER_LEARNING_NOTE.md`.
 M12's completed explanation and rerun checkpoint is `docs/48_M12_OWNER_LEARNING_NOTE.md`.

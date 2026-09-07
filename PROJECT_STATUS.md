@@ -1,16 +1,48 @@
 # Project Status
 
-**Current state: M12 bounded LangGraph investigation implemented and CI-validated on 2026-09-04.**
+**Current state: M13 MLflow/model governance implemented locally on 2026-09-07; remote CI evidence pending push.**
 
-The repository now includes a typed, bounded, read-only LangGraph investigation with independent
-deterministic citation/fact/policy criticism and safe append-only tenant-scoped traces. Its frozen
-synthetic comparison shows no task-success or groundedness lift over M7's simpler path, so the graph
-is optional and disabled by default.
+The repository now has exact formal-experiment and evaluation-registry lineage, a pinned local
+MLflow configuration, immutable human-gated model lifecycle/rollback evidence, delayed
+organization-local outcomes, and sample-gated drift review. The deterministic heuristic remains
+active because no learned candidate passed its published promotion gate.
 
 ## Next action
 
-Begin M13 (`RP-1201..RP-1206`) MLflow/evaluation/feedback governance. Do not enable the M12 graph by
-default, add a hosted agent provider, enable arbitrary repository execution or begin M14.
+After M13 is committed and CI-validated, begin M14 (`RP-1301..RP-1306`) consolidated security,
+quota, observability, reliability, retention and cost hardening. Do not promote a learned model,
+enable automatic retraining/promotion, expose the local MLflow service, or begin M15.
+
+## M13 evidence
+
+- `formal-experiment-v1` records dataset/version/hash, feature schema, immutable code SHA,
+  parameters, metrics, environment and exact artifacts for M4/M5/M11 historical evidence without
+  rewriting it. `evaluation-registry-entry-v1` records safe M6/M7/M12 aggregate results, exact
+  configurations/licenses/artifacts and rejects customer code.
+- Full MLflow 3.15.2 is isolated in a non-root/read-only Compose service with PostgreSQL metadata,
+  proxied SeaweedFS artifacts, exact health/version checking and loopback publication. The app uses
+  `mlflow-skinny==3.15.2` because the resolver proved full MLflow's pandas `<3` constraint conflicts
+  with the validated pandas 3.0.5 ML group.
+- `GovernedModelArtifact` and append-only `ModelLifecycleEvent` implement
+  candidate/staging/active/retired plus rollback. Owner/Admin approval must bind a passing exact
+  six-check compatibility report, artifact, action and evaluation hash. `ModelDeployment` swaps exact active/
+  rollback pointers atomically and preserves transition history.
+- `DeploymentOutcome` binds the original immutable snapshot/prediction and requires a completed
+  30–365 day observation window. Organization-local eligibility requires known provenance plus
+  organization and per-record opt-in; shared-training eligibility is database-fixed false.
+- `data-quality-drift-policy-v1` checks exact schema, missingness, PSI distribution and labeled
+  performance with 100-row sample gates. Non-pass results require an append-only human review;
+  automatic retraining/promotion is false in contracts and database records.
+- The CC0 aggregate control yields the expected `pass`, `review`, `insufficient_data` and
+  `incompatible_schema` decisions. The source-controlled governance artifact contains three formal
+  experiments, three safe evaluation entries, a five-transition rollback drill and root SHA-256
+  `b399c842d816932d4de007067f351bc1b34f0d384c34d3c15464ca5bda503f44`.
+- Canonical local validation passed **182 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 217
+  source files passed; Django, migration drift and M4–M13 artifact checks are included in the
+  canonical command. A live MLflow container smoke was not run because Docker Engine was
+  unavailable; Compose configuration passed and CI is wired to build, version-check and register
+  records after object-store bootstrap. Exact evidence/limitations are in docs/49/50.
 
 ## M12 evidence
 
@@ -366,7 +398,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
-| M13 MLflow/governance | Not started |
+| M13 MLflow/governance | Complete locally - RP-1201..RP-1206; live CI evidence pending push |
 | M14 security/ops | Not started |
 | M15 containers/CI/model serving | Not started |
 | M16 demo/pilot | Not started |

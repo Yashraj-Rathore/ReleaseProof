@@ -69,6 +69,61 @@ services:
       timeout: 3s
       retries: 20
 
+  mlflow:
+    build:
+      context: .
+      dockerfile: deploy/mlflow/Dockerfile
+    image: releaseproof-mlflow:3.15.2
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-releaseproof-local}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-releaseproof-local-secret-change-me}
+      AWS_DEFAULT_REGION: ${S3_REGION:-us-east-1}
+      MLFLOW_S3_ENDPOINT_URL: http://seaweedfs:8333
+      MLFLOW_SERVER_ALLOWED_HOSTS: localhost:*,127.0.0.1:*,mlflow:5000
+      MLFLOW_SERVER_CORS_ALLOWED_ORIGINS: http://localhost:*,http://127.0.0.1:*
+      MLFLOW_SERVER_ENABLE_JOB_EXECUTION: "false"
+      MLFLOW_CREATE_MODEL_VERSION_SOURCE_VALIDATION_REGEX: ^mlflow-artifacts:/.*$
+    command:
+      - mlflow
+      - server
+      - --host
+      - 0.0.0.0
+      - --port
+      - "5000"
+      - --workers
+      - "1"
+      - --backend-store-uri
+      - postgresql+psycopg://${POSTGRES_USER:-releaseproof}:${POSTGRES_PASSWORD:-replace-local-password}@postgres:5432/${POSTGRES_DB:-releaseproof}
+      - --artifacts-destination
+      - s3://${S3_BUCKET:-releaseproof-local}/mlflow
+    ports:
+      - "127.0.0.1:${MLFLOW_PORT:-5000}:5000"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=256m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request;
+          assert urllib.request.urlopen('http://127.0.0.1:5000/health', timeout=3).status == 200;
+          assert urllib.request.urlopen('http://127.0.0.1:5000/version', timeout=3).read().decode().strip() == '3.15.2'
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
 volumes:
   postgres_data:
   redis_data:

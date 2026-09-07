@@ -36,6 +36,7 @@ COMMANDS = (
     (sys.executable, "-m", "eng.evaluate_m10_differential", "--check"),
     (sys.executable, "-m", "eng.evaluate_m11_semantic", "--check"),
     (sys.executable, "-m", "eng.evaluate_m12_agent", "--check"),
+    (sys.executable, "-m", "eng.evaluate_m13_governance", "--check"),
 )
 
 

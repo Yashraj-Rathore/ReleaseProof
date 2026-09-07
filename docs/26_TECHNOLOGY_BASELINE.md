@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04; M13 verified 2026-09-07
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -63,7 +63,7 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 | LangChain core | `1.6.0` | M7 only if the adapter needs it |
 | LangChain OpenAI | `1.6.0` | M7 only if it reduces contract code |
 | LangGraph | `1.2.11` | M12 |
-| MLflow | `3.15.1` | M13 |
+| MLflow | `3.15.2` | Locked by M13; full server and lightweight client are isolated below |
 | OpenTelemetry API/SDK | `1.44.0` | M14 |
 | OpenTelemetry instrumentation | `0.65b0` | M14; beta versioning is explicit |
 | FastAPI | `0.141.1` | M15 only if RP-1402 returns `EXTRACT_FASTAPI` |
@@ -190,12 +190,35 @@ meta-package or a provider integration. The resolution includes LangGraph's own 
 but M12 does not enable remote deployment, LangSmith transmission or native checkpoint persistence.
 The only implemented node provider is local and deterministic.
 
+## M13 MLflow pins — verified and locked 2026-09-07
+
+| Package/service | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| MLflow server | `mlflow==3.15.2` | The official [3.15.2 package](https://pypi.org/project/mlflow/3.15.2/) is stable, requires Python 3.10+ and was released 2026-08-26. The [3.15.2 release](https://github.com/mlflow/mlflow/releases/tag/v3.15.2) includes the patch release and immutable evaluation-dataset version support. It runs only in the dedicated Compose image. |
+| MLflow remote client | `mlflow-skinny==3.15.2` | The exact [3.15.2 package](https://pypi.org/project/mlflow-skinny/3.15.2/) supplies a Python 3 wheel built with CPython 3.13.14. MLflow describes skinny as the remote-client package without SQL server/UI/data-science dependencies and directs it at a remote tracking server. |
+| Backend/artifacts | PostgreSQL 18.6 + SeaweedFS 4.44 | The official [tracking-server documentation](https://mlflow.org/docs/latest/self-hosting/architecture/tracking-server/) documents `--backend-store-uri`, `--artifacts-destination`, allowed hosts/CORS, read-only container filesystems and the proxied artifact model used here. |
+
+The resolver proved that full MLflow 3.15.2 conflicts with M5's pandas 3.0.5 because the full
+package requires pandas below 3. Downgrading an already validated ML baseline would be an unrelated
+change, so ReleaseProof isolates the full server in `deploy/mlflow/Dockerfile` and puts only the
+exact same-version skinny remote client in the `governance` group. This is a deliberate dependency
+boundary, not a claim that the two distributions provide identical server features.
+
+MLflow 3.16.0 was only three days old at this verification date. The 2026-08-26 patch release
+3.15.2 was selected as the conservative stable line rather than adopting a newly published minor
+during the governance milestone.
+
+Model registry code uses ReleaseProof's explicit candidate/staging/active/retired vocabulary and
+immutable transition evidence. MLflow's deprecated model stages are not used; aliases/tags may be
+added only as mirrors of authoritative ReleaseProof state. No model weight or customer data is
+downloaded or uploaded by dependency installation or normal tests.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.
 - Set `.python-version` to `3.13.15` and configure uv's required version as `0.12.6`.
 - Direct runtime/development requirements use exact pins; `uv.lock` records the complete transitive resolution.
-- Separate later `ml`, `semantic`, `ai`, `agent`, `e2e` and `observability` groups and create them only in the owning milestone.
+- Separate later `ml`, `semantic`, `ai`, `agent`, `governance`, `e2e` and `observability` groups and create them only in the owning milestone.
 - Release and Compose images use exact tags plus OCI manifest digests. Resolve digests on the actual target architecture during M1; do not invent them in documentation.
 - Model artifacts use exact registry identifiers/checksums; prompts, FTS, features and schemas use semantic version plus content hash.
 - Upgrade intentionally with unit/integration/security tests and relevant frozen ML/RAG/LLM evaluation; never float production dependencies.

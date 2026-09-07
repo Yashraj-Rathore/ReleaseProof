@@ -136,9 +136,11 @@ and run:
 
 ```text
 uv run --env-file .env python -m eng.configure_local
-docker compose up -d --wait
+docker compose up -d --build --wait
 uv run --env-file .env python -m eng.bootstrap_object_store
 uv run --env-file .env python -m eng.smoke_object_store
+uv sync --frozen --group dev --group governance
+uv run --env-file .env python -m eng.smoke_mlflow
 ```
 
 If a default loopback port is already in use, override `POSTGRES_PORT`, `REDIS_PORT`, or `S3_PORT`
@@ -425,3 +427,36 @@ Exact measurements, limitations and the owner explanation are in docs/47 and doc
 GitHub Actions run `33886498047` passed exact M12 implementation commit `0d6a255`, including
 canonical Linux validation, Compose, authoritative PostgreSQL constraints, the pinned runner image,
 live sandbox sentinels, SeaweedFS and teardown.
+
+## M13 MLflow and model governance
+
+M13 implements `RP-1201..RP-1206`: exact formal-experiment lineage, a safe aggregate retrieval/
+LLM/agent evaluation registry, immutable model artifacts and human-approved lifecycle events,
+transactional active/rollback pointers, delayed organization-local deployment outcomes and
+schema/missingness/distribution/performance drift controls. Approval is transition evidence; the
+canonical lifecycle is `candidate -> staging -> active -> retired`, with explicit rollback from a
+retired artifact.
+
+The dedicated local container pins full MLflow 3.15.2 with PostgreSQL metadata and proxied
+SeaweedFS artifacts. The application pins `mlflow-skinny==3.15.2` in the optional `governance`
+group, avoiding full MLflow's pandas `<3` conflict with the already validated M5 pandas 3.0.5
+environment. The local service is loopback-only and unauthenticated; its adapter rejects customer-
+data records. It is not a production multi-tenant MLflow deployment.
+
+M13 imports safe historical M4/M5/M11 experiment metadata and M6/M7/M12 aggregate evaluation
+metadata without changing their original evidence. No learned model passed promotion, so the
+deterministic heuristic remains active. Delayed outcomes never overwrite predictions and are never
+eligible for shared training. Drift cannot trigger retraining or promotion; non-pass results
+require human review.
+
+```text
+uv sync --frozen --group dev --group ml --group ai --group semantic --group agent --group governance
+uv run python -m eng.evaluate_m13_governance --check
+uv run pytest tests/unit/test_governance.py tests/integration/test_model_governance.py tests/web/test_governance_registry.py
+```
+
+The synthetic governance artifact root is
+`b399c842d816932d4de007067f351bc1b34f0d384c34d3c15464ca5bda503f44`. Exact evidence,
+limitations and the owner explanation are in docs/49 and docs/50. A live local MLflow smoke was
+not measured on the M13 implementation host because Docker Engine was unavailable; the committed
+CI path builds the service and performs the exact-version/idempotency check.

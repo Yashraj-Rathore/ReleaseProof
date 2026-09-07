@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 
 from apps.web.organizations.views import active_organization
 from apps.web.risk.artifacts import safe_current_model_summary
+from apps.web.risk.governance_artifacts import latest_evaluations_summary
 from apps.web.risk.services import get_current_risk_score, serialize_risk_score
 
 
@@ -27,3 +28,9 @@ class SnapshotRiskView(APIView):  # type: ignore[misc]
             snapshot_public_id=snapshot_public_id,
         )
         return Response(serialize_risk_score(score))
+
+
+class LatestEvaluationsView(APIView):  # type: ignore[misc]
+    def get(self, request: Request) -> Response:
+        active_organization(request._request)
+        return Response(latest_evaluations_summary())

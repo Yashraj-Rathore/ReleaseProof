@@ -50,5 +50,7 @@
 | `46_M11_OWNER_LEARNING_NOTE.md` | owner-defensible M11 tensors, training, evaluation and rerun path |
 | `47_M12_AGENT_EVALUATION.md` | bounded graph/non-agent comparison, controls, measurements and activation decision |
 | `48_M12_OWNER_LEARNING_NOTE.md` | owner-defensible M12 state, tools, guards, critic and rerun path |
+| `49_M13_GOVERNANCE_EVALUATION.md` | MLflow lineage, evaluation registry, lifecycle/rollback, feedback and drift evidence |
+| `50_M13_OWNER_LEARNING_NOTE.md` | owner-defensible M13 lineage, promotion, rollback, feedback and drift rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

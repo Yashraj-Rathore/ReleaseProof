@@ -152,6 +152,12 @@ M5_CLASSICAL_ARTIFACT_PATH = Path(
         str(BASE_DIR / "models" / "public" / "m5_classical_ml_v1.json"),
     )
 )
+M13_GOVERNANCE_ARTIFACT_PATH = Path(
+    os.getenv(
+        "M13_GOVERNANCE_ARTIFACT_PATH",
+        str(BASE_DIR / "artifacts" / "evaluation" / "m13_governance_eval_v1.json"),
+    )
+)
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

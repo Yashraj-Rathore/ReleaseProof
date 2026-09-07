@@ -73,6 +73,13 @@ The first public `RiskModelResponseV1` representation is `risk-model-response-v1
 probability display. An unavailable or checksum-invalid learned artifact leaves the deterministic
 baseline active with an explicit fallback reason.
 
+M13 implements `GET /api/v1/evaluations/latest`. It requires an authenticated active-organization
+session and returns the checksum-verified source-controlled `m13-governance-evaluation-v1` safe
+summary: formal experiment lineage, retrieval/LLM/agent aggregate registry entries, model decision
+and limitations. It contains no source, prompt text, raw provider output or customer code. Model
+promotion, rollback, feedback and drift services are internal typed application boundaries in M13;
+no public mutation endpoint is added before M14 authorization/abuse hardening.
+
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
 `RiskModelResponseV1`: exact model artifact/checksum, raw score, calibrated probability nullable, band, explanation, latency metadata.

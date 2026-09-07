@@ -148,9 +148,11 @@ and run:
 
 ```text
 uv run --env-file .env python -m eng.configure_local
-docker compose up -d --wait
+docker compose up -d --build --wait
 uv run --env-file .env python -m eng.bootstrap_object_store
 uv run --env-file .env python -m eng.smoke_object_store
+uv sync --frozen --group dev --group governance
+uv run --env-file .env python -m eng.smoke_mlflow
 ```
 
 If a default loopback port is already in use, override `POSTGRES_PORT`, `REDIS_PORT`, or `S3_PORT`
@@ -437,6 +439,39 @@ Exact measurements, limitations and the owner explanation are in docs/47 and doc
 GitHub Actions run `33886498047` passed exact M12 implementation commit `0d6a255`, including
 canonical Linux validation, Compose, authoritative PostgreSQL constraints, the pinned runner image,
 live sandbox sentinels, SeaweedFS and teardown.
+
+## M13 MLflow and model governance
+
+M13 implements `RP-1201..RP-1206`: exact formal-experiment lineage, a safe aggregate retrieval/
+LLM/agent evaluation registry, immutable model artifacts and human-approved lifecycle events,
+transactional active/rollback pointers, delayed organization-local deployment outcomes and
+schema/missingness/distribution/performance drift controls. Approval is transition evidence; the
+canonical lifecycle is `candidate -> staging -> active -> retired`, with explicit rollback from a
+retired artifact.
+
+The dedicated local container pins full MLflow 3.15.2 with PostgreSQL metadata and proxied
+SeaweedFS artifacts. The application pins `mlflow-skinny==3.15.2` in the optional `governance`
+group, avoiding full MLflow's pandas `<3` conflict with the already validated M5 pandas 3.0.5
+environment. The local service is loopback-only and unauthenticated; its adapter rejects customer-
+data records. It is not a production multi-tenant MLflow deployment.
+
+M13 imports safe historical M4/M5/M11 experiment metadata and M6/M7/M12 aggregate evaluation
+metadata without changing their original evidence. No learned model passed promotion, so the
+deterministic heuristic remains active. Delayed outcomes never overwrite predictions and are never
+eligible for shared training. Drift cannot trigger retraining or promotion; non-pass results
+require human review.
+
+```text
+uv sync --frozen --group dev --group ml --group ai --group semantic --group agent --group governance
+uv run python -m eng.evaluate_m13_governance --check
+uv run pytest tests/unit/test_governance.py tests/integration/test_model_governance.py tests/web/test_governance_registry.py
+```
+
+The synthetic governance artifact root is
+`b399c842d816932d4de007067f351bc1b34f0d384c34d3c15464ca5bda503f44`. Exact evidence,
+limitations and the owner explanation are in docs/49 and docs/50. A live local MLflow smoke was
+not measured on the M13 implementation host because Docker Engine was unavailable; the committed
+CI path builds the service and performs the exact-version/idempotency check.
 
 
 ---
@@ -771,17 +806,49 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M12 bounded LangGraph investigation implemented and CI-validated on 2026-09-04.**
+**Current state: M13 MLflow/model governance implemented locally on 2026-09-07; remote CI evidence pending push.**
 
-The repository now includes a typed, bounded, read-only LangGraph investigation with independent
-deterministic citation/fact/policy criticism and safe append-only tenant-scoped traces. Its frozen
-synthetic comparison shows no task-success or groundedness lift over M7's simpler path, so the graph
-is optional and disabled by default.
+The repository now has exact formal-experiment and evaluation-registry lineage, a pinned local
+MLflow configuration, immutable human-gated model lifecycle/rollback evidence, delayed
+organization-local outcomes, and sample-gated drift review. The deterministic heuristic remains
+active because no learned candidate passed its published promotion gate.
 
 ## Next action
 
-Begin M13 (`RP-1201..RP-1206`) MLflow/evaluation/feedback governance. Do not enable the M12 graph by
-default, add a hosted agent provider, enable arbitrary repository execution or begin M14.
+After M13 is committed and CI-validated, begin M14 (`RP-1301..RP-1306`) consolidated security,
+quota, observability, reliability, retention and cost hardening. Do not promote a learned model,
+enable automatic retraining/promotion, expose the local MLflow service, or begin M15.
+
+## M13 evidence
+
+- `formal-experiment-v1` records dataset/version/hash, feature schema, immutable code SHA,
+  parameters, metrics, environment and exact artifacts for M4/M5/M11 historical evidence without
+  rewriting it. `evaluation-registry-entry-v1` records safe M6/M7/M12 aggregate results, exact
+  configurations/licenses/artifacts and rejects customer code.
+- Full MLflow 3.15.2 is isolated in a non-root/read-only Compose service with PostgreSQL metadata,
+  proxied SeaweedFS artifacts, exact health/version checking and loopback publication. The app uses
+  `mlflow-skinny==3.15.2` because the resolver proved full MLflow's pandas `<3` constraint conflicts
+  with the validated pandas 3.0.5 ML group.
+- `GovernedModelArtifact` and append-only `ModelLifecycleEvent` implement
+  candidate/staging/active/retired plus rollback. Owner/Admin approval must bind a passing exact
+  six-check compatibility report, artifact, action and evaluation hash. `ModelDeployment` swaps exact active/
+  rollback pointers atomically and preserves transition history.
+- `DeploymentOutcome` binds the original immutable snapshot/prediction and requires a completed
+  30–365 day observation window. Organization-local eligibility requires known provenance plus
+  organization and per-record opt-in; shared-training eligibility is database-fixed false.
+- `data-quality-drift-policy-v1` checks exact schema, missingness, PSI distribution and labeled
+  performance with 100-row sample gates. Non-pass results require an append-only human review;
+  automatic retraining/promotion is false in contracts and database records.
+- The CC0 aggregate control yields the expected `pass`, `review`, `insufficient_data` and
+  `incompatible_schema` decisions. The source-controlled governance artifact contains three formal
+  experiments, three safe evaluation entries, a five-transition rollback drill and root SHA-256
+  `b399c842d816932d4de007067f351bc1b34f0d384c34d3c15464ca5bda503f44`.
+- Canonical local validation passed **182 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 217
+  source files passed; Django, migration drift and M4–M13 artifact checks are included in the
+  canonical command. A live MLflow container smoke was not run because Docker Engine was
+  unavailable; Compose configuration passed and CI is wired to build, version-check and register
+  records after object-store bootstrap. Exact evidence/limitations are in docs/49/50.
 
 ## M12 evidence
 
@@ -1137,7 +1204,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
-| M13 MLflow/governance | Not started |
+| M13 MLflow/governance | Complete locally - RP-1201..RP-1206; live CI evidence pending push |
 | M14 security/ops | Not started |
 | M15 containers/CI/model serving | Not started |
 | M16 demo/pilot | Not started |
@@ -1264,6 +1331,17 @@ and its remote M2 result is tracked in GitHub Actions.
   read-only API/HTML trace views without prompts, source blobs, raw output or hidden reasoning.
 - A frozen seven-case CC0 agent evaluation and Owner Learning Note; no incremental quality lift over
   M7 was measured, so the graph remains optional and disabled by default.
+- Exact `formal-experiment-v1` lineage for M4/M5/M11 and a customer-code-free aggregate
+  `evaluation-registry-entry-v1` registry for M6/M7/M12, with a frozen M13 governance artifact.
+- A pinned MLflow 3.15.2 Compose service using PostgreSQL and proxied SeaweedFS artifacts plus an
+  exact-version/idempotent smoke; the application uses the isolated `mlflow-skinny` client group.
+- Tenant-bound immutable model artifacts and lifecycle events, six-check approval evidence,
+  candidate/staging/active/retired transitions and atomic active/rollback deployment pointers.
+- Append-only delayed deployment outcomes that preserve original predictions, require explicit
+  organization-local learning opt-in and can never enter shared training.
+- Versioned schema/missingness/PSI/performance drift assessment with sample gates, append-only human
+  reviews and database-enforced prohibition of automatic retraining/promotion.
+- An authenticated safe latest-evaluation API, M13 evaluation report and Owner Learning Note.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -1281,6 +1359,8 @@ and its remote M2 result is tracked in GitHub Actions.
   credential file readable by the pinned SeaweedFS container's non-root user.
 - Locked LangGraph 1.2.11 in the optional `agent` group without adding a LangChain meta-package,
   remote tracing/deployment or native graph checkpoints.
+- Resolved the lifecycle shorthand to `candidate/staging/active/retired`, with approval represented
+  as transition evidence, and isolated full MLflow from the pandas 3.0.5 application environment.
 - Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
   opaque author familiarity input without exposing identity as a predictor.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
@@ -1479,6 +1559,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `46_M11_OWNER_LEARNING_NOTE.md` | owner-defensible M11 tensors, training, evaluation and rerun path |
 | `47_M12_AGENT_EVALUATION.md` | bounded graph/non-agent comparison, controls, measurements and activation decision |
 | `48_M12_OWNER_LEARNING_NOTE.md` | owner-defensible M12 state, tools, guards, critic and rerun path |
+| `49_M13_GOVERNANCE_EVALUATION.md` | MLflow lineage, evaluation registry, lifecycle/rollback, feedback and drift evidence |
+| `50_M13_OWNER_LEARNING_NOTE.md` | owner-defensible M13 lineage, promotion, rollback, feedback and drift rerun path |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1685,7 +1767,10 @@ Document/chunk: org/repo, source type/id/version/hash, content metadata, version
 Version/hash, provenance, extraction/label rules, feature version, split rule, counts/class balance/unknowns, usage/license notes, synthetic flag.
 
 ### ModelArtifact
-MLflow/model identifier, algorithm, dataset manifest, feature version, metrics summary, lifecycle (`candidate/approved/retired`), checksum.
+MLflow/model identifier, algorithm, dataset manifest, feature/input schema, runtime compatibility,
+formal-experiment hash and exact artifact checksum. The operational lifecycle is
+`candidate/staging/active/retired`; human approval is immutable evidence on each transition, not a
+state. `ModelDeployment` holds the transactionally updated active/rollback pointers and generation.
 
 ### PromptVersion / EvaluationSuite
 Immutable/versioned prompts and frozen evaluation cases.
@@ -1715,6 +1800,12 @@ historical decisions are never rewritten when a later policy is introduced.
 
 ### DeploymentOutcome
 Optional feedback taxonomy (`no_issue`, `revert`, `hotfix`, `incident`, `manual_label`, `unknown`), source/confidence/observation window and org-training eligibility.
+
+### DriftAssessment / DriftReview
+Immutable aggregate reference/current profile hashes, schema/missingness/distribution/performance
+results, policy/decision and explicit no-automation flags. A separate append-only Reviewer+
+decision records human disposition; approval permits an experiment only, never automatic training
+or promotion.
 
 ### AuditLog
 Append-only actor/org/action/resource/correlation and safe metadata. Never raw source/secrets.
@@ -1785,6 +1876,17 @@ Append-only actor/org/action/resource/correlation and safe metadata. Never raw s
 
 ## Retention
 Separate policies for metadata, raw diff/source index, execution logs, LLM traces, datasets and training eligibility. Org deletion removes active access promptly and schedules documented tenant-scoped deletion. Private-data-derived artifacts follow the same policy.
+
+## M13 governance persistence
+
+- `GovernedModelArtifact`, `ModelLifecycleEvent`, `DeploymentOutcome`, `DriftAssessmentRecord` and
+  `DriftReview` are append-only in the ORM and by PostgreSQL/SQLite triggers.
+- Composite organization/parent foreign keys prevent cross-tenant model events, deployment
+  pointers, outcomes, predictions, drift records and reviews.
+- Outcome records retain the original snapshot/prediction relationship and result hash. They never
+  overwrite a prediction and can never be eligible for shared training.
+- `ModelDeployment` alone is mutable because atomic active/rollback pointer swaps are its purpose;
+  immutable lifecycle events retain every historical transition and approval.
 
 ### M6 implemented retrieval evidence
 
@@ -1958,6 +2060,13 @@ The first public `RiskModelResponseV1` representation is `risk-model-response-v1
 `raw_score`/band vocabulary, sets calibrated probability to null and explicitly disables
 probability display. An unavailable or checksum-invalid learned artifact leaves the deterministic
 baseline active with an explicit fallback reason.
+
+M13 implements `GET /api/v1/evaluations/latest`. It requires an authenticated active-organization
+session and returns the checksum-verified source-controlled `m13-governance-evaluation-v1` safe
+summary: formal experiment lineage, retrieval/LLM/agent aggregate registry entries, model decision
+and limitations. It contains no source, prompt text, raw provider output or customer code. Model
+promotion, rollback, feedback and drift services are internal typed application boundaries in M13;
+no public mutation endpoint is added before M14 authorization/abuse hardening.
 
 ## Risk model contract
 `RiskModelRequestV1`: exact feature-schema version + normalized feature payload.
@@ -3020,6 +3129,23 @@ missing artifacts fail closed without erasing deterministic evidence. Future cus
 training still requires explicit organization opt-in, tenant-isolated storage/retention and the
 M13/M14 governance controls.
 
+## M13 model-governance controls
+
+The local MLflow development service is unauthenticated and therefore loopback-published only. Its
+adapter accepts only validated public/synthetic metadata and rejects organization-local/customer-
+code experiment records. The full server is isolated in its own exact container dependency set;
+the application uses the exact-version lightweight remote client. PostgreSQL stores tracking
+metadata and the server proxies artifacts to SeaweedFS, so browser/client processes do not receive
+object-store credentials.
+
+Governed model transitions require Owner/Admin membership, exact evaluation and compatibility
+hashes, and tenant-scoped artifact resolution. Artifacts/events/outcomes/drift reviews are
+append-only with database tenant constraints. Delayed outcomes are org-local opt-in only and have
+`shared_training_eligible=false`. Drift can request human review or a separately governed
+experiment, but cannot invoke training, promotion, deployment, source access, provider calls or a
+sandbox. Production MLflow authentication/workspaces, retention and authorization remain M14/M15
+work; the local profile must not be exposed beyond loopback.
+
 
 ---
 
@@ -3192,6 +3318,22 @@ steps versus four single-pass calls/steps. It therefore shows no incremental qua
 not promoted. Local fake latency/cost and all limitations are recorded in
 `47_M12_AGENT_EVALUATION.md`.
 
+## M13 governance evidence
+
+Unit tests cover strict formal-experiment/evaluation schemas and hashes, customer-code rejection,
+exact lifecycle transitions, passing compatibility evidence, delayed outcome eligibility, all four
+drift decisions, no automatic action, MLflow metadata completeness and idempotency. Django tests
+exercise two-artifact activation/rollback, Owner/Admin and tenant scope, append-only database
+triggers, outcome/prediction lineage, never-shared learning, drift review and idempotency. Web tests
+cover active-organization authentication and the safe evaluation-registry response.
+
+The committed CC0 aggregate fixture produces `pass`, `review`, `insufficient_data` and
+`incompatible_schema`; the shifted case catches missingness/distribution/performance signals. It is
+a deterministic control, not measured production drift. `eng.evaluate_m13_governance --check`
+also verifies three historical experiment records, three safe retrieval/LLM/agent entries and a
+five-transition rollback drill. Live CI starts the exact MLflow service, bootstraps SeaweedFS and
+runs the version/idempotent-registration smoke. See docs/49.
+
 
 ---
 
@@ -3207,7 +3349,8 @@ Every promoted model links:
 `code commit -> dataset manifest -> feature version -> training config -> evaluation -> artifact checksum -> promotion decision`.
 
 ## Lifecycle
-Candidate -> approved -> retired. No mutable “latest” in inference. Promotion/rollback is explicit/human-controlled.
+Candidate -> staging -> active -> retired. Approval is immutable transition evidence rather than a
+lifecycle state. No mutable “latest” in inference. Promotion/rollback is explicit/human-controlled.
 
 ## Versioned AI configuration
 Prompts, embedding model, chunking, fusion, reranker, agent graph and recommendation policy all have versions and evaluation gates.
@@ -3268,6 +3411,25 @@ incremental-value gates -> `candidate_not_promoted`. The normal reproduction pat
 embeddings without network access; explicit weight provisioning is separate. M13 may register this
 lineage but cannot convert the historical non-promotion into approval or a mutable `latest` alias.
 
+## M13 implementation
+
+`formal-experiment-v1` and `evaluation-registry-entry-v1` make complete lineage mandatory and
+checksum the canonical record. MLflow 3.15.2 runs in a separate pinned local container with
+PostgreSQL metadata and proxied SeaweedFS artifacts. The application uses
+`mlflow-skinny==3.15.2`; full MLflow cannot share M5's pandas 3.0.5 environment because the full
+package requires pandas below 3. Exact client/server versions are checked before registration.
+
+M4/M5/M11 formal histories and M6/M7/M12 evaluation histories are imported as safe synthetic
+metadata without rewriting their source artifacts or promotion decisions. The deterministic
+heuristic stays active. `GovernedModelArtifact` and append-only transition events bind every
+candidate/staging/active/retired/rollback action to evaluation, compatibility and reviewer
+evidence; an atomic deployment pointer preserves a known rollback.
+
+Delayed 30–365 day outcomes remain separate from immutable predictions and are never shared-
+training eligible. Aggregate drift checks cover exact schema, missingness, PSI distribution shift
+and labeled performance drop with sample-size gates. Non-pass decisions require human review and
+cannot automatically retrain or promote. Exact evidence and limitations are in docs/49.
+
 
 ---
 
@@ -3290,6 +3452,13 @@ OpenTelemetry internally. Hosted/provider/MLflow trace content follows privacy p
 ## Health
 `/health/live`: process.
 `/health/ready`: essential dependencies for that role. Optional LLM outage must not necessarily make web unready if graceful degradation is supported.
+
+M13's local MLflow container has separate `/health` and exact `/version` checks. Its tracking
+metadata is in PostgreSQL and artifacts are proxied to SeaweedFS. CI bootstraps the bucket before
+writing governance artifacts and then runs an idempotent registration smoke. The local service is
+optional to core web readiness: an unavailable tracker must fail experiment registration visibly
+without erasing already committed evaluation or deterministic risk evidence. Do not emit run IDs,
+model tags or drift feature names as unbounded production metric labels.
 
 ## Controls
 Global/org analysis pause, hosted LLM kill switch, sandbox kill switch, model rollback, stale-run cancellation, retention jobs.
@@ -3946,7 +4115,7 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04; M13 verified 2026-09-07
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -4011,7 +4180,7 @@ Do not add these to the Prompt 1 lock solely because they appear here.
 | LangChain core | `1.6.0` | M7 only if the adapter needs it |
 | LangChain OpenAI | `1.6.0` | M7 only if it reduces contract code |
 | LangGraph | `1.2.11` | M12 |
-| MLflow | `3.15.1` | M13 |
+| MLflow | `3.15.2` | Locked by M13; full server and lightweight client are isolated below |
 | OpenTelemetry API/SDK | `1.44.0` | M14 |
 | OpenTelemetry instrumentation | `0.65b0` | M14; beta versioning is explicit |
 | FastAPI | `0.141.1` | M15 only if RP-1402 returns `EXTRACT_FASTAPI` |
@@ -4138,12 +4307,35 @@ meta-package or a provider integration. The resolution includes LangGraph's own 
 but M12 does not enable remote deployment, LangSmith transmission or native checkpoint persistence.
 The only implemented node provider is local and deterministic.
 
+## M13 MLflow pins — verified and locked 2026-09-07
+
+| Package/service | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| MLflow server | `mlflow==3.15.2` | The official [3.15.2 package](https://pypi.org/project/mlflow/3.15.2/) is stable, requires Python 3.10+ and was released 2026-08-26. The [3.15.2 release](https://github.com/mlflow/mlflow/releases/tag/v3.15.2) includes the patch release and immutable evaluation-dataset version support. It runs only in the dedicated Compose image. |
+| MLflow remote client | `mlflow-skinny==3.15.2` | The exact [3.15.2 package](https://pypi.org/project/mlflow-skinny/3.15.2/) supplies a Python 3 wheel built with CPython 3.13.14. MLflow describes skinny as the remote-client package without SQL server/UI/data-science dependencies and directs it at a remote tracking server. |
+| Backend/artifacts | PostgreSQL 18.6 + SeaweedFS 4.44 | The official [tracking-server documentation](https://mlflow.org/docs/latest/self-hosting/architecture/tracking-server/) documents `--backend-store-uri`, `--artifacts-destination`, allowed hosts/CORS, read-only container filesystems and the proxied artifact model used here. |
+
+The resolver proved that full MLflow 3.15.2 conflicts with M5's pandas 3.0.5 because the full
+package requires pandas below 3. Downgrading an already validated ML baseline would be an unrelated
+change, so ReleaseProof isolates the full server in `deploy/mlflow/Dockerfile` and puts only the
+exact same-version skinny remote client in the `governance` group. This is a deliberate dependency
+boundary, not a claim that the two distributions provide identical server features.
+
+MLflow 3.16.0 was only three days old at this verification date. The 2026-08-26 patch release
+3.15.2 was selected as the conservative stable line rather than adopting a newly published minor
+during the governance milestone.
+
+Model registry code uses ReleaseProof's explicit candidate/staging/active/retired vocabulary and
+immutable transition evidence. MLflow's deprecated model stages are not used; aliases/tags may be
+added only as mirrors of authoritative ReleaseProof state. No model weight or customer data is
+downloaded or uploaded by dependency installation or normal tests.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.
 - Set `.python-version` to `3.13.15` and configure uv's required version as `0.12.6`.
 - Direct runtime/development requirements use exact pins; `uv.lock` records the complete transitive resolution.
-- Separate later `ml`, `semantic`, `ai`, `agent`, `e2e` and `observability` groups and create them only in the owning milestone.
+- Separate later `ml`, `semantic`, `ai`, `agent`, `governance`, `e2e` and `observability` groups and create them only in the owning milestone.
 - Release and Compose images use exact tags plus OCI manifest digests. Resolve digests on the actual target architecture during M1; do not invent them in documentation.
 - Model artifacts use exact registry identifiers/checksums; prompts, FTS, features and schemas use semantic version plus content hash.
 - Upgrade intentionally with unit/integration/security tests and relevant frozen ML/RAG/LLM evaluation; never float production dependencies.
@@ -4253,6 +4445,9 @@ The project is not interview-ready unless the owner can explain it without Codex
 - **M13:** trace one prediction from code -> dataset -> experiment -> artifact -> score; demonstrate model rollback.
 
 Every AI/ML Codex completion report includes an Owner Learning Note.
+
+M13's completed lineage, lifecycle, feedback/drift and rollback explanation is
+`docs/50_M13_OWNER_LEARNING_NOTE.md`; the exact synthetic evidence is in docs/49.
 
 M5's completed explanation and rerun checkpoint is `docs/33_M5_OWNER_LEARNING_NOTE.md`.
 M11's completed explanation and rerun checkpoint is `docs/46_M11_OWNER_LEARNING_NOTE.md`.
@@ -5585,6 +5780,195 @@ and the existing recommendation policy, so it does not ask the generating model 
 invent missing evidence. The frozen comparison tied the simpler M7 path on task success and
 groundedness while adding calls, steps and latency. The right engineering decision was therefore to
 retain the bounded graph as an optional experiment, not force complexity into the default path.
+
+
+---
+
+# SOURCE FILE: `docs/49_M13_GOVERNANCE_EVALUATION.md`
+
+# 49 — M13 Governance Evaluation
+
+## Scope and decision
+
+M13 implements `RP-1201..RP-1206` without changing the product's active inference decision. The
+deterministic heuristic remains the fixture/demo baseline; M5 and M11 learned artifacts remain
+unpromoted because their published gates failed. All evidence in this document is synthetic or
+approved public metadata. It is not customer-quality, production-drift or incident evidence.
+
+Approval is immutable evidence attached to a transition, not a lifecycle state. The canonical
+lifecycle is `candidate -> staging -> active -> retired`; rollback is the explicit
+`retired -> active` transition. This resolves the earlier `candidate -> approved -> retired`
+shorthand in docs/03 and docs/17 against the M13 acceptance vocabulary in docs/22.
+
+## RP-1201 — tracking deployment
+
+- The application dependency group pins `mlflow-skinny==3.15.2`; it is the remote tracking client
+  and does not force MLflow's pandas `<3` server/data-science dependency onto the M5 pandas 3.0.5
+  environment.
+- `deploy/mlflow/Dockerfile` separately pins the full `mlflow==3.15.2` server, Python 3.13.15 base
+  image digest, Boto3 1.43.81 and psycopg 3.3.4.
+- Compose uses PostgreSQL as the backend store and proxied SeaweedFS S3 storage at
+  `s3://releaseproof-local/mlflow`. There is no MLflow local-volume source of truth.
+- The service is loopback-published, non-root, capability-free, read-only-root, bounded to one
+  worker and configured with explicit allowed-host/CORS settings. This is a development profile,
+  not an authenticated multi-tenant production control plane. Customer-data records are rejected
+  by the ReleaseProof adapter.
+- `/health` and `/version` are checked; `eng.smoke_mlflow` requires exact client/server 3.15.2 and
+  idempotently registers the source-controlled records after the S3 bucket bootstrap.
+
+`docker compose config --quiet` passed locally. A live server build/smoke was not measured on the
+assessment host because its Docker daemon was unavailable; the CI workflow owns that Linux check.
+
+## RP-1202 — formal experiment lineage
+
+`formal-experiment-v1` requires experiment/run/kind, dataset version and manifest SHA-256, feature
+schema, immutable code SHA, bounded parameters and metrics, environment, immutable artifact URIs
+and checksums, data scope, synthetic status and customer-content status. M13 imports three already
+published histories without rewriting them:
+
+| Experiment | Historical source | Decision |
+|---|---|---|
+| deterministic heuristic | M4 | active for fixture/demo |
+| logistic/XGBoost classical candidates | M5 | candidate, not promoted |
+| MiniLM semantic head candidate | M11 | candidate, not promoted |
+
+The M4 environment field is explicitly marked `m13_historical_import`; it does not claim that M4
+was originally executed by MLflow. The authoritative pre-existing raw artifacts and hashes remain
+unchanged.
+
+## RP-1203 — evaluation registry
+
+`evaluation-registry-entry-v1` contains only configuration versions, frozen dataset identity,
+aggregate metrics, immutable result-artifact identity, license and synthetic/customer-code flags.
+It registers:
+
+| Component | Dataset | Registry record SHA-256 |
+|---|---|---|
+| retrieval | `m6-relevance-fixture-v1` | `9128135b4aace2198872e8f5442b9144f688a6eb6c33eb4591e26e9fbdd9ae33` |
+| LLM | `m7-grounding-fixture-v1` | `b231c1f4e076fc09df5069a4b2505320a1008b59c81a044294089854c0fd7229` |
+| agent | `m12-agent-fixture-v1` | `265ce859e936d99ae5e0d9e9b7921c11bb0bccf6d913c8034b50120061fbdb30` |
+
+The authenticated active-organization endpoint `GET /api/v1/evaluations/latest` exposes this safe
+registry. It does not expose source, prompts, raw provider responses, traces or customer code.
+
+## RP-1204 — promotion and rollback
+
+`GovernedModelArtifact` stores an exact immutable artifact/data/experiment/schema/runtime identity.
+Append-only `ModelLifecycleEvent` rows store sequence, transition, reviewer, reason, evaluation
+hash and the exact six-check compatibility report: artifact checksum, evaluation gate, feature
+schema, input schema, privacy/license and runtime. Each approval checksum binds the exact artifact,
+authorized action, reviewer identity/role, reason, evaluation and compatibility report. Owner/Admin
+identity must match the approval; replacement and rollback require separate retirement evidence.
+
+`ModelDeployment` is the only mutable pointer. Its active and rollback artifacts update in one
+database transaction and each update increments a generation. Cross-organization relationships
+are rejected by application scoping and composite database constraints. A deterministic two-
+artifact test exercises activation, replacement and rollback; append-only triggers reject raw
+artifact/event mutation. No learned artifact is promoted by M13.
+
+## RP-1205 — delayed outcomes
+
+`DeploymentOutcome` is append-only and binds organization, repository, immutable snapshot and the
+original `RiskScore.result_hash`. The explicit taxonomy is `no_issue`, `revert`, `hotfix`,
+`incident`, `manual_label`, or `unknown`. Ingestion requires a 30–365 day observation window,
+timezone-aware ordered timestamps and completed-window delay. Organization-local training
+eligibility additionally requires known provenance, organization learning enabled and explicit
+per-outcome opt-in. `shared_training_eligible` is permanently false. Recording an outcome never
+updates the prediction it describes.
+
+## RP-1206 — data quality and drift
+
+`data-quality-drift-policy-v1` compares exact feature schemas, missingness deltas, population
+stability index over versioned bins and labeled performance drop. It requires at least 100 feature
+rows and 100 labeled rows. Decisions are `pass`, `review`, `insufficient_data`, or
+`incompatible_schema`.
+
+The CC0 aggregate fixture exercises all four decisions. The shifted case detects missingness,
+distribution and performance changes. Insufficient samples do not become a drift claim. Every
+non-pass requires an append-only human review, and both automatic retraining and automatic
+promotion are false in the contract, database and persisted report.
+
+## Reproduction
+
+```text
+uv sync --frozen --group dev --group ml --group ai --group semantic --group agent --group governance
+uv run python -m eng.evaluate_m13_governance --check
+uv run pytest tests/unit/test_governance.py tests/integration/test_model_governance.py tests/web/test_governance_registry.py
+uv run --env-file .env.example python -m eng.configure_local
+docker compose --env-file .env.example config --quiet
+docker compose --env-file .env.example up -d --build --wait
+uv run --env-file .env.example python -m eng.bootstrap_object_store
+uv run --env-file .env.example python -m eng.smoke_mlflow
+```
+
+The committed evaluation root is
+`b399c842d816932d4de007067f351bc1b34f0d384c34d3c15464ca5bda503f44`. Its drift profiles are
+aggregate synthetic controls, its rollback drill validates mechanics only, and its MLflow records
+are an M13 registration of historical evidence rather than proof that past milestones used MLflow.
+
+
+---
+
+# SOURCE FILE: `docs/50_M13_OWNER_LEARNING_NOTE.md`
+
+# 50 — M13 Owner Learning Note
+
+## 1. Concept implemented
+
+M13 adds experiment/evaluation lineage, an exact-artifact model registry, human-gated lifecycle and
+rollback, delayed deployment-outcome records, and deterministic data-quality/drift assessment. A
+pinned MLflow tracking server gives operators a comparison UI and durable run metadata; PostgreSQL
+and object storage remain authoritative for its metadata and artifacts.
+
+## 2. Why ReleaseProof uses it
+
+A risk score is defensible only if it can be traced to the exact code, data, features, configuration
+and artifact that produced it. Promotion must preserve the rejected/previous alternatives and a
+known rollback. Delayed outcomes enable later organization-local learning without relabeling the
+historical prediction, while drift checks signal when current inputs or measured behavior no longer
+resemble the declared reference.
+
+## 3. Algorithm and data assumptions
+
+- Dataset manifests, feature schemas, code SHAs and artifact checksums are immutable and truthful.
+- M4/M5/M6/M7/M11/M12 source artifacts remain authoritative; M13 imports their safe metadata.
+- PSI compares the same named feature and same versioned histogram bins. It is not meaningful when
+  schemas differ or observed counts are absent.
+- A 100-row/100-labeled-row minimum and 0.10 missingness, 0.20 PSI and 0.05 performance-drop limits
+  are synthetic starting policy values, not production-calibrated thresholds.
+- Revert/hotfix/follow-up style outcomes are proxy signals unless provenance says otherwise.
+- Organization-local eligibility never implies shared/global training; customer code is excluded
+  from the local unauthenticated MLflow profile.
+
+## 4. Key code paths
+
+- `packages/ml_core/governance.py`: framework-light strict records, lifecycle, feedback and drift.
+- `adapters/mlflow/tracking.py`: exact-version, metadata-only, idempotent MLflow client boundary.
+- `apps/web/risk/governance_services.py`: role/tenant checks and transactional registry workflows.
+- `apps/web/risk/models.py`: immutable artifact/event/outcome/drift/review evidence and deployment
+  pointer.
+- `eng/evaluate_m13_governance.py`: historical registry import plus drift/rollback fixture evidence.
+- `compose.yaml` and `deploy/mlflow/Dockerfile`: pinned local service with PostgreSQL/SeaweedFS.
+
+## 5. Exact experiment/test to rerun
+
+```text
+uv run python -m eng.evaluate_m13_governance --check
+uv run pytest tests/unit/test_governance.py tests/integration/test_model_governance.py tests/web/test_governance_registry.py
+```
+
+For live infrastructure, start Compose, bootstrap the bucket and run
+`uv run --env-file .env.example python -m eng.smoke_mlflow`. Run it twice: the second output should
+report `created: false` for every exact record hash.
+
+## 6. Likely interview question
+
+**Why is “approved” not a model lifecycle state?**
+
+Approval is evidence about a specific attempted transition: reviewer, reason, evaluation checksum
+and compatibility report. Treating it as a state loses whether approval authorized staging,
+activation, retirement or rollback. ReleaseProof therefore keeps the operational states
+`candidate/staging/active/retired` and records approval on immutable transition events.
 
 
 ---
