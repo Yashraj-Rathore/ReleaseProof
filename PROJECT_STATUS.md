@@ -1,6 +1,6 @@
 # Project Status
 
-**Current state: M13 MLflow/model governance implemented locally on 2026-09-07; remote CI evidence pending push.**
+**Current state: M13 MLflow/model governance is complete and CI-validated on 2026-09-07.**
 
 The repository now has exact formal-experiment and evaluation-registry lineage, a pinned local
 MLflow configuration, immutable human-gated model lifecycle/rollback evidence, delayed
@@ -9,9 +9,9 @@ active because no learned candidate passed its published promotion gate.
 
 ## Next action
 
-After M13 is committed and CI-validated, begin M14 (`RP-1301..RP-1306`) consolidated security,
-quota, observability, reliability, retention and cost hardening. Do not promote a learned model,
-enable automatic retraining/promotion, expose the local MLflow service, or begin M15.
+Begin M14 (`RP-1301..RP-1306`) consolidated security, quota, observability, reliability, retention
+and cost hardening. Do not promote a learned model, enable automatic retraining/promotion, expose
+the local MLflow service, or begin M15.
 
 ## M13 evidence
 
@@ -40,9 +40,10 @@ enable automatic retraining/promotion, expose the local MLflow service, or begin
 - Canonical local validation passed **182 tests**, with one PostgreSQL physical-index assertion
   skipped and three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 217
   source files passed; Django, migration drift and M4–M13 artifact checks are included in the
-  canonical command. A live MLflow container smoke was not run because Docker Engine was
-  unavailable; Compose configuration passed and CI is wired to build, version-check and register
-  records after object-store bootstrap. Exact evidence/limitations are in docs/49/50.
+  canonical command. GitHub Actions run `34168800664` passed on commit `91f6372`, including the
+  authoritative PostgreSQL contracts, pinned infrastructure startup, live sandbox sentinels,
+  SeaweedFS object contract and the MLflow version/registration smoke. Exact evidence/limitations
+  are in docs/49/50.
 
 ## M12 evidence
 
@@ -398,7 +399,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M10 differential | Complete - RP-0901..RP-0905; fixture-only boundary, live CI validated |
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
-| M13 MLflow/governance | Complete locally - RP-1201..RP-1206; live CI evidence pending push |
+| M13 MLflow/governance | Complete - RP-1201..RP-1206; CI run 34168800664 passed |
 | M14 security/ops | Not started |
 | M15 containers/CI/model serving | Not started |
 | M16 demo/pilot | Not started |
