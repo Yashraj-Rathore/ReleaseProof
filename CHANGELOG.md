@@ -144,6 +144,8 @@
   remote tracing/deployment or native graph checkpoints.
 - Resolved the lifecycle shorthand to `candidate/staging/active/retired`, with approval represented
   as transition evidence, and isolated full MLflow from the pandas 3.0.5 application environment.
+- Restricted rollback row locking to the authoritative deployment row so PostgreSQL does not apply
+  `FOR UPDATE` to the nullable rollback-artifact outer join.
 - Upgraded pull-request snapshots to `github-pr-snapshot-v2` for optional bounded commit count and
   opaque author familiarity input without exposing identity as a predictor.
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific

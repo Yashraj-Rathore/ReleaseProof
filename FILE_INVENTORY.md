@@ -14,8 +14,8 @@ checkout-independent.
 | `.pre-commit-config.yaml` | 1044 | `c34ecf7f9680dc30e0dde0b178dda144231197554f42c4c6637ae7b48d40f805` |
 | `.python-version` | 8 | `861b3dd8083d28f336ef70f6755bc399538ddad627b1d095820ca34cb953cf14` |
 | `AGENTS.md` | 7313 | `0abf3b78b53895e7086b9f9851f7c4ca5cc8ce4e8c6d0c125079712fe6d02f6e` |
-| `CHANGELOG.md` | 18641 | `00d113849c9e2a5fd65d9f092135274954c4a312ceefb9939e856c070e7b0347` |
-| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 405937 | `b08c742ec37543a27c8687c97830c4d89a33fb327a4624712426b370e4440cb3` |
+| `CHANGELOG.md` | 18801 | `c4d2541f51af429804ebe356060425e75de59c45581e68480ed8e7fb801e4cd4` |
+| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 406097 | `a84d843c8fe4d886244352cf7e879991493b56f28e3bf318740797edb037e0e3` |
 | `CODEX_PROMPT_SEQUENCE.md` | 4186 | `01f5b7913c8d80546d92ce6d00ea16d2bd251fd0f4213eee32eac5ecf235ec35` |
 | `CODEX_START_HERE.md` | 2443 | `225d7bd9451e0c8f9911dbb88bdd7c806e79e24ddf1458f12b7cfa2cec5b4e7e` |
 | `IMPLEMENTATION_CHECKLIST.md` | 1641 | `28a5ef63491e9ccc2166f6be3d0e38b110ceb02aa59f1372c691618cf75eb267` |
@@ -142,7 +142,7 @@ checkout-independent.
 | `apps/web/risk/apps.py` | 149 | `1b9b865a6b9189f348b467fd7e7499306a5e13e0bbf0892f9a2c00517c6fe984` |
 | `apps/web/risk/artifacts.py` | 2353 | `f2be64c6e76b2bb27f1ecefa241915327b4acd5f41b83d8837255a27c14377c1` |
 | `apps/web/risk/governance_artifacts.py` | 3464 | `60dcc00d4abf23a67de3451a028e30a0d4026002d9a24eaac745f4e994579406` |
-| `apps/web/risk/governance_services.py` | 25634 | `085973c37d6c19e4c602af963e1a133b1611043b72b8c9aeac1827ec2659850e` |
+| `apps/web/risk/governance_services.py` | 25646 | `43c1bf337a6fe0f0decab93e907dd2e326c3d8d64bcceb78b1bdf4bde964abb4` |
 | `apps/web/risk/migrations/0001_initial.py` | 4776 | `43e79c77df94af2af06cc739fe1bcb699c8de0210ee2b65a6e519e2b4861e95f` |
 | `apps/web/risk/migrations/0002_tenant_integrity.py` | 4126 | `0dd468857b6078fe4dfab494c69f73d668f14c3cde878adc4d428158344befb5` |
 | `apps/web/risk/migrations/0003_governedmodelartifact_driftassessmentrecord_and_more.py` | 25176 | `852c1c09fdace5512e671a31bac9f714acef5b0b8def63b281ac72aaba524696` |

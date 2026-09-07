@@ -396,7 +396,7 @@ def rollback_model(
     _validate_approval_actor(approval=retirement_approval, actor=actor, role=role)
     with transaction.atomic():
         deployment = (
-            ModelDeployment.objects.select_for_update()
+            ModelDeployment.objects.select_for_update(of=("self",))
             .filter(organization=organization, model_name=model_name)
             .select_related("active_artifact", "rollback_artifact")
             .first()
