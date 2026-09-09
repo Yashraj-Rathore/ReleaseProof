@@ -1,6 +1,6 @@
 # Project Status
 
-**Current state: M14 security, reliability and observability is complete locally on 2026-09-08; remote CI validation is pending.**
+**Current state: M14 security, reliability and observability is complete and CI-validated on 2026-09-09.**
 
 The repository now has a remediated ranked security review, immutable operational policies,
 PostgreSQL-authoritative tenant/user quotas, server-owned correlation and OpenTelemetry boundaries,
@@ -39,9 +39,11 @@ external repository execution, promote an unqualified learned model, or begin Ku
 - Local validation passed **193 tests**, with one PostgreSQL physical-index assertion skipped and
   three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 231 source files,
   targeted M14/workflow tests, Django checks, migration drift and the M14 artifact check passed.
-  Docker Compose configuration passed; live services await GitHub Actions because no local Docker
-  daemon was available. Artifact root SHA-256 is
+  Artifact root SHA-256 is
   `b5b92c524ad8b9a3ededff447487c64fe6e0cc00ccc5b0be2ba241368532dbc9`.
+- GitHub Actions run `34367370527` passed fix commit `7317742`, including the canonical Linux gate,
+  digest-pinned Compose startup, live OTLP-to-Prometheus smoke, authoritative PostgreSQL migrations/
+  tenant/immutability controls, sandbox sentinels, SeaweedFS object contract and MLflow smoke.
 
 ## M13 evidence
 
@@ -430,7 +432,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
 | M13 MLflow/governance | Complete - RP-1201..RP-1206; CI run 34168800664 passed |
-| M14 security/ops | Complete locally - RP-1301..RP-1306; remote CI pending |
+| M14 security/ops | Complete - RP-1301..RP-1306; CI run 34367370527 passed |
 | M15 containers/CI/model serving | Not started |
 | M16 demo/pilot | Not started |
 | M17 final review | Not started |
