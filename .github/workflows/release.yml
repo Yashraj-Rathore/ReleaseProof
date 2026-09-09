@@ -1,0 +1,157 @@
+name: protected-release-attestation
+
+on:
+  workflow_dispatch:
+    inputs:
+      ci_run_id:
+        description: Successful CI run containing the immutable release evidence
+        required: true
+        type: string
+      source_revision:
+        description: Full commit SHA associated with the CI release evidence
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+env:
+  UV_FROZEN: "1"
+  UV_NO_PROGRESS: "1"
+
+concurrency:
+  group: release-${{ inputs.source_revision }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact release source
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+
+      - name: Install pinned uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: 0.12.6
+
+      - name: Install pinned Python
+        run: uv python install 3.13.15
+
+      - name: Download exact CI release evidence
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: releaseproof-release-${{ inputs.source_revision }}
+          path: artifacts/release
+          github-token: ${{ github.token }}
+          run-id: ${{ inputs.ci_run_id }}
+
+      - name: Verify source, image, model, data, evaluation and SBOM binding
+        env:
+          EXPECTED_SOURCE_REVISION: ${{ inputs.source_revision }}
+        run: >-
+          uv run python -m eng.release_manifest verify
+          --manifest artifacts/release/release-manifest.json
+          --expected-source-revision "${EXPECTED_SOURCE_REVISION}"
+
+      - name: Preserve exact preflight evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: releaseproof-preflight-${{ inputs.source_revision }}
+          path: artifacts/release/
+          if-no-files-found: error
+
+  staging:
+    needs: preflight
+    environment: staging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact release source
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+
+      - name: Install pinned uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: 0.12.6
+
+      - name: Install pinned Python
+        run: uv python install 3.13.15
+
+      - name: Download preflight evidence unchanged
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: releaseproof-preflight-${{ inputs.source_revision }}
+          path: artifacts/release
+
+      - name: Record protected staging approval
+        run: >-
+          uv run python -m eng.release_manifest promote
+          --manifest artifacts/release/release-manifest.json
+          --stage staging
+          --approval-reference "github-environment:staging:${GITHUB_RUN_ID}"
+          --output artifacts/release/protected-staging-promotion.json
+
+      - name: Preserve staging evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: releaseproof-staging-${{ inputs.source_revision }}
+          path: artifacts/release/
+          if-no-files-found: error
+
+  production:
+    needs: staging
+    environment: production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE_ROLLBACK_STRATEGY: FORWARD_FIX_ONLY
+    steps:
+      - name: Check out exact release source
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+        with:
+          ref: ${{ inputs.source_revision }}
+          persist-credentials: false
+
+      - name: Install pinned uv
+        uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: 0.12.6
+
+      - name: Install pinned Python
+        run: uv python install 3.13.15
+
+      - name: Download exact staging evidence
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: releaseproof-staging-${{ inputs.source_revision }}
+          path: artifacts/release
+
+      - name: Reverify and record protected production approval
+        env:
+          EXPECTED_SOURCE_REVISION: ${{ inputs.source_revision }}
+        run: |
+          test "${DATABASE_ROLLBACK_STRATEGY}" = "FORWARD_FIX_ONLY"
+          uv run python -m eng.release_manifest verify \
+            --manifest artifacts/release/release-manifest.json \
+            --expected-source-revision "${EXPECTED_SOURCE_REVISION}"
+          uv run python -m eng.release_manifest promote \
+            --manifest artifacts/release/release-manifest.json \
+            --stage production \
+            --approval-reference "github-environment:production:${GITHUB_RUN_ID}" \
+            --output artifacts/release/protected-production-promotion.json
+
+      - name: Preserve production approval evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: releaseproof-production-${{ inputs.source_revision }}
+          path: artifacts/release/
+          if-no-files-found: error

@@ -38,6 +38,7 @@ COMMANDS = (
     (sys.executable, "-m", "eng.evaluate_m12_agent", "--check"),
     (sys.executable, "-m", "eng.evaluate_m13_governance", "--check"),
     (sys.executable, "-m", "eng.evaluate_m14_operations", "--check"),
+    (sys.executable, "-m", "eng.evaluate_m15_release", "--check"),
 )
 
 

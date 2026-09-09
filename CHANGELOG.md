@@ -136,6 +136,16 @@
   referential blocking and append-only audit evidence.
 - A ranked M14 security review, seven-component failure matrix and reproducible synthetic
   performance/cost artifact with explicit non-production limitations.
+- A multi-stage, non-root Gunicorn application image shared by migration, Django web and Celery
+  worker roles, with migration-first Compose gates, health checks and bounded runtime privileges.
+- Strict framework-light release-manifest, promotion and rollback contracts binding immutable
+  image/source/model/dataset/migration/evaluation/SBOM/provenance identities.
+- Pinned Trivy dependency, secret and application-image gates with CycloneDX SBOM generation and
+  immutable CI release-evidence upload.
+- A manual same-artifact staging/production approval workflow using protected GitHub environments,
+  exact source revalidation and forward-fix-only database rollback policy.
+- An M15 evaluation artifact and Owner Learning Note recording evidence-backed FastAPI, Ollama and
+  vLLM `DEFER_INSUFFICIENT_EVIDENCE` decisions without unused service scaffolding.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.

@@ -1,18 +1,51 @@
 # Project Status
 
-**Current state: M14 security, reliability and observability is complete and CI-validated on 2026-09-09.**
+**Current state: M15 production packaging and release evidence is implementation-complete locally
+on 2026-09-09; the first Linux image/scan/Compose run for this unpushed commit is pending.**
 
-The repository now has a remediated ranked security review, immutable operational policies,
-PostgreSQL-authoritative tenant/user quotas, server-owned correlation and OpenTelemetry boundaries,
-redacted structured logs, audited retention/deletion, a seven-component failure matrix and honest
-synthetic performance/cost evidence. External repository execution remains disabled and the
-deterministic heuristic remains active.
+The repository now has one multi-stage non-root application artifact for migration/web/worker,
+migration-first production-shaped Compose, immutable image/model/data/evaluation/SBOM/provenance
+release contracts, pinned CI supply-chain gates and ordered protected promotion attestations.
+FastAPI, Ollama and vLLM are explicitly deferred for insufficient evidence. External repository
+execution remains disabled and the deterministic heuristic remains active.
 
 ## Next action
 
-Begin M15 with RP-1401 production-shaped images/Compose. Evaluate RP-1402 only against its
-predeclared measurement gate before adding FastAPI. Do not expose local dashboards/MLflow, enable
-external repository execution, promote an unqualified learned model, or begin Kubernetes work.
+Push this exact M15 commit and require the Linux CI image build, Trivy dependency/secret/image
+scans, CycloneDX SBOM, release-manifest verification, migration-first Compose smoke, PostgreSQL,
+telemetry, sandbox, SeaweedFS and MLflow gates to pass. After that evidence, begin M16 recruiter
+demo/pilot work without enabling external repository execution or unqualified learned models.
+
+## M15 evidence
+
+- `deploy/app/Dockerfile` uses the exact Python 3.13.15 base digest in builder/runtime stages,
+  installs the locked active runtime groups, serves Django with Gunicorn 26.2.0 as UID/GID 65532
+  and excludes tests, private caches and the runner.
+- The same `releaseproof-app:m15` image backs a one-shot migration job, web and Celery worker.
+  Compose gates on healthy dependencies/migration success; the application services use read-only
+  roots, bounded tmpfs/PIDs/CPU/memory, no added capabilities, no Docker socket and loopback-only
+  web publication.
+- `release-manifest-v1` binds a full source revision and immutable application image digest to the
+  active deterministic model, model registry, M4 synthetic dataset manifest, migration tree,
+  evaluation bundle, CycloneDX SBOM and local build provenance. Promotion rejects changed artifact
+  identity or failed migration/evaluation/smoke/compatibility gates.
+- Pinned Trivy Action v0.36.0/Trivy 0.74.0 scan locked dependencies, repository secrets and the
+  exact built image. CI uploads the SBOM/manifest/ephemeral-staging receipt as one immutable
+  artifact; the manual workflow reverifies it through staging then production environments.
+  Repository Owners must still configure required environment reviewers before real use.
+- Database rollback is `FORWARD_FIX_ONLY`. App/model rollback requires target compatibility and
+  smoke evidence; no workflow blindly reverses migrations or deploys to an unselected cloud.
+- The docs/20 predeclared 768 MiB/10 s/250 ms/4 records-per-second/2 s/USD 75 decision budget was
+  applied. FastAPI, Ollama and vLLM are each `DEFER_INSUFFICIENT_EVIDENCE`; no package, service,
+  model download, GPU or Kubernetes scaffold was added.
+- Local canonical validation passed **204 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 236
+  source files, Django checks, migration drift, generated docs/inventory and M4-M15 artifact checks
+  passed. Focused M15 tests passed 17/17. M15 artifact root SHA-256 is
+  `a1fc8e31b6dc0a5ba4e684505dcf3e20150c86bd09eb0e141f1e320ce0a91d28`.
+- `docker compose config --quiet` passed locally. Docker Engine was not running on this host, so no
+  local image build/startup or Trivy scan is claimed; those Linux gates are intentionally pending
+  the first GitHub Actions run for this commit and will be monitored before handoff.
 
 ## M14 evidence
 
@@ -433,6 +466,6 @@ and its remote M2 result is tracked in GitHub Actions.
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
 | M13 MLflow/governance | Complete - RP-1201..RP-1206; CI run 34168800664 passed |
 | M14 security/ops | Complete - RP-1301..RP-1306; CI run 34367370527 passed |
-| M15 containers/CI/model serving | Not started |
+| M15 containers/CI/model serving | Implementation complete locally — RP-1401..RP-1406; first Linux CI run pending |
 | M16 demo/pilot | Not started |
 | M17 final review | Not started |

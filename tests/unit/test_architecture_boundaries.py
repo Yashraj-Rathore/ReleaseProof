@@ -29,6 +29,7 @@ CANONICAL_PACKAGES = {
     "ml_core",
     "observability",
     "recommendation_core",
+    "release_core",
     "retrieval_core",
 }
 FORBIDDEN_CORE_IMPORTS = {"celery", "django"}

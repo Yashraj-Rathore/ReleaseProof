@@ -15,7 +15,7 @@ concurrency:
 jobs:
   foundation:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       UV_FROZEN: "1"
       UV_NO_PROGRESS: "1"
@@ -39,6 +39,29 @@ jobs:
       - name: Validate source, Django, tests, and generated docs
         run: uv run python eng/validate.py
 
+      - name: Scan locked dependencies
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          skip-dirs: .git,.venv,.uv-cache,.uv-python,.bootstrap-uv
+          version: v0.74.0
+
+      - name: Scan repository for secrets
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          scanners: secret
+          severity: HIGH,CRITICAL
+          exit-code: "1"
+          skip-dirs: .git,.venv,.uv-cache,.uv-python,.bootstrap-uv
+          version: v0.74.0
+
       - name: Validate Compose configuration
         run: |
           uv run --env-file .env.example python -m eng.configure_local
@@ -46,8 +69,51 @@ jobs:
           chmod 0644 deploy/seaweedfs/s3.local.json
           docker compose config --quiet
 
+      - name: Build production application image once
+        run: >-
+          docker build --file deploy/app/Dockerfile
+          --tag releaseproof-app:m15 .
+
+      - name: Prepare release evidence directory
+        run: mkdir -p artifacts/release
+
+      - name: Scan production application image
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          scan-type: image
+          image-ref: releaseproof-app:m15
+          scanners: vuln
+          severity: HIGH,CRITICAL
+          ignore-unfixed: true
+          exit-code: "1"
+          version: v0.74.0
+
+      - name: Emit CycloneDX application SBOM
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          scan-type: image
+          image-ref: releaseproof-app:m15
+          format: cyclonedx
+          output: artifacts/release/releaseproof-app.cdx.json
+          version: v0.74.0
+
+      - name: Bind image, model, data, evaluations and provenance
+        run: |
+          APP_IMAGE_DIGEST=$(docker image inspect --format '{{.Id}}' releaseproof-app:m15)
+          uv run python -m eng.release_manifest build \
+            --source-revision "${GITHUB_SHA}" \
+            --application-image-digest "${APP_IMAGE_DIGEST}" \
+            --sbom artifacts/release/releaseproof-app.cdx.json \
+            --output artifacts/release/release-manifest.json
+          uv run python -m eng.release_manifest verify \
+            --manifest artifacts/release/release-manifest.json \
+            --expected-source-revision "${GITHUB_SHA}"
+
       - name: Start pinned local infrastructure
         run: docker compose up -d --wait
+
+      - name: Smoke migration-first production-shaped deployment
+        run: uv run --env-file .env.example python -m eng.smoke_deployment
 
       - name: Prove bounded telemetry export
         env:
@@ -80,6 +146,22 @@ jobs:
           uv run --env-file .env.example python -m eng.smoke_object_store
           uv run --env-file .env.example python -m eng.smoke_mlflow
           uv run --env-file .env.example pytest tests/integration/test_s3_contract.py
+
+      - name: Record same-artifact ephemeral staging promotion
+        run: >-
+          uv run python -m eng.release_manifest promote
+          --manifest artifacts/release/release-manifest.json
+          --stage staging
+          --approval-reference "github-ci:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+          --output artifacts/release/staging-promotion.json
+
+      - name: Upload immutable release evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: releaseproof-release-${{ github.sha }}
+          path: artifacts/release/
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Show infrastructure diagnostics on failure
         if: failure()

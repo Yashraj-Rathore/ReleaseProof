@@ -1,5 +1,35 @@
 name: releaseproof
 
+x-app-environment: &app-environment
+  DATABASE_URL: postgresql://${POSTGRES_USER:-releaseproof}:${POSTGRES_PASSWORD:-replace-local-password}@postgres:5432/${POSTGRES_DB:-releaseproof}
+  REDIS_URL: redis://:${REDIS_PASSWORD:-replace-local-password}@redis:6379/0
+  CELERY_BROKER_URL: redis://:${REDIS_PASSWORD:-replace-local-password}@redis:6379/1
+  CELERY_RESULT_BACKEND: redis://:${REDIS_PASSWORD:-replace-local-password}@redis:6379/2
+  S3_ENDPOINT_URL: http://seaweedfs:8333
+  S3_BUCKET: ${S3_BUCKET:-releaseproof-local}
+  S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-releaseproof-local}
+  S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-releaseproof-local-secret-change-me}
+  S3_REGION: ${S3_REGION:-us-east-1}
+  S3_FORCE_PATH_STYLE: "true"
+  MLFLOW_TRACKING_URI: http://mlflow:5000
+  OTEL_SDK_DISABLED: ${OTEL_SDK_DISABLED:-true}
+  OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+  OTEL_EXPORTER_OTLP_PROTOCOL: http/protobuf
+  DJANGO_SETTINGS_MODULE: apps.web.releaseproof.settings.production
+  DJANGO_SECRET_KEY: ${COMPOSE_DJANGO_SECRET_KEY:-releaseproof-local-compose-secret-key}
+  DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,web}
+  DJANGO_SECURE_SSL_REDIRECT: ${DJANGO_SECURE_SSL_REDIRECT:-false}
+  DJANGO_SECURE_COOKIES: ${DJANGO_SECURE_COOKIES:-false}
+  DJANGO_TRUST_PROXY_SSL_HEADER: ${DJANGO_TRUST_PROXY_SSL_HEADER:-false}
+  GITHUB_WEBHOOK_SECRET: ${COMPOSE_GITHUB_WEBHOOK_SECRET:-releaseproof-local-compose-webhook-secret}
+  GITHUB_APP_CREDENTIAL_REFERENCE: ${GITHUB_APP_CREDENTIAL_REFERENCE:-env:GITHUB_APP_PRIVATE_KEY_PATH}
+  LLM_PROVIDER: ${LLM_PROVIDER:-fake}
+  SANDBOX_ENABLED: "false"
+
+x-app-build: &app-build
+  context: .
+  dockerfile: deploy/app/Dockerfile
+
 services:
   postgres:
     image: pgvector/pgvector:0.8.6-pg18-trixie@sha256:78bf48b801e792f99e3ac62b5036fd3876e9be48afda16c1e331af1c75ceb2ff
@@ -192,6 +222,118 @@ services:
       - no-new-privileges:true
     cap_drop:
       - ALL
+
+  migration:
+    build: *app-build
+    image: releaseproof-app:m15
+    environment: *app-environment
+    command: ["python", "manage.py", "migrate", "--noinput"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 128
+    mem_limit: 512m
+    cpus: 1.0
+
+  web:
+    build: *app-build
+    image: releaseproof-app:m15
+    environment: *app-environment
+    command:
+      - gunicorn
+      - apps.web.releaseproof.wsgi:application
+      - --bind=0.0.0.0:8000
+      - --workers=2
+      - --threads=4
+      - --timeout=30
+      - --graceful-timeout=30
+      - --max-requests=1000
+      - --max-requests-jitter=100
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WEB_PORT:-8000}:8000"
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 1024m
+    cpus: 2.0
+    stop_grace_period: 35s
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request;
+          assert urllib.request.urlopen('http://127.0.0.1:8000/health/live', timeout=3).status == 200;
+          assert urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=3).status == 200
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  worker:
+    build: *app-build
+    image: releaseproof-app:m15
+    environment: *app-environment
+    command:
+      - celery
+      - --app=apps.web.releaseproof
+      - worker
+      - --loglevel=INFO
+      - --concurrency=2
+      - --prefetch-multiplier=1
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+      seaweedfs:
+        condition: service_healthy
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=128m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 256
+    mem_limit: 1536m
+    cpus: 2.0
+    stop_grace_period: 35s
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - >-
+          celery --app=apps.web.releaseproof inspect ping --timeout=3
+          --destination="celery@$${HOSTNAME}" | grep -q pong
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
 
 volumes:
   postgres_data:

@@ -460,3 +460,34 @@ The synthetic governance artifact root is
 limitations and the owner explanation are in docs/49 and docs/50. A live local MLflow smoke was
 not measured on the M13 implementation host because Docker Engine was unavailable; the committed
 CI path builds the service and performs the exact-version/idempotency check.
+
+## M15 production packaging and release evidence
+
+M15 implements `RP-1401..RP-1406` with a multi-stage non-root application image shared by the
+migration, web and worker roles. Compose is migration-first, health/dependency gated, loopback-only
+and resource bounded. It does not contain the fixture runner or a Docker socket, and external
+repository execution remains disabled.
+
+CI scans locked dependencies, repository secrets and the exact application image with pinned Trivy
+0.74.0, emits a CycloneDX SBOM and creates `release-manifest-v1`. That manifest binds the full
+source revision and image digest to the active deterministic model, model registry, synthetic
+dataset manifest, migration tree, evaluations, SBOM and build provenance. The manual release
+workflow reverifies the same artifact through protected staging then production environments and
+records approvals; it deliberately has no cloud deploy/push adapter. Rollback is compatibility-
+gated and uses forward fixes for database state rather than blind reverse migrations.
+
+FastAPI, Ollama and vLLM are all `DEFER_INSUFFICIENT_EVIDENCE`: no active resident learned model,
+approved local/GPU workload or measured simpler-serving failure satisfies the predeclared docs/20
+gate. No dormant service or package is added.
+
+```text
+uv sync --frozen --group dev --group ml --group ai --group semantic --group agent --group governance --group observability
+uv run python -m eng.evaluate_m15_release --check
+uv run --env-file .env.example python -m eng.configure_local
+docker compose up --build -d --wait
+uv run --env-file .env.example python -m eng.smoke_deployment
+docker compose down
+```
+
+The exact architecture, trust boundaries, promotion/rollback contract, evidence limitations and
+Owner Learning Note are in docs/52 and docs/53.

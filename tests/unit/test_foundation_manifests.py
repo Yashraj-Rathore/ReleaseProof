@@ -15,6 +15,7 @@ EXPECTED_IMAGES = {
     "chrislusf/seaweedfs:4.44@sha256:"
     "e67e8c385484120b78bff47ba5f4debbca47fbd27ed1a39f016f47e8baea615b",
     "releaseproof-mlflow:3.15.2",
+    "releaseproof-app:m15",
     "otel/opentelemetry-collector-contrib:0.159.0@sha256:"
     "1f2c54a30e713fac6b3ae77a1ec84010c2007e29ced8ec666214fc2f6739c1cc",
     "prom/prometheus:v3.14.0@sha256:"
@@ -39,7 +40,7 @@ def test_compose_images_are_exact_and_ports_are_loopback_only() -> None:
     assert {
         line.strip().removeprefix("image: ") for line in compose.splitlines() if "image:" in line
     } == EXPECTED_IMAGES
-    assert compose.count('"127.0.0.1:${') == 8
+    assert compose.count('"127.0.0.1:${') == 9
     assert "postgres_data:/var/lib/postgresql\n" in compose
     assert "postgres_data:/var/lib/postgresql/data" not in compose
     assert "dir/status?pretty=y" in compose
@@ -107,6 +108,14 @@ def test_ci_external_actions_are_pinned_to_full_commit_shas() -> None:
     )
     assert "--group observability" in workflow
     assert "python -m eng.smoke_observability" in workflow
+
+
+def test_release_actions_are_pinned_to_full_commit_shas() -> None:
+    workflow = (ROOT / ".github" / "workflows" / "release.yml").read_text(encoding="utf-8")
+    action_references = re.findall(r"uses:\s+([^\s#]+)", workflow)
+
+    assert action_references
+    assert all(re.search(r"@[0-9a-f]{40}$", reference) for reference in action_references)
 
 
 def test_file_inventory_normalizes_text_line_endings() -> None:

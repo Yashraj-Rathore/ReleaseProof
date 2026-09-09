@@ -32,6 +32,7 @@ artifacts/evaluation/*
 !artifacts/evaluation/m12_agent_eval_v1.json
 !artifacts/evaluation/m13_governance_eval_v1.json
 !artifacts/evaluation/m14_operations_eval_v1.json
+!artifacts/evaluation/m15_release_eval_v1.json
 mlruns/
 .minio/
 *.sqlite3

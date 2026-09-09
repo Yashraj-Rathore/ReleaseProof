@@ -1,0 +1,168 @@
+{
+  "claims": {
+    "cloud_deployment_validated": false,
+    "fastapi_required": false,
+    "kubernetes_approved": false,
+    "ollama_validated": false,
+    "production_capacity_validated": false,
+    "vllm_validated": false
+  },
+  "conditional_serving_decisions": [
+    {
+      "budget": {
+        "cold_start_ms": 10000,
+        "maximum_incremental_monthly_cost_usd": 75.0,
+        "minimum_throughput_per_second": 4.0,
+        "queue_delay_p95_ms": 2000,
+        "steady_state_p95_ms": 250,
+        "worker_resident_memory_mib": 768
+      },
+      "component": "fastapi-model-service",
+      "decision": "DEFER_INSUFFICIENT_EVIDENCE",
+      "evidence_paths": [
+        "docs/20_PERFORMANCE_CAPACITY_COST.md",
+        "artifacts/evaluation/m14_operations_eval_v1.json"
+      ],
+      "extraction_criteria_met": [],
+      "measured_dimensions": [
+        "synthetic_control_plane_p95_ms"
+      ],
+      "missing_dimensions": [
+        "worker_resident_model_memory_mib",
+        "worker_cold_start_ms",
+        "broker_queue_delay_p95_ms",
+        "independent_inference_scaling_cost"
+      ],
+      "operational_security_cost_accepted": false,
+      "rationale": [
+        "No learned model is active or resident in each worker.",
+        "M14 explicitly excludes worker RSS, broker scheduling and saturation evidence.",
+        "A new authenticated service would add a trust boundary without measured benefit."
+      ],
+      "workload": "Active deterministic heuristic scoring for a bounded PR feature record; planned comparison assumes two worker replicas and no GPU."
+    },
+    {
+      "budget": {
+        "cold_start_ms": 10000,
+        "maximum_incremental_monthly_cost_usd": 75.0,
+        "minimum_throughput_per_second": 4.0,
+        "queue_delay_p95_ms": 2000,
+        "steady_state_p95_ms": 250,
+        "worker_resident_memory_mib": 768
+      },
+      "component": "ollama-local-provider",
+      "decision": "DEFER_INSUFFICIENT_EVIDENCE",
+      "evidence_paths": [
+        "docs/11_LLM_PROVIDER_ABSTRACTION.md",
+        "docs/20_PERFORMANCE_CAPACITY_COST.md"
+      ],
+      "extraction_criteria_met": [],
+      "measured_dimensions": [],
+      "missing_dimensions": [
+        "approved_local_privacy_demand",
+        "compatible_hardware",
+        "model_license_review",
+        "schema_and_grounding_evaluation"
+      ],
+      "operational_security_cost_accepted": false,
+      "rationale": [
+        "The deterministic fake remains the default and hosted transmission is policy-gated.",
+        "No approved local model, hardware profile or representative privacy workload exists."
+      ],
+      "workload": "Organization-approved local advisory generation under the existing strict schema."
+    },
+    {
+      "budget": {
+        "cold_start_ms": 10000,
+        "maximum_incremental_monthly_cost_usd": 75.0,
+        "minimum_throughput_per_second": 4.0,
+        "queue_delay_p95_ms": 2000,
+        "steady_state_p95_ms": 250,
+        "worker_resident_memory_mib": 768
+      },
+      "component": "vllm-gpu-serving",
+      "decision": "DEFER_INSUFFICIENT_EVIDENCE",
+      "evidence_paths": [
+        "docs/20_PERFORMANCE_CAPACITY_COST.md",
+        "docs/26_TECHNOLOGY_BASELINE.md"
+      ],
+      "extraction_criteria_met": [],
+      "measured_dimensions": [],
+      "missing_dimensions": [
+        "failing_simple_serving_baseline",
+        "approved_gpu_hardware",
+        "model_license_review",
+        "privacy_review",
+        "throughput_and_cost_comparison"
+      ],
+      "operational_security_cost_accepted": false,
+      "rationale": [
+        "No local serving baseline fails a predeclared budget.",
+        "No GPU runtime, approved model or measured batching benefit exists."
+      ],
+      "workload": "Batched local advisory inference using an approved immutable model revision."
+    }
+  ],
+  "limitations": [
+    "Compose is a production-shaped loopback demo, not a highly available deployment.",
+    "Trivy results depend on the vulnerability database available during each CI run.",
+    "The repository emits unsigned local provenance; registry-backed OIDC attestation is deferred until a registry and deployment target are selected.",
+    "GitHub environment reviewers and branch rules are repository settings and must be configured by an Owner before a real promotion.",
+    "No external repository code, paid provider, model download, GPU or Kubernetes was used."
+  ],
+  "manifest_inputs": {
+    "dataset": {
+      "path": "tests/golden/m4_synthetic_baseline_v1.json",
+      "sha256": "8885e414196d2f2944a3b37edd77d923915d370b74e92fbf85665616dd9780a1"
+    },
+    "m14_operations": {
+      "path": "artifacts/evaluation/m14_operations_eval_v1.json",
+      "root_sha256": "b5b92c524ad8b9a3ededff447487c64fe6e0cc00ccc5b0be2ba241368532dbc9"
+    },
+    "model_registry": {
+      "path": "models/public/m5_classical_ml_v1.json",
+      "sha256": "e0c58feb3f824a8d7fa7786d1ba19da8de5c0ee45b00f0401265ab9294aaa044"
+    }
+  },
+  "production_packaging": {
+    "application_image": "releaseproof-app:m15",
+    "base_image_digest_pinned": true,
+    "compose_services": [
+      "migration",
+      "web",
+      "worker"
+    ],
+    "external_repository_execution_enabled": false,
+    "gunicorn_version": "26.2.0",
+    "health_checks": true,
+    "migration_dependency_gate": true,
+    "multi_stage": true,
+    "non_root_uid": true
+  },
+  "promotion_and_rollback": {
+    "automatic_database_reverse_allowed": false,
+    "cloud_deployment_adapter_present": false,
+    "database_rollback_strategy": "FORWARD_FIX_ONLY",
+    "ordered_gates": [
+      "migrations",
+      "evaluations",
+      "smoke",
+      "compatibility",
+      "approval"
+    ],
+    "same_image_and_model_digests_required": true
+  },
+  "root_sha256": "a1fc8e31b6dc0a5ba4e684505dcf3e20150c86bd09eb0e141f1e320ce0a91d28",
+  "schema_version": "m15-release-evaluation-v1",
+  "supply_chain": {
+    "cyclonedx_sbom": true,
+    "dependency_scan": true,
+    "image_scan": true,
+    "protected_environments": true,
+    "release_manifest_check": true,
+    "secret_scan": true,
+    "trivy_action_commit": "a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8",
+    "trivy_version": "0.74.0"
+  },
+  "synthetic": true
+}

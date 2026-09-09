@@ -11,7 +11,10 @@ __pycache__
 .ruff_cache
 node_modules
 local-data
-artifacts
+artifacts/*
+!artifacts/evaluation/
+artifacts/evaluation/*
+!artifacts/evaluation/m13_governance_eval_v1.json
 mlruns
 secrets
 .env

@@ -473,6 +473,37 @@ limitations and the owner explanation are in docs/49 and docs/50. A live local M
 not measured on the M13 implementation host because Docker Engine was unavailable; the committed
 CI path builds the service and performs the exact-version/idempotency check.
 
+## M15 production packaging and release evidence
+
+M15 implements `RP-1401..RP-1406` with a multi-stage non-root application image shared by the
+migration, web and worker roles. Compose is migration-first, health/dependency gated, loopback-only
+and resource bounded. It does not contain the fixture runner or a Docker socket, and external
+repository execution remains disabled.
+
+CI scans locked dependencies, repository secrets and the exact application image with pinned Trivy
+0.74.0, emits a CycloneDX SBOM and creates `release-manifest-v1`. That manifest binds the full
+source revision and image digest to the active deterministic model, model registry, synthetic
+dataset manifest, migration tree, evaluations, SBOM and build provenance. The manual release
+workflow reverifies the same artifact through protected staging then production environments and
+records approvals; it deliberately has no cloud deploy/push adapter. Rollback is compatibility-
+gated and uses forward fixes for database state rather than blind reverse migrations.
+
+FastAPI, Ollama and vLLM are all `DEFER_INSUFFICIENT_EVIDENCE`: no active resident learned model,
+approved local/GPU workload or measured simpler-serving failure satisfies the predeclared docs/20
+gate. No dormant service or package is added.
+
+```text
+uv sync --frozen --group dev --group ml --group ai --group semantic --group agent --group governance --group observability
+uv run python -m eng.evaluate_m15_release --check
+uv run --env-file .env.example python -m eng.configure_local
+docker compose up --build -d --wait
+uv run --env-file .env.example python -m eng.smoke_deployment
+docker compose down
+```
+
+The exact architecture, trust boundaries, promotion/rollback contract, evidence limitations and
+Owner Learning Note are in docs/52 and docs/53.
+
 
 ---
 
@@ -806,19 +837,52 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M14 security, reliability and observability is complete and CI-validated on 2026-09-09.**
+**Current state: M15 production packaging and release evidence is implementation-complete locally
+on 2026-09-09; the first Linux image/scan/Compose run for this unpushed commit is pending.**
 
-The repository now has a remediated ranked security review, immutable operational policies,
-PostgreSQL-authoritative tenant/user quotas, server-owned correlation and OpenTelemetry boundaries,
-redacted structured logs, audited retention/deletion, a seven-component failure matrix and honest
-synthetic performance/cost evidence. External repository execution remains disabled and the
-deterministic heuristic remains active.
+The repository now has one multi-stage non-root application artifact for migration/web/worker,
+migration-first production-shaped Compose, immutable image/model/data/evaluation/SBOM/provenance
+release contracts, pinned CI supply-chain gates and ordered protected promotion attestations.
+FastAPI, Ollama and vLLM are explicitly deferred for insufficient evidence. External repository
+execution remains disabled and the deterministic heuristic remains active.
 
 ## Next action
 
-Begin M15 with RP-1401 production-shaped images/Compose. Evaluate RP-1402 only against its
-predeclared measurement gate before adding FastAPI. Do not expose local dashboards/MLflow, enable
-external repository execution, promote an unqualified learned model, or begin Kubernetes work.
+Push this exact M15 commit and require the Linux CI image build, Trivy dependency/secret/image
+scans, CycloneDX SBOM, release-manifest verification, migration-first Compose smoke, PostgreSQL,
+telemetry, sandbox, SeaweedFS and MLflow gates to pass. After that evidence, begin M16 recruiter
+demo/pilot work without enabling external repository execution or unqualified learned models.
+
+## M15 evidence
+
+- `deploy/app/Dockerfile` uses the exact Python 3.13.15 base digest in builder/runtime stages,
+  installs the locked active runtime groups, serves Django with Gunicorn 26.2.0 as UID/GID 65532
+  and excludes tests, private caches and the runner.
+- The same `releaseproof-app:m15` image backs a one-shot migration job, web and Celery worker.
+  Compose gates on healthy dependencies/migration success; the application services use read-only
+  roots, bounded tmpfs/PIDs/CPU/memory, no added capabilities, no Docker socket and loopback-only
+  web publication.
+- `release-manifest-v1` binds a full source revision and immutable application image digest to the
+  active deterministic model, model registry, M4 synthetic dataset manifest, migration tree,
+  evaluation bundle, CycloneDX SBOM and local build provenance. Promotion rejects changed artifact
+  identity or failed migration/evaluation/smoke/compatibility gates.
+- Pinned Trivy Action v0.36.0/Trivy 0.74.0 scan locked dependencies, repository secrets and the
+  exact built image. CI uploads the SBOM/manifest/ephemeral-staging receipt as one immutable
+  artifact; the manual workflow reverifies it through staging then production environments.
+  Repository Owners must still configure required environment reviewers before real use.
+- Database rollback is `FORWARD_FIX_ONLY`. App/model rollback requires target compatibility and
+  smoke evidence; no workflow blindly reverses migrations or deploys to an unselected cloud.
+- The docs/20 predeclared 768 MiB/10 s/250 ms/4 records-per-second/2 s/USD 75 decision budget was
+  applied. FastAPI, Ollama and vLLM are each `DEFER_INSUFFICIENT_EVIDENCE`; no package, service,
+  model download, GPU or Kubernetes scaffold was added.
+- Local canonical validation passed **204 tests**, with one PostgreSQL physical-index assertion
+  skipped and three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 236
+  source files, Django checks, migration drift, generated docs/inventory and M4-M15 artifact checks
+  passed. Focused M15 tests passed 17/17. M15 artifact root SHA-256 is
+  `a1fc8e31b6dc0a5ba4e684505dcf3e20150c86bd09eb0e141f1e320ce0a91d28`.
+- `docker compose config --quiet` passed locally. Docker Engine was not running on this host, so no
+  local image build/startup or Trivy scan is claimed; those Linux gates are intentionally pending
+  the first GitHub Actions run for this commit and will be monitored before handoff.
 
 ## M14 evidence
 
@@ -1239,7 +1303,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
 | M13 MLflow/governance | Complete - RP-1201..RP-1206; CI run 34168800664 passed |
 | M14 security/ops | Complete - RP-1301..RP-1306; CI run 34367370527 passed |
-| M15 containers/CI/model serving | Not started |
+| M15 containers/CI/model serving | Implementation complete locally — RP-1401..RP-1406; first Linux CI run pending |
 | M16 demo/pilot | Not started |
 | M17 final review | Not started |
 
@@ -1386,6 +1450,16 @@ and its remote M2 result is tracked in GitHub Actions.
   referential blocking and append-only audit evidence.
 - A ranked M14 security review, seven-component failure matrix and reproducible synthetic
   performance/cost artifact with explicit non-production limitations.
+- A multi-stage, non-root Gunicorn application image shared by migration, Django web and Celery
+  worker roles, with migration-first Compose gates, health checks and bounded runtime privileges.
+- Strict framework-light release-manifest, promotion and rollback contracts binding immutable
+  image/source/model/dataset/migration/evaluation/SBOM/provenance identities.
+- Pinned Trivy dependency, secret and application-image gates with CycloneDX SBOM generation and
+  immutable CI release-evidence upload.
+- A manual same-artifact staging/production approval workflow using protected GitHub environments,
+  exact source revalidation and forward-fix-only database rollback policy.
+- An M15 evaluation artifact and Owner Learning Note recording evidence-backed FastAPI, Ollama and
+  vLLM `DEFER_INSUFFICIENT_EVIDENCE` decisions without unused service scaffolding.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -1613,6 +1687,8 @@ and repositories until a later assigned issue justifies a separate module.
 | `49_M13_GOVERNANCE_EVALUATION.md` | MLflow lineage, evaluation registry, lifecycle/rollback, feedback and drift evidence |
 | `50_M13_OWNER_LEARNING_NOTE.md` | owner-defensible M13 lineage, promotion, rollback, feedback and drift rerun path |
 | `51_M14_SECURITY_RELIABILITY_REVIEW.md` | ranked security review, quotas, telemetry, failure drills, retention and measured operational evidence |
+| `52_M15_PRODUCTION_RELEASE.md` | production-shaped Compose, supply-chain gates, serving decisions and promotion/rollback evidence |
+| `53_M15_OWNER_LEARNING_NOTE.md` | owner-defensible container, release-manifest and conditional-serving explanation |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -3646,6 +3722,52 @@ Later: semver/tag, immutable image/model IDs, SBOM/provenance, vulnerability gat
 ## Kubernetes
 Optional and justified only by runner/model/GPU/resource/replica needs. Select one deployment packaging approach by ADR; do not build multiple orchestrator stacks for keywords.
 
+## M15 implementation
+
+M15 adds a multi-stage `deploy/app/Dockerfile` from the existing digest-pinned Python 3.13.15
+base. The runtime stage contains one shared application artifact for the migration, web and worker
+roles, runs as UID/GID 65532, omits tests/private-model paths/the runner, and uses Gunicorn 26.2.0
+for WSGI serving. Compose gates web and worker startup on the successful one-shot migration job and
+healthy PostgreSQL, Redis and SeaweedFS dependencies. Application services use read-only root
+filesystems, bounded tmpfs/PID/CPU/memory settings, dropped capabilities and
+`no-new-privileges`. All published ports remain loopback-only. The separate ADR-018 runner is not
+in this stack and no Docker socket is mounted.
+
+The production settings remain fail-closed for secrets and hosts. TLS redirect defaults on and
+proxy-header trust defaults off; the explicitly local Compose demo disables redirect and secure
+cookies because it publishes only loopback HTTP. The Compose defaults are public local-demo
+credentials and are not a production secret-management design. A real deployment must inject
+`COMPOSE_DJANGO_SECRET_KEY`/`COMPOSE_GITHUB_WEBHOOK_SECRET`, enable secure cookies and deliberately
+configure its trusted TLS proxy.
+
+CI builds `releaseproof-app:m15` once, scans the locked source and exact built image for High/
+Critical fixed vulnerabilities, scans the repository for secrets, emits a CycloneDX SBOM, then
+records the image ID (`sha256:...`) in `release-manifest-v1`. The manifest also binds the full source
+revision, active deterministic model, model registry, synthetic dataset manifest, migration tree,
+evaluation bundle, SBOM and local build provenance. The production-shaped Compose smoke, live
+fixture sandbox evidence and object-store checks run before the same manifest can receive an
+ephemeral staging receipt. Trivy's database is time-varying, so the CI run is the authoritative
+scan result rather than a source-controlled claim that future scans will be clean.
+
+`.github/workflows/release.yml` is manual and downloads the immutable evidence from a named
+successful CI run. It reverifies the bundle at the exact commit, then crosses the `staging` and
+`production` GitHub environments in order without rebuilding or changing the image/model identity.
+Repository Owners must configure required reviewers and branch/tag policy on both environments;
+workflow YAML cannot create that administrative protection. The workflow records approval
+attestations only because no cloud/registry deployment target has been selected. It does not claim
+to deploy a live service. Database rollback is always `FORWARD_FIX_ONLY`; an application/model
+pointer rollback needs compatibility and smoke evidence and never blindly reverses migrations.
+
+No Kubernetes manifest is added. The one-command production-shaped local start is:
+
+```text
+uv run --env-file .env.example python -m eng.configure_local
+docker compose up --build -d --wait
+```
+
+Use `uv run --env-file .env.example python -m eng.smoke_deployment` to verify web readiness and
+migration currency, and `docker compose down` to stop the stack without deleting its volumes.
+
 
 ---
 
@@ -3685,6 +3807,39 @@ execution. The queue measure excludes broker scheduling and worker saturation. T
 development regression evidence only. Local fake external billed cost is $0; hosted LLM, external
 runner and production infrastructure cost are not yet measured. No capacity, customer-latency,
 hosted-provider-latency or production-runner-latency claim is made. See the raw artifact and docs/51.
+
+## M15 conditional-serving decision record
+
+Before reviewing M14 evidence, M15 fixes this representative workload and budget for each optional
+serving comparison: one bounded pull-request feature record, two application-worker replicas, CPU
+by default, no downloaded model and no external repository execution. The numeric hypotheses are:
+
+| Dimension | Budget |
+|---|---:|
+| resident model memory per worker | 768 MiB maximum |
+| cold model/process start | 10,000 ms maximum |
+| steady-state inference p95 | 250 ms maximum |
+| steady-state throughput | 4 records/second minimum |
+| broker queue-delay p95 | 2,000 ms maximum |
+| incremental serving infrastructure | USD 75/month maximum |
+
+These are extraction-decision budgets, not achieved production SLOs. A controlled environment,
+fixed fixture, warm/cold separation and sufficient repetitions are still required before a measured
+value can be compared to them.
+
+The RP-1402 decision is `DEFER_INSUFFICIENT_EVIDENCE`. The active risk artifact is the
+framework-light deterministic heuristic, not a resident learned model. M14 measured only a
+sequential in-process synthetic control-plane p95 and explicitly did not measure worker resident
+model memory, worker cold start, Redis/Celery queue delay, worker saturation or independent
+inference scaling/cost. No extraction criterion is demonstrated, and the additional authenticated
+service/trust boundary has not been operationally accepted. No FastAPI package or service is added.
+
+RP-1403 Ollama is `DEFER_INSUFFICIENT_EVIDENCE`: fake/hosted contracts exist, but there is no
+approved organization-local privacy demand, hardware profile, immutable local model/license review
+or grounding/schema evaluation. RP-1404 vLLM is also `DEFER_INSUFFICIENT_EVIDENCE`: there is no
+failing simpler-serving baseline, approved GPU, selected licensed model, privacy review, or measured
+throughput/cost advantage. Neither adapter/service is scaffolded. The exact machine-readable record
+is `artifacts/evaluation/m15_release_eval_v1.json`; it must be updated before revisiting any decision.
 
 
 ---
@@ -4502,6 +4657,23 @@ The Python packages live only in the `observability` dependency group and resolv
 not depend on it. Collector, Prometheus and Grafana images are manifest-digest pinned and publish
 only to loopback. They are not a production monitoring topology. No separate log backend, alert
 manager or hosted telemetry service is introduced in M14.
+
+## M15 production-packaging pins — verified and locked 2026-09-09
+
+| Package/tool | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| Gunicorn | `gunicorn==26.2.0` | The official [PyPI 26.2.0 release](https://pypi.org/project/gunicorn/26.2.0/) publishes a Python 3 wheel and identifies Gunicorn as a WSGI HTTP server. It resolves in the Python 3.13.15 uv lock and is used only by the Linux application image. |
+| Trivy Action | `v0.36.0` at commit `a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8` | The official [v0.36.0 release](https://github.com/aquasecurity/trivy-action/releases/tag/v0.36.0) is immutable/signed; CI pins its resolved full commit rather than a mutable tag. |
+| Trivy scanner | `v0.74.0` | The official [v0.74.0 release](https://github.com/aquasecurity/trivy/releases/tag/v0.74.0) is selected explicitly through the action's `version` input rather than inheriting its older default. |
+| upload-artifact | `ea165f8d65b6e75b540449e92b4886f43607fa02` (`v4.6.2`) | The official [v4.6.2 release](https://github.com/actions/upload-artifact/releases/tag/v4.6.2) supplies immutable artifact upload used for the SBOM, manifest and promotion receipts. |
+| download-artifact | `d3f86a106a0bac45b974a628896c90dbdf5c8093` (`v4.3.0`) | The official [v4.3.0 release](https://github.com/actions/download-artifact/releases/tag/v4.3.0) supports downloading an artifact from a named workflow run; the workflow pins the full commit. |
+
+The application image reuses the M9-verified digest-pinned Python 3.13.15 slim-bookworm base in both
+build and runtime stages. M15 adds no FastAPI, Ollama or vLLM pin: each conditional decision is
+`DEFER_INSUFFICIENT_EVIDENCE` under docs/20, so adding a dependency would violate its acceptance
+criteria. The image intentionally excludes the optional semantic dependency group and model
+weights because no semantic model is active; it includes the active runtime, ML, AI, agent,
+governance and observability groups from the unchanged lock.
 
 ## Dependency and image management
 
@@ -6294,6 +6466,188 @@ runner latency, and hosted-provider latency remain **not validated**.
   reviewability over bulk deletion speed.
 
 None permits a security, privacy, performance, capacity, cost, or customer-outcome claim.
+
+
+---
+
+# SOURCE FILE: `docs/52_M15_PRODUCTION_RELEASE.md`
+
+# 52 — M15 Production Packaging and Release Evidence
+
+## Scope and outcome
+
+M15 implements RP-1401, RP-1405 and RP-1406 and completes the conditional RP-1402, RP-1403 and
+RP-1404 decision records. It packages the existing Django modular monolith and Celery worker; it
+does not widen product behavior, enable external repository execution, promote a learned model or
+add Kubernetes.
+
+## Image and Compose topology
+
+`deploy/app/Dockerfile` is a two-stage image built from the same immutable Python 3.13.15 OCI digest
+used by the controlled fixture runner. The builder installs exact locked runtime groups and creates
+static assets. The runtime copies only the environment plus application adapters, Django apps,
+framework-light packages, workers, public model metadata and the active governance artifact. It
+does not copy tests, private model/data paths, Git metadata or the runner. UID/GID 65532 runs the
+image and Gunicorn 26.2.0 serves WSGI.
+
+The same `releaseproof-app:m15` build is used for three roles:
+
+- `migration` waits for healthy PostgreSQL and completes `migrate --noinput` once;
+- `web` starts only after migration success and healthy Redis/SeaweedFS, then exposes loopback port
+  8000 with liveness/readiness checks;
+- `worker` starts only after the same gates and exposes no host port.
+
+All three drop Linux capabilities, set `no-new-privileges`, use a read-only root filesystem and
+bounded tmpfs, PID, memory and CPU settings. Web/worker have an init process and bounded graceful
+shutdown. `SANDBOX_ENABLED=false` is fixed in the application environment. The fixture-only runner
+remains outside Compose, gets no application credential and shares no Docker socket.
+
+The local demo deliberately uses known local-only default credentials and loopback HTTP. Production
+settings still reject missing/short application and webhook secrets. TLS redirect and secure
+cookies default true outside this explicitly local Compose override, and forwarded-protocol trust
+is opt-in. A deployed Compose instance must inject the two `COMPOSE_*_SECRET` variables rather than
+using the public demo defaults. This is a production-shaped reproducible topology, not a public/HA
+production deployment.
+
+## Supply-chain gates
+
+The main CI job now performs these fail-closed steps before emitting promotion evidence:
+
+1. canonical format/lint/type/test/Django/migration/evaluation validation;
+2. Trivy 0.74.0 scan of locked dependencies for fixed High/Critical vulnerabilities;
+3. Trivy secret scan of the checked-out repository;
+4. one production application-image build;
+5. High/Critical fixed-vulnerability scan of that exact local image ID;
+6. CycloneDX JSON SBOM generation;
+7. `release-manifest-v1` binding source/image/model/data/migrations/evaluations/SBOM/provenance;
+8. migration-first Compose startup and bounded live deployment smoke;
+9. authoritative PostgreSQL, telemetry, fixture sandbox, SeaweedFS and MLflow evidence;
+10. an ephemeral staging receipt for the unchanged release manifest and artifact upload.
+
+`release-manifest-v1` rejects mutable image tags and external-repository execution. It records the
+full source commit, exact application `sha256:` image ID, active deterministic model hash, M5 model-
+registry manifest checksum, M4 synthetic dataset file and internal manifest checksums, migration
+tree, evaluation bundle, CycloneDX SBOM and a checksum over Dockerfile/lock/source/image build
+provenance. Verification recomputes those bindings from the checked-out revision.
+
+Trivy findings are evaluated at CI time against its downloaded advisory database. The source-
+controlled M15 artifact proves gate configuration and deterministic contracts, not the absence of
+future CVEs. Local provenance is checksum-bound but unsigned. Registry/OIDC provenance remains
+deferred because no registry/deployment target is selected.
+
+## Promotion and rollback
+
+The manual protected-release workflow takes a successful CI run ID and full source commit. It
+downloads the named immutable CI artifact, checks out exactly that revision, and recomputes the
+manifest. The same bundle then crosses GitHub `staging` and `production` environments in order.
+Each receipt retains the original manifest/image/model hashes and requires migrations, evaluations,
+smoke and compatibility evidence before approval.
+
+The workflow is an approval/evidence contract, not a cloud deployment adapter. A repository Owner
+must configure required reviewers and branch/tag protection for both GitHub environments before
+using it for a real release. There is no implicit rebuild, `docker push`, provider credential or
+deployment command.
+
+Rollback changes only to a previously recorded compatible application/model release after target
+smoke evidence. The database strategy is always `FORWARD_FIX_ONLY`; ReleaseProof never blindly
+reverses an applied destructive migration. Risky future schema work must use expand/contract and
+provide a compatible target window.
+
+## Conditional model-serving decisions
+
+The predeclared docs/20 budget is 768 MiB resident model memory per worker, 10 s cold start,
+250 ms steady p95, at least 4 records/s, 2 s queue-delay p95 and at most USD 75/month incremental
+infrastructure. These are decision hypotheses, not achieved SLOs.
+
+| Issue | Decision | Evidence gap |
+|---|---|---|
+| RP-1402 FastAPI | `DEFER_INSUFFICIENT_EVIDENCE` | no active resident learned model; worker RSS/startup, broker delay/saturation and independent scaling economics not measured |
+| RP-1403 Ollama | `DEFER_INSUFFICIENT_EVIDENCE` | no approved local-privacy demand, hardware/model/license selection or schema/grounding evaluation |
+| RP-1404 vLLM | `DEFER_INSUFFICIENT_EVIDENCE` | no failing simple baseline, approved GPU/model/privacy review or measured throughput/cost benefit |
+
+No optional service or package is scaffolded. Revisit only by updating the predeclared workload,
+running a controlled comparison and accepting the new operational/security boundary.
+
+## Reproduction
+
+```text
+uv sync --frozen --group dev --group ml --group ai --group semantic --group agent --group governance --group observability
+uv run python -m eng.evaluate_m15_release --check
+uv run pytest tests/unit/test_release_contracts.py tests/unit/test_m15_packaging.py
+uv run --env-file .env.example python -m eng.configure_local
+docker compose config --quiet
+docker build --file deploy/app/Dockerfile --tag releaseproof-app:m15 .
+docker compose up -d --wait
+uv run --env-file .env.example python -m eng.smoke_deployment
+docker compose down
+```
+
+The committed `m15-release-evaluation-v1` artifact is deterministic, synthetic contract evidence.
+It does not claim production capacity, cloud deployment, hosted/local-provider quality, GPU
+performance or Kubernetes readiness.
+
+
+---
+
+# SOURCE FILE: `docs/53_M15_OWNER_LEARNING_NOTE.md`
+
+# 53 — M15 Owner Learning Note
+
+## 1. Concept implemented
+
+M15 turns one source tree into a migration-first, non-root web/worker application image and adds an
+immutable release manifest, CI supply-chain checks, protected promotion evidence and safe rollback
+rules. It also applies a predeclared evidence gate to optional model-serving technology.
+
+## 2. Why it is used here
+
+A release recommendation system is only credible if the code, model, dataset/evaluation evidence
+and database state being reviewed are the same artifacts being promoted. Building once and binding
+digests prevents a staging pass from silently approving a different production build. Migration-
+first startup prevents new code from serving against an old schema. The serving gate prevents an
+extra network service/GPU stack from being introduced without a measured problem it solves.
+
+## 3. Assumptions
+
+- PostgreSQL remains authoritative; Redis/worker health is transport evidence, not product state.
+- Compose is a local production-shaped topology, not high availability or public ingress.
+- The deterministic risk heuristic remains active; no resident learned model requires extraction.
+- Trivy findings depend on the advisory database available during the run.
+- GitHub environment protection is configured by a repository Owner outside workflow YAML.
+- App/model rollback is safe only inside a proven schema-compatibility window; database recovery is
+  a forward fix, never an automatic destructive reverse migration.
+
+## 4. Key code paths
+
+- `deploy/app/Dockerfile`: builder/runtime separation and non-root image.
+- `compose.yaml`: migration, web and worker dependency/security/health gates.
+- `packages/release_core/contracts.py`: image/model identity, promotion and rollback invariants.
+- `eng/release_manifest.py`: build/recompute/verify immutable evidence and promotion receipts.
+- `eng/evaluate_m15_release.py`: reproducible conditional-serving and packaging evidence.
+- `.github/workflows/ci.yml`: scans, build, SBOM, manifest, live smoke and staging receipt.
+- `.github/workflows/release.yml`: ordered protected staging/production attestations.
+
+## 5. Exact rerun
+
+```text
+uv run python -m eng.evaluate_m15_release --check
+uv run pytest tests/unit/test_release_contracts.py tests/unit/test_m15_packaging.py
+uv run --env-file .env.example python -m eng.configure_local
+docker compose up --build -d --wait
+uv run --env-file .env.example python -m eng.smoke_deployment
+docker compose down
+```
+
+## 6. Likely interview question
+
+**Why did you not add FastAPI or vLLM when packaging the ML system?**
+
+Because a separate inference service is an operational and security cost, not an automatic upgrade.
+The active model is a small deterministic heuristic, and the existing evidence does not measure a
+worker memory, cold-start, latency, queueing, dependency-isolation, GPU or independent-scaling
+failure. The predeclared gate therefore returns `DEFER_INSUFFICIENT_EVIDENCE`; extraction becomes
+appropriate only when a controlled benchmark shows a criterion is violated and the new boundary's
+cost is accepted.
 
 
 ---

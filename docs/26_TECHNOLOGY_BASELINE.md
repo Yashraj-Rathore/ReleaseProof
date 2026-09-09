@@ -229,6 +229,23 @@ not depend on it. Collector, Prometheus and Grafana images are manifest-digest p
 only to loopback. They are not a production monitoring topology. No separate log backend, alert
 manager or hosted telemetry service is introduced in M14.
 
+## M15 production-packaging pins — verified and locked 2026-09-09
+
+| Package/tool | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| Gunicorn | `gunicorn==26.2.0` | The official [PyPI 26.2.0 release](https://pypi.org/project/gunicorn/26.2.0/) publishes a Python 3 wheel and identifies Gunicorn as a WSGI HTTP server. It resolves in the Python 3.13.15 uv lock and is used only by the Linux application image. |
+| Trivy Action | `v0.36.0` at commit `a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8` | The official [v0.36.0 release](https://github.com/aquasecurity/trivy-action/releases/tag/v0.36.0) is immutable/signed; CI pins its resolved full commit rather than a mutable tag. |
+| Trivy scanner | `v0.74.0` | The official [v0.74.0 release](https://github.com/aquasecurity/trivy/releases/tag/v0.74.0) is selected explicitly through the action's `version` input rather than inheriting its older default. |
+| upload-artifact | `ea165f8d65b6e75b540449e92b4886f43607fa02` (`v4.6.2`) | The official [v4.6.2 release](https://github.com/actions/upload-artifact/releases/tag/v4.6.2) supplies immutable artifact upload used for the SBOM, manifest and promotion receipts. |
+| download-artifact | `d3f86a106a0bac45b974a628896c90dbdf5c8093` (`v4.3.0`) | The official [v4.3.0 release](https://github.com/actions/download-artifact/releases/tag/v4.3.0) supports downloading an artifact from a named workflow run; the workflow pins the full commit. |
+
+The application image reuses the M9-verified digest-pinned Python 3.13.15 slim-bookworm base in both
+build and runtime stages. M15 adds no FastAPI, Ollama or vLLM pin: each conditional decision is
+`DEFER_INSUFFICIENT_EVIDENCE` under docs/20, so adding a dependency would violate its acceptance
+criteria. The image intentionally excludes the optional semantic dependency group and model
+weights because no semantic model is active; it includes the active runtime, ML, AI, agent,
+governance and observability groups from the unchanged lock.
+
 ## Dependency and image management
 
 - Use only uv for the Python environment; commit `pyproject.toml`, `.python-version` and `uv.lock`.

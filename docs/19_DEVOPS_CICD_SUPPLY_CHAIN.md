@@ -49,3 +49,49 @@ Later: semver/tag, immutable image/model IDs, SBOM/provenance, vulnerability gat
 
 ## Kubernetes
 Optional and justified only by runner/model/GPU/resource/replica needs. Select one deployment packaging approach by ADR; do not build multiple orchestrator stacks for keywords.
+
+## M15 implementation
+
+M15 adds a multi-stage `deploy/app/Dockerfile` from the existing digest-pinned Python 3.13.15
+base. The runtime stage contains one shared application artifact for the migration, web and worker
+roles, runs as UID/GID 65532, omits tests/private-model paths/the runner, and uses Gunicorn 26.2.0
+for WSGI serving. Compose gates web and worker startup on the successful one-shot migration job and
+healthy PostgreSQL, Redis and SeaweedFS dependencies. Application services use read-only root
+filesystems, bounded tmpfs/PID/CPU/memory settings, dropped capabilities and
+`no-new-privileges`. All published ports remain loopback-only. The separate ADR-018 runner is not
+in this stack and no Docker socket is mounted.
+
+The production settings remain fail-closed for secrets and hosts. TLS redirect defaults on and
+proxy-header trust defaults off; the explicitly local Compose demo disables redirect and secure
+cookies because it publishes only loopback HTTP. The Compose defaults are public local-demo
+credentials and are not a production secret-management design. A real deployment must inject
+`COMPOSE_DJANGO_SECRET_KEY`/`COMPOSE_GITHUB_WEBHOOK_SECRET`, enable secure cookies and deliberately
+configure its trusted TLS proxy.
+
+CI builds `releaseproof-app:m15` once, scans the locked source and exact built image for High/
+Critical fixed vulnerabilities, scans the repository for secrets, emits a CycloneDX SBOM, then
+records the image ID (`sha256:...`) in `release-manifest-v1`. The manifest also binds the full source
+revision, active deterministic model, model registry, synthetic dataset manifest, migration tree,
+evaluation bundle, SBOM and local build provenance. The production-shaped Compose smoke, live
+fixture sandbox evidence and object-store checks run before the same manifest can receive an
+ephemeral staging receipt. Trivy's database is time-varying, so the CI run is the authoritative
+scan result rather than a source-controlled claim that future scans will be clean.
+
+`.github/workflows/release.yml` is manual and downloads the immutable evidence from a named
+successful CI run. It reverifies the bundle at the exact commit, then crosses the `staging` and
+`production` GitHub environments in order without rebuilding or changing the image/model identity.
+Repository Owners must configure required reviewers and branch/tag policy on both environments;
+workflow YAML cannot create that administrative protection. The workflow records approval
+attestations only because no cloud/registry deployment target has been selected. It does not claim
+to deploy a live service. Database rollback is always `FORWARD_FIX_ONLY`; an application/model
+pointer rollback needs compatibility and smoke evidence and never blindly reverses migrations.
+
+No Kubernetes manifest is added. The one-command production-shaped local start is:
+
+```text
+uv run --env-file .env.example python -m eng.configure_local
+docker compose up --build -d --wait
+```
+
+Use `uv run --env-file .env.example python -m eng.smoke_deployment` to verify web readiness and
+migration currency, and `docker compose down` to stop the stack without deleting its volumes.
