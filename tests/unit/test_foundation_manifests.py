@@ -53,7 +53,11 @@ def test_compose_images_are_exact_and_ports_are_loopback_only() -> None:
     assert "python:3.13.15-slim-bookworm@sha256:" in mlflow_dockerfile
     assert "USER 65532:65532" in mlflow_dockerfile
     assert "--storage.tsdb.retention.time=7d" in compose
+    assert "--web.enable-lifecycle=false" not in compose
     assert "GF_AUTH_ANONYMOUS_ENABLED" in compose
+    assert 'GF_PLUGINS_PLUGIN_ADMIN_ENABLED: "false"' in compose
+    assert 'GF_PLUGINS_PREINSTALL_AUTO_UPDATE: "false"' in compose
+    assert 'GF_PLUGINS_PREINSTALL_DISABLED: "true"' in compose
     assert "no-new-privileges:true" in compose
 
 

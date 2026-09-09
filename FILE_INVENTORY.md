@@ -15,7 +15,7 @@ checkout-independent.
 | `.python-version` | 8 | `861b3dd8083d28f336ef70f6755bc399538ddad627b1d095820ca34cb953cf14` |
 | `AGENTS.md` | 7313 | `0abf3b78b53895e7086b9f9851f7c4ca5cc8ce4e8c6d0c125079712fe6d02f6e` |
 | `CHANGELOG.md` | 20209 | `12afdea337977b34d0e5ae3ebd5221e904e1524d5c28ddd47ba22ecc8de16e6b` |
-| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 431187 | `a8d34c007868fe93697613e262d87549ca1701ba8377e8106b0cebbb85323f4e` |
+| `CODEX_MASTER_IMPLEMENTATION_SPEC.md` | 431370 | `f415d0701a42ac312954fe8c8c8b4bcf9adc67b5800b54a76d61311143d0d763` |
 | `CODEX_PROMPT_SEQUENCE.md` | 4186 | `01f5b7913c8d80546d92ce6d00ea16d2bd251fd0f4213eee32eac5ecf235ec35` |
 | `CODEX_START_HERE.md` | 2443 | `225d7bd9451e0c8f9911dbb88bdd7c806e79e24ddf1458f12b7cfa2cec5b4e7e` |
 | `IMPLEMENTATION_CHECKLIST.md` | 1717 | `6e5415e77c4a1d66eb14706b8a1ad1322fd2a44831b117111f4264e3832be525` |
@@ -198,7 +198,7 @@ checkout-independent.
 | `codex-prompts/15_CONTAINERS_CICD_MODEL_SERVING.md` | 2101 | `f75b8fc3fedaf6605907af29a3a5bc02d8c14abe2035ff24e9f1a58bdc8ea593` |
 | `codex-prompts/16_DEMO_PILOT.md` | 1655 | `d26c4920c437bf6ab2966e1f19473bdd4074e3d71a5c74795f0a483a182daa99` |
 | `codex-prompts/17_FINAL_ARCHITECTURE_REVIEW.md` | 1800 | `4a5eb30e68bffac22d0eeb182ec4f026b6d824daa96eab7a4afae71a91da1264` |
-| `compose.yaml` | 6333 | `b77e1f63ea32244ca795d7605dffad147750fd2883b5d057b4f35e796e574139` |
+| `compose.yaml` | 6437 | `0a182db5c9edcc68b0f5ce2f8a5543385eb6dd754dc2a44f0d9bf681d8012504` |
 | `datasets/README.md` | 679 | `c4c706e338a562ed6d1e59ece02dac1c4338f93c7d0c8994929538a702958ad5` |
 | `datasets/public/m11_semantic_dataset_v1.json` | 12957 | `c56e3ee5b97fdcec858cbe13103af8032736f58a3d83915f0b8f098d61621782` |
 | `deploy/README.md` | 1403 | `8b09c58875cf38dab9e2bd87088b52b41f067511a25bbb03a289e19509a7808f` |
@@ -226,8 +226,8 @@ checkout-independent.
 | `docs/15_SECURITY_PRIVACY_TRUST.md` | 12600 | `804f5f5c71d4d231c5c384f2af46e0521265ef6c174a78d4de5dc7f6fcbdc7ab` |
 | `docs/16_TESTING_QUALITY_EVALUATION.md` | 12181 | `4b2fd7035426810594c2300da6d25ba6431e4e6b57f29d8b5fa08425dc74e4ab` |
 | `docs/17_MLOPS_MODEL_GOVERNANCE.md` | 6310 | `f523d380ee2bd11fe69496e4879d31560ea1ff7ddf3f554dfc7bca188fc39229` |
-| `docs/18_OBSERVABILITY_OPERATIONS.md` | 3239 | `bc63fedd4090aceafb4ab86876c7da6db9a9550627b5ae72e43dfa119f34861b` |
-| `docs/19_DEVOPS_CICD_SUPPLY_CHAIN.md` | 3296 | `fd844b648f549b687b873045562866f1c526dda5d7cc2694a091bd2601fa54d8` |
+| `docs/18_OBSERVABILITY_OPERATIONS.md` | 3308 | `54e6bcdc8170134df754b571f71e3465ba135f4eac4c5971a13ff4f55a97b727` |
+| `docs/19_DEVOPS_CICD_SUPPLY_CHAIN.md` | 3333 | `5f4600cb63f9b1cde5712e43b730bb674a9b7e9f1eb6063157256aa4d19e2bea` |
 | `docs/20_PERFORMANCE_CAPACITY_COST.md` | 2874 | `832a73e08e36402da3f133c1bd9e787305138d704c2d6ac6cd3f310b6a28dcf9` |
 | `docs/21_TIMELINE_MILESTONES.md` | 1385 | `46c7f49a453b10201af63a71490011a81ee50d967e463926e173b3286d1be2a0` |
 | `docs/22_BACKLOG_AND_ACCEPTANCE.md` | 23959 | `eac9e0f63f457f3fad064fed368cd3196437d2bb70685fb17ed858533f67b978` |
@@ -259,7 +259,7 @@ checkout-independent.
 | `docs/48_M12_OWNER_LEARNING_NOTE.md` | 4014 | `03c4253fdac9c36fdbad488461a32e39877bb35bd949e3478a3858b40cf35cdc` |
 | `docs/49_M13_GOVERNANCE_EVALUATION.md` | 7056 | `56dd4bc4d8dff1af25f34d2f0001df404fc2eed3ddb50c93d9f0f2b670332f68` |
 | `docs/50_M13_OWNER_LEARNING_NOTE.md` | 3220 | `c8884c5b35d4163b7f233373cda6e930d4d106b3350d128be89618badc1fb216` |
-| `docs/51_M14_SECURITY_RELIABILITY_REVIEW.md` | 11839 | `c61e565f53e2bb88719d5a5dc4fbce3bea9857afb451a57ddf542208058eb38b` |
+| `docs/51_M14_SECURITY_RELIABILITY_REVIEW.md` | 11916 | `e4d012a2fe7d217f454997b4b95e9d4242c7b48f9e9bdde40e475622ed34d773` |
 | `docs/PRODUCTIZATION_BLUEPRINT.md` | 11359 | `34cf4691b736b0e136bdb8b93786591c861a7c921dc5b6bc2c1441a810c57d65` |
 | `docs/decisions/ADR-001_MODULAR_MONOLITH_FIRST.md` | 505 | `23b70409efcaf6556f951b5ddc5b61270fc09b504539e687e35703841febff97` |
 | `docs/decisions/ADR-002_POSTGRES_PGVECTOR_FIRST.md` | 409 | `af6c206ea146fdec71a08cf222adf96a00ee94878bee58916e32c95efa032978` |
@@ -297,7 +297,7 @@ checkout-independent.
 | `eng/smoke_fakes.py` | 2727 | `ae06ed761ec1ac2866113f01e8c71d3373ad03e5544e030aaeae121dba61750d` |
 | `eng/smoke_mlflow.py` | 1830 | `ec36cdfcbf5cb3af8b2e1ba040157ccc8381b8dc9f2c2bdd383a7f35b839fb74` |
 | `eng/smoke_object_store.py` | 1137 | `0175e58cdab9162f9d06c2cdae2ed57b791f13a8bcca1fa9bef0d734ddee53ea` |
-| `eng/smoke_observability.py` | 2965 | `9ae643f0fada25b044dea38e76f18f9092d07e13be681db058759f0b3d87acaa` |
+| `eng/smoke_observability.py` | 3067 | `9538337ed9eb46a74b055a2804e9e4d8681f72ae487a594e49b5935303a599ec` |
 | `eng/sync_master_spec.py` | 2362 | `39961f3f4afdf9f2097b0b0686b50970d4806d944469eb8a3d4ff6e29e42058b` |
 | `eng/update_file_inventory.py` | 3072 | `0400e8bda9d0d6b9d575be8c9fe41d55495437df58e83c6456aa0b0b311bb06f` |
 | `eng/validate.py` | 1909 | `3a722bb0823cb6a030a6f98ca49610c111101edbd7ab7893dcb2203a5b745dae` |
@@ -442,7 +442,7 @@ checkout-independent.
 | `tests/unit/test_differential_contracts.py` | 6489 | `6d206ef3e789b9069be43a52e2004c8208556e504b4d487238425366bd6b5939` |
 | `tests/unit/test_execution_contracts.py` | 6589 | `1fd990d8eda8c961d4e025c4fc551f06a04b6e3d2ac7e93ca8c2032456eef4bb` |
 | `tests/unit/test_fixture_entrypoint.py` | 979 | `3f4d603125cee2d5e80bd47d0f76c07ccffff62942182952c298f79638250664` |
-| `tests/unit/test_foundation_manifests.py` | 5854 | `dae73d93f5b4e4b5dcdc960aa7f71afecaef11417246f541f352f3fe32235800` |
+| `tests/unit/test_foundation_manifests.py` | 6106 | `f15edd149d2b89e6864a7a25b2ac7b4659dc5ab4e27d6a35eca86b966f46c645` |
 | `tests/unit/test_github_auth_contract.py` | 2167 | `dd621394f5b7e43b7824189f3437a936b3a1aa909ba8a7fa6d99b464e2ca9452` |
 | `tests/unit/test_governance.py` | 12385 | `25a5493f088a96ce3fbd1590d366ee26b6d3ba2be2b94c87c2665a12d71410e0` |
 | `tests/unit/test_llm_core.py` | 7991 | `5f99ce5533d79fd947cd4523d83e0ca1d92b079bbd111d96e0454d46237f5dc0` |

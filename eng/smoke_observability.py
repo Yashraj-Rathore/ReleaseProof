@@ -53,7 +53,11 @@ def main() -> int:
     )
     deadline = time.monotonic() + 30
     while time.monotonic() < deadline:
-        result = _read_json(query_url)
+        try:
+            result = _read_json(query_url)
+        except (OSError, ValueError):
+            time.sleep(1)
+            continue
         data = result.get("data")
         if result.get("status") == "success" and isinstance(data, dict) and data.get("result"):
             print(json.dumps({"metric": "releaseproof_smoke_events_total", "status": "verified"}))

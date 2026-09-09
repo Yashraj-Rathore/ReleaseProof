@@ -23,7 +23,7 @@ remains the active model, and no production capacity or security certification i
 | M14-S06 | Medium | Unbounded metric attributes could expose tenant/source identity and cause cardinality abuse. | Product metrics accept enum component/outcome attributes only. Organization, repository, user, path, prompt, source and artifact identifiers are not labels. | Low |
 | M14-S07 | Medium | Artifact deletion could remove the wrong object or leave active lineage inconsistent. | Only the configured S3 bucket is supported; metadata checksum must match object metadata before deletion. Protected/active lineage is reported blocked rather than bypassed. Unsupported artifact schemes remain blocked. | Low |
 | M14-S08 | Medium | Uploaded bodies or URL-like values could become memory/SSRF primitives. | Django upload bounds and versioned per-request/upload-count policy fail before persistence. There is no general upload endpoint. GitHub hosts/S3 endpoints remain operator configuration; artifact URIs reject credentials/query/fragment; no user URL fetcher is introduced. | Low |
-| M14-S09 | Medium | Local observability/MLflow UIs could be exposed with weak defaults. | Collector, Prometheus, Grafana and MLflow publish on loopback; telemetry images are digest-pinned, capability-dropped, read-only where feasible, and Grafana disables anonymous access/sign-up/analytics. MLflow remains unauthenticated local-only. | Low |
+| M14-S09 | Medium | Local observability/MLflow UIs could be exposed with weak defaults. | Collector, Prometheus, Grafana and MLflow publish on loopback; telemetry images are digest-pinned, capability-dropped, read-only where feasible, and Grafana disables anonymous access/sign-up/analytics plus plugin installation/updates. MLflow remains unauthenticated local-only. | Low |
 
 ## Boundary review
 
@@ -116,7 +116,8 @@ rejects an incomplete matrix, false-SHIP allowance, unsupported validation claim
   trace diagnostics locally, deletes sensitive HTTP/process trace attributes, batches, and limits
   memory. Application metric attributes are already a closed enum set.
 - Prometheus retains at most seven days/512 MB locally. Grafana has a non-editable Prometheus
-  datasource and no anonymous access. CI sends a bounded metric/span and queries the series.
+  datasource, no anonymous access and no plugin installation/automatic updates. CI sends a bounded
+  metric/span and queries the series.
 - Application logs remain structured stdout; M14 adds no log backend or raw messages to traces.
 
 ## Performance and cost evidence

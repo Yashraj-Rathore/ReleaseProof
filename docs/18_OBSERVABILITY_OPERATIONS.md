@@ -41,8 +41,9 @@ only bounded event metadata and exception type, never exception text. The local 
 Collector/Prometheus/Grafana stack is loopback-only. It receives OTLP/HTTP traces and metrics,
 deletes sensitive HTTP/process trace attributes, limits/batches memory, retains Prometheus data for
 seven days/512 MB and disables Grafana anonymous access/sign-up/analytics. Application metric
-attributes are already closed enums. CI proves a bounded metric and span reach the collector and
-that Prometheus can query the series.
+attributes are already closed enums. Grafana plugin installation and automatic updates are also
+disabled. CI proves a bounded metric and span reach the collector and that Prometheus can query the
+series.
 
 PostgreSQL is the quota authority. The versioned operational policy independently accounts for
 tenant/user requests plus LLM token/cost and runner CPU budgets. Seven failure drills require safe

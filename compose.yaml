@@ -151,7 +151,6 @@ services:
       - --storage.tsdb.path=/prometheus
       - --storage.tsdb.retention.time=7d
       - --storage.tsdb.retention.size=512MB
-      - --web.enable-lifecycle=false
     ports:
       - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
     volumes:
@@ -174,6 +173,9 @@ services:
       GF_ANALYTICS_REPORTING_ENABLED: "false"
       GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
       GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_PLUGINS_PLUGIN_ADMIN_ENABLED: "false"
+      GF_PLUGINS_PREINSTALL_AUTO_UPDATE: "false"
+      GF_PLUGINS_PREINSTALL_DISABLED: "true"
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-replace-local-password}
       GF_SECURITY_DISABLE_GRAVATAR: "true"
       GF_USERS_ALLOW_SIGN_UP: "false"
