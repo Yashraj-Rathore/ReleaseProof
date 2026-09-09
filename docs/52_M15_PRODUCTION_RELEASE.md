@@ -14,7 +14,9 @@ used by the controlled fixture runner. The builder installs exact locked runtime
 static assets. The runtime copies only the environment plus application adapters, Django apps,
 framework-light packages, workers, public model metadata and the active governance artifact. It
 does not copy tests, private model/data paths, Git metadata or the runner. UID/GID 65532 runs the
-image and Gunicorn 26.2.0 serves WSGI.
+image and Gunicorn 26.2.0 serves WSGI. The runtime removes pip and setuptools after dependency
+installation; they are build tools, not runtime requirements, and removing pip also removes its
+vendored package copies from the attack/scan surface.
 
 The same `releaseproof-app:m15` build is used for three roles:
 
@@ -60,6 +62,12 @@ Trivy findings are evaluated at CI time against its downloaded advisory database
 controlled M15 artifact proves gate configuration and deterministic contracts, not the absence of
 future CVEs. Local provenance is checksum-bound but unsigned. Registry/OIDC provenance remains
 deferred because no registry/deployment target is selected.
+
+The first M15 run (`34375441897`) proved the source dependency/secret gates and application build,
+then correctly stopped on two fixed High Python findings: pip's vendored msgpack 1.1.2 and the base
+image's setuptools 70.3.0. Neither is required at runtime, so the remediation removes pip and
+setuptools from the final stage instead of suppressing either advisory. A later successful run is
+required before M15 can claim live container validation.
 
 ## Promotion and rollback
 

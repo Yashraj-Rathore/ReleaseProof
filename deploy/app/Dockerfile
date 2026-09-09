@@ -31,6 +31,8 @@ RUN DJANGO_SETTINGS_MODULE=apps.web.releaseproof.settings.test \
 
 FROM python:3.13.15-slim-bookworm@sha256:ed86c82274b3c69b52fb5820f358f0bd7df0b603332063cb5c6e32bd220c3e6e AS runtime
 
+RUN /usr/local/bin/python -m pip uninstall --yes pip setuptools
+
 ENV PATH=/opt/releaseproof/.venv/bin:$PATH \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1

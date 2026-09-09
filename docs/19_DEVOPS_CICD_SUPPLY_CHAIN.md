@@ -55,7 +55,9 @@ Optional and justified only by runner/model/GPU/resource/replica needs. Select o
 M15 adds a multi-stage `deploy/app/Dockerfile` from the existing digest-pinned Python 3.13.15
 base. The runtime stage contains one shared application artifact for the migration, web and worker
 roles, runs as UID/GID 65532, omits tests/private-model paths/the runner, and uses Gunicorn 26.2.0
-for WSGI serving. Compose gates web and worker startup on the successful one-shot migration job and
+for WSGI serving. The final stage removes build-only pip/setuptools (and pip's vendored libraries)
+after CI exposed two fixed High findings in the first image scan. Compose gates web and worker
+startup on the successful one-shot migration job and
 healthy PostgreSQL, Redis and SeaweedFS dependencies. Application services use read-only root
 filesystems, bounded tmpfs/PID/CPU/memory settings, dropped capabilities and
 `no-new-privileges`. All published ports remain loopback-only. The separate ADR-018 runner is not

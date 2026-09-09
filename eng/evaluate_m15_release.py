@@ -152,6 +152,9 @@ def build_artifact() -> dict[str, object]:
             "base_image_digest_pinned": "python:3.13.15-slim-bookworm@sha256:" in dockerfile,
             "multi_stage": " AS builder" in dockerfile and " AS runtime" in dockerfile,
             "non_root_uid": "USER 65532:65532" in dockerfile,
+            "runtime_build_tooling_removed": (
+                "python -m pip uninstall --yes pip setuptools" in dockerfile
+            ),
             "gunicorn_version": GUNICORN_VERSION,
             "compose_services": ["migration", "web", "worker"],
             "migration_dependency_gate": "condition: service_completed_successfully" in compose,

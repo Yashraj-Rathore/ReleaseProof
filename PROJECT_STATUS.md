@@ -1,7 +1,7 @@
 # Project Status
 
-**Current state: M15 production packaging and release evidence is implementation-complete locally
-on 2026-09-09; the first Linux image/scan/Compose run for this unpushed commit is pending.**
+**Current state: M15 production packaging and release evidence is remediated locally on 2026-09-09;
+the first Linux run stopped on two fixed High build-tool findings and the clean rerun is pending.**
 
 The repository now has one multi-stage non-root application artifact for migration/web/worker,
 migration-first production-shaped Compose, immutable image/model/data/evaluation/SBOM/provenance
@@ -11,7 +11,7 @@ execution remains disabled and the deterministic heuristic remains active.
 
 ## Next action
 
-Push this exact M15 commit and require the Linux CI image build, Trivy dependency/secret/image
+Push the exact M15 remediation commit and require the Linux CI image build, Trivy dependency/secret/image
 scans, CycloneDX SBOM, release-manifest verification, migration-first Compose smoke, PostgreSQL,
 telemetry, sandbox, SeaweedFS and MLflow gates to pass. After that evidence, begin M16 recruiter
 demo/pilot work without enabling external repository execution or unqualified learned models.
@@ -20,7 +20,8 @@ demo/pilot work without enabling external repository execution or unqualified le
 
 - `deploy/app/Dockerfile` uses the exact Python 3.13.15 base digest in builder/runtime stages,
   installs the locked active runtime groups, serves Django with Gunicorn 26.2.0 as UID/GID 65532
-  and excludes tests, private caches and the runner.
+  and excludes tests, private caches and the runner. The final stage removes build-only pip,
+  setuptools and pip's vendored libraries.
 - The same `releaseproof-app:m15` image backs a one-shot migration job, web and Celery worker.
   Compose gates on healthy dependencies/migration success; the application services use read-only
   roots, bounded tmpfs/PIDs/CPU/memory, no added capabilities, no Docker socket and loopback-only
@@ -42,10 +43,13 @@ demo/pilot work without enabling external repository execution or unqualified le
   skipped and three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 236
   source files, Django checks, migration drift, generated docs/inventory and M4-M15 artifact checks
   passed. Focused M15 tests passed 17/17. M15 artifact root SHA-256 is
-  `a1fc8e31b6dc0a5ba4e684505dcf3e20150c86bd09eb0e141f1e320ce0a91d28`.
+  `b15ee0569f6ad348f29262dc5c992decdf6672f7e89d2662d7ccdba09869e261`.
 - `docker compose config --quiet` passed locally. Docker Engine was not running on this host, so no
-  local image build/startup or Trivy scan is claimed; those Linux gates are intentionally pending
-  the first GitHub Actions run for this commit and will be monitored before handoff.
+  local image build/startup or Trivy scan is claimed. GitHub Actions run `34375441897` passed the
+  canonical validator, dependency scan, secret scan, Compose configuration and application build,
+  then stopped at the image gate on pip-vendored msgpack 1.1.2 (`GHSA-6v7p-g79w-8964`) and base
+  setuptools 70.3.0 (`CVE-2025-47273`). Both build-only packages are now removed from the runtime
+  stage without an ignore/VEX; the complete clean Linux rerun is pending this status-bearing fix.
 
 ## M14 evidence
 
@@ -466,6 +470,6 @@ and its remote M2 result is tracked in GitHub Actions.
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
 | M13 MLflow/governance | Complete - RP-1201..RP-1206; CI run 34168800664 passed |
 | M14 security/ops | Complete - RP-1301..RP-1306; CI run 34367370527 passed |
-| M15 containers/CI/model serving | Implementation complete locally — RP-1401..RP-1406; first Linux CI run pending |
+| M15 containers/CI/model serving | Remediated locally — RP-1401..RP-1406; clean Linux CI rerun pending |
 | M16 demo/pilot | Not started |
 | M17 final review | Not started |

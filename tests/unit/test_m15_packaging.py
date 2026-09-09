@@ -13,6 +13,7 @@ def test_application_image_is_multi_stage_non_root_and_does_not_embed_runner() -
     assert " AS runtime" in dockerfile
     assert "USER 65532:65532" in dockerfile
     assert '"gunicorn==26.2.0"' in (ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    assert "python -m pip uninstall --yes pip setuptools" in dockerfile
     assert "COPY runner" not in dockerfile
     assert "COPY tests" not in dockerfile
     assert "COPY models/private" not in dockerfile

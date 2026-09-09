@@ -172,6 +172,9 @@
 - Added an authoritative PostgreSQL test pass to CI after Compose readiness so database-specific
   tenant and immutability controls cannot be inferred only from SQLite tests; the step uses an
   explicit public test-only webhook signing value while `.env.example` remains secret-free.
+- Removed build-only pip/setuptools and pip's vendored libraries from the final application image
+  after the first M15 Trivy run identified fixed High msgpack/setuptools findings; no advisory was
+  ignored or suppressed.
 - Resolved the fixture runner's allowlisted `python` command through the image's current
   interpreter so its deliberately minimal, secret-free child environment does not require `PATH`;
   invalid runner output reports a bounded category, with a sanitized/length-bounded daemon detail

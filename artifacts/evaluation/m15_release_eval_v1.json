@@ -137,7 +137,8 @@
     "health_checks": true,
     "migration_dependency_gate": true,
     "multi_stage": true,
-    "non_root_uid": true
+    "non_root_uid": true,
+    "runtime_build_tooling_removed": true
   },
   "promotion_and_rollback": {
     "automatic_database_reverse_allowed": false,
@@ -152,7 +153,7 @@
     ],
     "same_image_and_model_digests_required": true
   },
-  "root_sha256": "a1fc8e31b6dc0a5ba4e684505dcf3e20150c86bd09eb0e141f1e320ce0a91d28",
+  "root_sha256": "b15ee0569f6ad348f29262dc5c992decdf6672f7e89d2662d7ccdba09869e261",
   "schema_version": "m15-release-evaluation-v1",
   "supply_chain": {
     "cyclonedx_sbom": true,
