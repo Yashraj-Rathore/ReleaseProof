@@ -15,6 +15,12 @@ EXPECTED_IMAGES = {
     "chrislusf/seaweedfs:4.44@sha256:"
     "e67e8c385484120b78bff47ba5f4debbca47fbd27ed1a39f016f47e8baea615b",
     "releaseproof-mlflow:3.15.2",
+    "otel/opentelemetry-collector-contrib:0.159.0@sha256:"
+    "1f2c54a30e713fac6b3ae77a1ec84010c2007e29ced8ec666214fc2f6739c1cc",
+    "prom/prometheus:v3.14.0@sha256:"
+    "5ce7540c3c00ef4ab0c9d2c995c6a5b9c421f44b4a115d97a2c7af3b1c21cbb0",
+    "grafana/grafana:13.2.1@sha256:"
+    "f772d434e8fab0049deb2b1b30abd43342bcfca1537614aa8d36080232cf4283",
 }
 
 
@@ -33,7 +39,7 @@ def test_compose_images_are_exact_and_ports_are_loopback_only() -> None:
     assert {
         line.strip().removeprefix("image: ") for line in compose.splitlines() if "image:" in line
     } == EXPECTED_IMAGES
-    assert compose.count('"127.0.0.1:${') == 4
+    assert compose.count('"127.0.0.1:${') == 8
     assert "postgres_data:/var/lib/postgresql\n" in compose
     assert "postgres_data:/var/lib/postgresql/data" not in compose
     assert "dir/status?pretty=y" in compose
@@ -46,6 +52,9 @@ def test_compose_images_are_exact_and_ports_are_loopback_only() -> None:
     assert '"mlflow-skinny==3.15.2"' in (ROOT / "pyproject.toml").read_text(encoding="utf-8")
     assert "python:3.13.15-slim-bookworm@sha256:" in mlflow_dockerfile
     assert "USER 65532:65532" in mlflow_dockerfile
+    assert "--storage.tsdb.retention.time=7d" in compose
+    assert "GF_AUTH_ANONYMOUS_ENABLED" in compose
+    assert "no-new-privileges:true" in compose
 
 
 def test_local_seaweedfs_config_is_rendered_from_environment_template() -> None:
@@ -92,6 +101,8 @@ def test_ci_external_actions_are_pinned_to_full_commit_shas() -> None:
     assert workflow.index(postgres_settings) < workflow.index(
         "uv run --env-file .env.example python -m eng.bootstrap_object_store"
     )
+    assert "--group observability" in workflow
+    assert "python -m eng.smoke_observability" in workflow
 
 
 def test_file_inventory_normalizes_text_line_endings() -> None:

@@ -34,7 +34,7 @@ jobs:
       - name: Install pinned Python and dependencies
         run: |
           uv python install 3.13.15
-          uv sync --group dev --group ml --group ai --group semantic --group agent --group governance
+          uv sync --group dev --group ml --group ai --group semantic --group agent --group governance --group observability
 
       - name: Validate source, Django, tests, and generated docs
         run: uv run python eng/validate.py
@@ -48,6 +48,11 @@ jobs:
 
       - name: Start pinned local infrastructure
         run: docker compose up -d --wait
+
+      - name: Prove bounded telemetry export
+        env:
+          OTEL_SDK_DISABLED: "false"
+        run: uv run --env-file .env.example python -m eng.smoke_observability
 
       - name: Validate authoritative PostgreSQL contracts
         env:

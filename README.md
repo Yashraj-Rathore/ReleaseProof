@@ -74,7 +74,7 @@ The first working system is a **Django modular monolith + Celery workers + Postg
 - Testcontainers
 - Playwright
 - Ruff + mypy/django-stubs
-- OpenTelemetry + Prometheus/Grafana in later milestones
+- OpenTelemetry + local Prometheus/Grafana with bounded, redacted M14 telemetry
 - GitHub Actions
 - Docker Compose first; optional Kubernetes later
 

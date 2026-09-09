@@ -19,6 +19,13 @@ evidence only; ADR-018 requires rootless Docker on a dedicated disposable host f
 fixture runner. The runner is not added to the application Compose stack and no application
 container receives its Docker socket.
 
+M14 adds digest-pinned OpenTelemetry Collector, Prometheus and Grafana services to the local
+Compose dependency graph. Every published port is loopback-only; the services are capability-
+dropped and read-only where feasible, Prometheus has bounded local retention, and Grafana disables
+anonymous access and self-registration. CI enables OTLP for one bounded smoke, emits a trace and
+metric, checks collector health and requires the metric to be queryable from Prometheus. This is
+transport evidence, not production alerting, capacity or authenticated-dashboard evidence.
+
 From M4, the same validator also rebuilds the committed synthetic dataset/baseline evidence from
 its recorded extraction-code commit and fails when the manifest, feature rows, split assignments,
 leakage report, raw predictions, thresholds or metrics drift.

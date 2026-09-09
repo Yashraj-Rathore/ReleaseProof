@@ -125,6 +125,17 @@
 - Versioned schema/missingness/PSI/performance drift assessment with sample gates, append-only human
   reviews and database-enforced prohibition of automatic retraining/promotion.
 - An authenticated safe latest-evaluation API, M13 evaluation report and Owner Learning Note.
+- M14 immutable operational policies with PostgreSQL-authoritative fixed-window tenant/user quotas
+  for webhook, analysis, retrieval, embeddings, LLM request/token/cost, runner job/CPU and uploads.
+- Server-owned request correlation, Django/Celery OpenTelemetry instrumentation, allowlisted JSON
+  logs and low-cardinality metrics that exclude source, prompts, credentials and tenant IDs.
+- Digest-pinned loopback OpenTelemetry Collector, Prometheus and Grafana services plus a CI
+  trace/metric transport smoke and bounded local metrics retention.
+- Owner/Admin retention dry-run and execution workflows for snapshots, embeddings, artifacts and
+  analysis, with exact immutable plans, short-lived database grants, checksum-aware S3 deletion,
+  referential blocking and append-only audit evidence.
+- A ranked M14 security review, seven-component failure matrix and reproducible synthetic
+  performance/cost artifact with explicit non-production limitations.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -184,6 +195,8 @@
   ensemble added no F1 or average-precision value over XGBoost.
 - Excluded ignored private model caches and raw private-dataset paths from the generated source-file
   inventory so explicit local model provisioning remains checkout-independent and private by design.
+- Propagated the server-owned correlation context through repository, proposal, model-governance,
+  execution and differential workflows instead of creating unrelated per-layer identifiers.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -213,3 +226,6 @@
   harness measurements; no customer data, shared training, serving integration, probability or
   production-quality claim is made. GitHub Actions run `33767255599` passed the exact M11
   implementation/fix commit `0565206` and all canonical/infrastructure gates.
+- M14 evidence is recorded in `PROJECT_STATUS.md`, docs/51 and the raw operations artifact. Its
+  timings are synthetic local regression evidence; production capacity, hosted-provider cost,
+  external-runner cost and customer latency remain not yet measured.

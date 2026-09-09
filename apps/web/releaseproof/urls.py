@@ -10,6 +10,11 @@ from apps.web.analysis.views import agent_investigation_detail_view
 from apps.web.changes.views import github_webhook
 from apps.web.identity.api import MeView
 from apps.web.identity.views import login_view, logout_view
+from apps.web.organizations.api import (
+    OperationalPolicyView,
+    RetentionExecuteView,
+    RetentionPlanView,
+)
 from apps.web.organizations.views import select_organization
 from apps.web.releaseproof import health
 from apps.web.repositories.api import RepositoryDetailView, RepositoryLifecycleView
@@ -39,6 +44,21 @@ urlpatterns = [
     path("accounts/login/", login_view, name="login"),
     path("accounts/logout/", logout_view, name="logout"),
     path("api/v1/me", MeView.as_view(), name="api-me"),
+    path(
+        "api/v1/operations/policy",
+        OperationalPolicyView.as_view(),
+        name="api-operational-policy",
+    ),
+    path(
+        "api/v1/operations/retention-plans",
+        RetentionPlanView.as_view(),
+        name="api-retention-plan",
+    ),
+    path(
+        "api/v1/operations/retention-plans/<uuid:public_id>/execute",
+        RetentionExecuteView.as_view(),
+        name="api-retention-execute",
+    ),
     path(
         "api/v1/agent-investigations/<uuid:public_id>",
         AgentInvestigationDetailView.as_view(),

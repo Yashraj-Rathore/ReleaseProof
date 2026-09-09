@@ -8,7 +8,16 @@ from django.contrib import admin
 from django.db.models import QuerySet
 from django.http import HttpRequest
 
-from apps.web.organizations.models import HostedLLMPolicy, Membership, Organization
+from apps.web.organizations.models import (
+    HostedLLMPolicy,
+    Membership,
+    OperationalPolicy,
+    Organization,
+    RetentionDeletionExecution,
+    RetentionDeletionPlan,
+    UsageCounter,
+    UsageReservation,
+)
 
 
 class TenantScopedAdminMixin(admin.ModelAdmin):  # type: ignore[type-arg]
@@ -114,3 +123,42 @@ class HostedLLMPolicyAdmin(TenantScopedAdminMixin):
     ) -> bool:
         del request, obj
         return False
+
+
+class OperationalReadOnlyAdmin(TenantScopedAdminMixin):
+    def has_add_permission(self, request: HttpRequest) -> bool:
+        del request
+        return False
+
+    def has_change_permission(self, request: HttpRequest, obj: object | None = None) -> bool:
+        del request, obj
+        return False
+
+    def has_delete_permission(self, request: HttpRequest, obj: object | None = None) -> bool:
+        del request, obj
+        return False
+
+
+@admin.register(OperationalPolicy)
+class OperationalPolicyAdmin(OperationalReadOnlyAdmin):
+    list_display = ("public_id", "organization", "version", "policy_sha256", "created_at")
+
+
+@admin.register(UsageCounter)
+class UsageCounterAdmin(OperationalReadOnlyAdmin):
+    list_display = ("organization", "scope", "quota_kind", "consumed", "limit", "updated_at")
+
+
+@admin.register(UsageReservation)
+class UsageReservationAdmin(OperationalReadOnlyAdmin):
+    list_display = ("public_id", "organization", "scope", "quota_kind", "quantity", "created_at")
+
+
+@admin.register(RetentionDeletionPlan)
+class RetentionDeletionPlanAdmin(OperationalReadOnlyAdmin):
+    list_display = ("public_id", "organization", "dry_run", "plan_sha256", "created_at")
+
+
+@admin.register(RetentionDeletionExecution)
+class RetentionDeletionExecutionAdmin(OperationalReadOnlyAdmin):
+    list_display = ("public_id", "organization", "result_sha256", "created_at")

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import uuid
-
 from django.conf import settings
 from django.core.exceptions import RequestDataTooBig
 from django.http import HttpRequest, JsonResponse
@@ -18,7 +16,9 @@ from apps.web.changes.webhooks import (
     ingest_webhook,
     verify_webhook,
 )
+from apps.web.organizations.operational_services import QuotaExceededError
 from packages.github_contracts import GitHubProviderError
+from packages.observability.context import current_correlation_id
 
 
 def _error(code: str, message: str, status: int) -> JsonResponse:
@@ -27,7 +27,7 @@ def _error(code: str, message: str, status: int) -> JsonResponse:
             "error": {
                 "code": code,
                 "message": message,
-                "correlation_id": str(uuid.uuid4()),
+                "correlation_id": str(current_correlation_id()),
                 "details": {},
             }
         },
@@ -65,6 +65,10 @@ def github_webhook(request: HttpRequest) -> JsonResponse:
         result = ingest_webhook(webhook=webhook, provider=get_github_provider())
     except WebhookError as error:
         return _error(error.code, str(error), error.status_code)
+    except QuotaExceededError as error:
+        response = _error("rate_limited", "Webhook quota exceeded", 429)
+        response.headers["Retry-After"] = str(error.retry_after_seconds)
+        return response
     except GitHubProviderError:
         return _error("github_unavailable", "GitHub snapshot provider is unavailable", 503)
     return JsonResponse(

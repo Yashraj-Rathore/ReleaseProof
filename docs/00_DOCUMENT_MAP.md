@@ -52,5 +52,6 @@
 | `48_M12_OWNER_LEARNING_NOTE.md` | owner-defensible M12 state, tools, guards, critic and rerun path |
 | `49_M13_GOVERNANCE_EVALUATION.md` | MLflow lineage, evaluation registry, lifecycle/rollback, feedback and drift evidence |
 | `50_M13_OWNER_LEARNING_NOTE.md` | owner-defensible M13 lineage, promotion, rollback, feedback and drift rerun path |
+| `51_M14_SECURITY_RELIABILITY_REVIEW.md` | ranked security review, quotas, telemetry, failure drills, retention and measured operational evidence |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.

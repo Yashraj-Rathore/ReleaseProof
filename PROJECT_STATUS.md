@@ -1,17 +1,47 @@
 # Project Status
 
-**Current state: M13 MLflow/model governance is complete and CI-validated on 2026-09-07.**
+**Current state: M14 security, reliability and observability is complete locally on 2026-09-08; remote CI validation is pending.**
 
-The repository now has exact formal-experiment and evaluation-registry lineage, a pinned local
-MLflow configuration, immutable human-gated model lifecycle/rollback evidence, delayed
-organization-local outcomes, and sample-gated drift review. The deterministic heuristic remains
-active because no learned candidate passed its published promotion gate.
+The repository now has a remediated ranked security review, immutable operational policies,
+PostgreSQL-authoritative tenant/user quotas, server-owned correlation and OpenTelemetry boundaries,
+redacted structured logs, audited retention/deletion, a seven-component failure matrix and honest
+synthetic performance/cost evidence. External repository execution remains disabled and the
+deterministic heuristic remains active.
 
 ## Next action
 
-Begin M14 (`RP-1301..RP-1306`) consolidated security, quota, observability, reliability, retention
-and cost hardening. Do not promote a learned model, enable automatic retraining/promotion, expose
-the local MLflow service, or begin M15.
+Begin M15 with RP-1401 production-shaped images/Compose. Evaluate RP-1402 only against its
+predeclared measurement gate before adding FastAPI. Do not expose local dashboards/MLflow, enable
+external repository execution, promote an unqualified learned model, or begin Kubernetes work.
+
+## M14 evidence
+
+- The consolidated review covers GitHub trust, tenant/admin isolation, RAG/LLM poisoning, model and
+  object artifacts, SSRF/uploads and the fixture-only runner. Four initial High findings were
+  remediated; zero Critical or High findings remain open. Residual Low and deployment-dependent
+  risks are explicit in docs/51.
+- `operational-policy-v1` defines exact safe quota/retention maps. PostgreSQL-backed fixed-window
+  counters and append-only idempotent reservations independently enforce tenant and user bounds for
+  webhook, analysis, retrieval, embeddings, LLM request/token/cost, runner job/CPU and upload
+  requests; upload size is checked separately before persistence.
+- Server-generated request correlation is reused by errors, audits, jobs, model/proposal/execution
+  workflows and Celery. Optional Django/Celery OpenTelemetry exports bounded traces/metrics;
+  allowlisted JSON logs discard raw messages, source, prompts, secrets and exception text.
+- Owner/Admin retention workflows freeze exact dry-run/executable plans for snapshots, embeddings,
+  artifacts and analysis. Execution rechecks tenant/policy/hash, uses a transaction-local expiring
+  database grant, preserves protected lineage and records immutable count/hash audit evidence.
+- The seven-case Postgres/Redis/provider/model/retrieval/worker/runner matrix requires rejection,
+  retained work, deterministic/lexical fallback, explicit failure or UNKNOWN, never false SHIP.
+- The synthetic artifact records 20 sequential in-process samples (median 76.5176 ms, nearest-rank
+  p95 87.8585 ms) and a 1,000-message fake publisher burst. It explicitly excludes databases,
+  broker scheduling, network, hosted providers and live sandbox execution. Production capacity,
+  customer latency and non-local cost remain not yet measured.
+- Local validation passed **193 tests**, with one PostgreSQL physical-index assertion skipped and
+  three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 231 source files,
+  targeted M14/workflow tests, Django checks, migration drift and the M14 artifact check passed.
+  Docker Compose configuration passed; live services await GitHub Actions because no local Docker
+  daemon was available. Artifact root SHA-256 is
+  `b5b92c524ad8b9a3ededff447487c64fe6e0cc00ccc5b0be2ba241368532dbc9`.
 
 ## M13 evidence
 
@@ -400,7 +430,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
 | M13 MLflow/governance | Complete - RP-1201..RP-1206; CI run 34168800664 passed |
-| M14 security/ops | Not started |
+| M14 security/ops | Complete locally - RP-1301..RP-1306; remote CI pending |
 | M15 containers/CI/model serving | Not started |
 | M16 demo/pilot | Not started |
 | M17 final review | Not started |

@@ -12,6 +12,7 @@ from django.db import transaction
 from apps.web.audit.services import record_audit
 from apps.web.changes.models import PullRequestSnapshot
 from apps.web.organizations.models import Organization
+from apps.web.organizations.operational_services import QuotaBundleItem, reserve_quota_bundle
 from apps.web.verification.models import (
     ExecutionApproval,
     ExecutionPlan,
@@ -29,6 +30,7 @@ from packages.execution_contracts import (
     ResourceLimitsV1,
     verify_payload_signature,
 )
+from packages.observability import QuotaKind, current_correlation_id
 
 
 class ExecutionWorkflowError(ValueError):
@@ -164,7 +166,7 @@ def create_execution_plan(
         organization=organization,
         plan_hash=contract.plan_sha256,
     ).first()
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     if existing is not None:
         return PlanCreationResult(existing, contract, execution_input, False, correlation_id)
     plan = ExecutionPlan(
@@ -204,9 +206,25 @@ def approve_execution_plan(
     if not _active(plan):
         raise ExecutionWorkflowError("execution_plan_stale")
     existing = ExecutionApproval.objects.filter(organization=organization, plan=plan).first()
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     if existing is not None:
         return ApprovalResult(existing, False, existing.correlation_id)
+    resources = plan.payload.get("resources")
+    if not isinstance(resources, dict) or not isinstance(resources.get("wall_time_seconds"), int):
+        raise ExecutionWorkflowError("execution_plan_resources_invalid")
+    reserve_quota_bundle(
+        organization=organization,
+        actor=actor,
+        items=(
+            QuotaBundleItem(QuotaKind.RUNNER_JOBS_PER_HOUR, 1),
+            QuotaBundleItem(
+                QuotaKind.RUNNER_CPU_SECONDS_PER_DAY,
+                resources["wall_time_seconds"],
+            ),
+        ),
+        idempotency_key=f"runner:{plan.plan_hash}",
+        correlation_id=correlation_id,
+    )
     approval = ExecutionApproval(
         organization=organization,
         plan=plan,
@@ -257,7 +275,7 @@ def record_execution_result(
     ).first()
     if existing is None:
         existing = ExecutionRun.objects.filter(plan=plan, attempt=result.attempt).first()
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     if existing is not None:
         if existing.result_hash != result.result_sha256:
             raise ExecutionWorkflowError("execution_result_idempotency_conflict")

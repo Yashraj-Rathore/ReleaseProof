@@ -27,6 +27,7 @@ from packages.github_contracts import (
     GitHubAdvisoryPublisher,
     PublishedAdvisory,
 )
+from packages.observability import current_correlation_id
 
 
 class StaleSnapshotError(RuntimeError):
@@ -263,7 +264,7 @@ def create_test_proposal(
             created=False,
             correlation_id=_latest_event(existing).correlation_id,
         )
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     try:
         with transaction.atomic():
             record = _new_model(
@@ -374,7 +375,7 @@ def transition_test_proposal(
             proposal.validation_report.get("valid", False)
         ):
             raise ProposalWorkflowError("invalid_proposal_cannot_be_accepted")
-        correlation_id = uuid.uuid4()
+        correlation_id = current_correlation_id()
         _append_event(
             proposal=proposal,
             sequence=latest.sequence + 1,
@@ -440,7 +441,7 @@ def edit_test_proposal(
         source = previous.source_llm_evidence
         _validate_source_binding(source=source, proposal=replacement)
         validation = (adapter or PythonFixtureTestAdapter()).validate(replacement)
-        correlation_id = uuid.uuid4()
+        correlation_id = current_correlation_id()
         revised = _new_model(
             organization=organization,
             source=source,
@@ -509,7 +510,7 @@ def export_test_proposal(
             raise ProposalWorkflowError("proposal_not_accepted_for_export")
         if not bool(proposal.validation_report.get("valid", False)):
             raise ProposalWorkflowError("invalid_proposal_cannot_be_exported")
-        correlation_id = uuid.uuid4()
+        correlation_id = current_correlation_id()
         _audit(
             proposal=proposal,
             action="generated_test_proposal.exported",

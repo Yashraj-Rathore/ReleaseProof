@@ -36,6 +36,7 @@ from packages.ml_core import (
     evaluate_feedback_eligibility,
     validate_model_transition,
 )
+from packages.observability import current_correlation_id
 
 MINIMUM_OUTCOME_WINDOW_DAYS = 30
 MAXIMUM_OUTCOME_WINDOW_DAYS = 365
@@ -211,7 +212,7 @@ def register_model_artifact(
         if event is None:
             raise ModelGovernanceError("artifact_registration_event_missing")
         return ArtifactRegistration(existing, event, False)
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     try:
         with transaction.atomic():
             artifact = GovernedModelArtifact(
@@ -293,7 +294,7 @@ def promote_model_to_staging(
             action="risk.model_artifact.staged",
             resource_type="governed_model_artifact",
             resource_public_id=artifact.public_id,
-            correlation_id=uuid.uuid4(),
+            correlation_id=current_correlation_id(),
             actor=actor,
             metadata={"artifact_version": artifact.artifact_version, "event": event.event_sha256},
         )
@@ -372,7 +373,7 @@ def activate_model(
             action="risk.model_artifact.activated",
             resource_type="governed_model_artifact",
             resource_public_id=artifact.public_id,
-            correlation_id=uuid.uuid4(),
+            correlation_id=current_correlation_id(),
             actor=actor,
             metadata={
                 "artifact_version": artifact.artifact_version,
@@ -433,7 +434,7 @@ def rollback_model(
             action="risk.model_artifact.rolled_back",
             resource_type="governed_model_artifact",
             resource_public_id=rollback.public_id,
-            correlation_id=uuid.uuid4(),
+            correlation_id=current_correlation_id(),
             actor=actor,
             metadata={
                 "artifact_version": rollback.artifact_version,
@@ -556,7 +557,7 @@ def ingest_deployment_outcome(
                 action="risk.deployment_outcome.recorded",
                 resource_type="deployment_outcome",
                 resource_public_id=record.public_id,
-                correlation_id=uuid.uuid4(),
+                correlation_id=current_correlation_id(),
                 metadata={
                     "eligible": eligibility.organization_training_eligible,
                     "outcome": outcome.value,
@@ -666,7 +667,7 @@ def review_drift_assessment(
             action="risk.drift_assessment.reviewed",
             resource_type="drift_assessment",
             resource_public_id=assessment.public_id,
-            correlation_id=uuid.uuid4(),
+            correlation_id=current_correlation_id(),
             actor=actor,
             metadata={"decision": decision.value},
         )

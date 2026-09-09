@@ -14,6 +14,7 @@ from apps.web.organizations.services import require_minimum_role
 from apps.web.organizations.views import active_organization
 from apps.web.repositories.models import RepositoryLifecycle
 from apps.web.repositories.services import get_repository, get_repository_binding
+from packages.observability import current_correlation_id
 
 
 class RepositoryDetailView(APIView):  # type: ignore[misc]
@@ -48,7 +49,7 @@ class RepositoryLifecycleView(APIView):  # type: ignore[misc]
                     "error": {
                         "code": "invalid_lifecycle_action",
                         "message": "action must be enable or disable",
-                        "correlation_id": str(uuid.uuid4()),
+                        "correlation_id": str(current_correlation_id()),
                         "details": {},
                     }
                 },
@@ -58,7 +59,7 @@ class RepositoryLifecycleView(APIView):  # type: ignore[misc]
             RepositoryLifecycle.ACTIVE if action == "enable" else RepositoryLifecycle.DISABLED
         )
         repository.save(update_fields=("lifecycle", "updated_at"))
-        correlation_id = uuid.uuid4()
+        correlation_id = current_correlation_id()
         record_audit(
             organization=organization,
             actor=request.user,

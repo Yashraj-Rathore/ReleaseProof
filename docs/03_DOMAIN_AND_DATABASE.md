@@ -254,3 +254,20 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
   exceptions, credentials and hidden chain-of-thought.
 - LangGraph native checkpoints are disabled in M12. Later durable resume support requires a
   retention/privacy design and migration; it may not silently serialize full graph state.
+
+## M14 operational-control implementation
+
+- `OperationalPolicy` is immutable and versioned per organization. It binds exact independent
+  quota limits, retention durations, approving Admin/Owner, schema version and content hash.
+- `UsageCounter` is the mutable PostgreSQL fixed-window authority. `UsageReservation` is append-only
+  and idempotent per tenant/scope/kind/operation. Tenant and authenticated-user counters are locked
+  and reserved atomically; Redis is not authoritative.
+- `RetentionDeletionPlan` freezes a dry-run flag, policy, cutoffs, at most 1,000 exact candidate
+  public IDs, actor, correlation ID and hash. `RetentionDeletionExecution` records deleted/blocked
+  counts and result hash. Both are tenant-bound and append-only.
+- A `RetentionDeletionGrant` can be active only inside the execution transaction. Database triggers
+  consult that uncommitted, expiring tenant grant before permitting deletion from exactly snapshot,
+  embedding, governed-artifact or analysis-evidence tables. Composite foreign keys bind policy/
+  plan/grant/execution and counter/reservation relationships within a tenant.
+- Deletion respects referential protection. Active or referenced lineage is reported blocked;
+  constraints are never globally disabled. S3 bytes require checksum match before deletion.

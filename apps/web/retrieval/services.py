@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import uuid
 from dataclasses import dataclass
 from datetime import timedelta
 from typing import Any
@@ -16,6 +17,7 @@ from django.utils import timezone
 from pgvector.django import CosineDistance
 
 from apps.web.organizations.models import Organization
+from apps.web.organizations.operational_services import reserve_quota
 from apps.web.repositories.models import Repository, RepositoryLifecycle
 from apps.web.retrieval.models import (
     EMBEDDING_DIMENSION_V1,
@@ -29,6 +31,7 @@ from apps.web.retrieval.models import (
     KnowledgeLexicalIndex,
     LexicalIndexProfile,
 )
+from packages.observability import QuotaKind, current_correlation_id
 from packages.retrieval_core import (
     CHUNKING_VERSION,
     FTS_CONFIGURATION,
@@ -388,6 +391,14 @@ def build_embedding_profile(
         raise ValueError("repository chunk count exceeds the M6 embedding index bound")
     existing_ids = set(profile.entries.values_list("chunk_id", flat=True))
     missing = [chunk for chunk in chunks if chunk.id not in existing_ids]
+    if missing:
+        reserve_quota(
+            organization=organization,
+            kind=QuotaKind.EMBEDDING_ITEMS_PER_DAY,
+            quantity=len(missing),
+            idempotency_key=f"embedding:{profile.public_id}",
+            correlation_id=current_correlation_id(),
+        )
     try:
         for start in range(0, len(missing), EMBEDDING_BATCH_SIZE):
             batch = missing[start : start + EMBEDDING_BATCH_SIZE]
@@ -600,6 +611,13 @@ def retrieve_evidence(
 ) -> RetrievalResponse:
     _validate_scope(organization=organization, repository=repository)
     bounded_query = validate_query(query)
+    reserve_quota(
+        organization=organization,
+        kind=QuotaKind.RETRIEVAL_QUERIES_PER_MINUTE,
+        quantity=1,
+        idempotency_key=f"retrieval:{uuid.uuid4()}",
+        correlation_id=current_correlation_id(),
+    )
     if not 1 <= limit <= MAX_RETURNED_HITS:
         raise ValueError("retrieval result limit is outside the bounded contract")
     pool_limit = min(MAX_CANDIDATES, max(limit * 3, limit))

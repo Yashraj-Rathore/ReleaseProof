@@ -14,6 +14,11 @@ from django.utils import timezone
 from apps.web.changes.models import ChangeFeatureSet
 from apps.web.evidence.models import EvidenceItem, EvidenceKind
 from apps.web.organizations.models import Organization
+from apps.web.organizations.operational_services import (
+    QuotaBundleItem,
+    QuotaExceededError,
+    reserve_quota_bundle,
+)
 from apps.web.organizations.services import llm_policy_snapshot, resolve_effective_llm_policy
 from apps.web.repositories.models import Repository
 from apps.web.retrieval.models import KnowledgeChunk
@@ -33,6 +38,7 @@ from packages.ai_core import (
     route_evidence,
     validate_suggestion_citations,
 )
+from packages.observability import QuotaKind, current_correlation_id
 
 LLM_ANALYSIS_PRODUCER_VERSION = "releaseproof-llm-analysis-v1"
 MAX_SELECTED_EVIDENCE = 50
@@ -363,6 +369,22 @@ def analyze_llm_evidence(
             budget=budget,
             cancelled=cancelled,
         )
+        reserve_quota_bundle(
+            organization=organization,
+            items=(
+                QuotaBundleItem(QuotaKind.LLM_REQUESTS_PER_HOUR, 1),
+                QuotaBundleItem(
+                    QuotaKind.LLM_TOKENS_PER_DAY,
+                    request.conservative_input_tokens + request.budget.max_output_tokens,
+                ),
+                QuotaBundleItem(
+                    QuotaKind.LLM_COST_MICROUSD_PER_DAY,
+                    request.budget.max_cost_microusd,
+                ),
+            ),
+            idempotency_key=rule_id,
+            correlation_id=current_correlation_id(),
+        )
         response = provider.analyze_change(request)
         if (
             response.provider_name != provider_configuration.provider_name
@@ -373,8 +395,8 @@ def analyze_llm_evidence(
             response.suggestion,
             allowed_evidence_ids=request.allowed_evidence_ids,
         )
-    except LLMProviderError as error:
-        status = error.error_code
+    except (LLMProviderError, QuotaExceededError) as error:
+        status = error.error_code if isinstance(error, LLMProviderError) else "quota_exceeded"
         return _persist_result(
             organization=organization,
             feature_set=feature_set,

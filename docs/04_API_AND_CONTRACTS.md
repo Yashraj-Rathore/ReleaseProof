@@ -175,6 +175,23 @@ Implemented authenticated M9 routes are `GET /api/v1/execution-plans/{public_id}
 They are tenant scoped and session mutations require CSRF. Plan creation/result ingestion remain
 trusted application-service boundaries; no public endpoint accepts Docker options or runner output.
 
+## M14 operational routes
+
+Authenticated active-organization routes are:
+
+- `GET|POST /api/v1/operations/policy` — read the effective policy or append a new exact policy;
+- `POST /api/v1/operations/retention-plans` — create a dry-run-by-default candidate plan;
+- `POST /api/v1/operations/retention-plans/{public_id}/execute` — execute only a non-dry-run,
+  unexpired plan under the unchanged policy hash.
+
+Mutations use session authentication/CSRF and require Admin or Owner. Tenant identity is derived
+from session context. Requests accept only declared keys and never accept a database grant, table
+name, storage endpoint, tenant ID or arbitrary deletion selector. Results expose counts, opaque IDs
+and hashes, not deleted source. Unsupported or foreign-key-protected artifacts are blocked.
+
+M14 adds `X-Correlation-ID` to web responses and `X-Trace-ID` when tracing is active. Both are
+server generated; inbound values are not authorization or trusted identity.
+
 ## Idempotency/staleness
 GitHub delivery + snapshot identity dedupe. Manual reanalysis may use idempotency key. Old-head analysis cannot publish current-head conclusion.
 

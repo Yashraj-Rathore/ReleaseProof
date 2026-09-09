@@ -88,6 +88,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "apps.web.releaseproof.middleware.CorrelationMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -169,6 +170,18 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "apps.web.releaseproof.api.safe_exception_handler",
 }
 
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "safe_json": {"()": "packages.observability.logging.SafeJsonFormatter"},
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "safe_json"},
+    },
+    "root": {"handlers": ["console"], "level": os.getenv("LOG_LEVEL", "INFO")},
+}
+
 CELERY_BROKER_URL = os.getenv(
     "CELERY_BROKER_URL", "redis://:replace-local-password@localhost:6379/1"
 )
@@ -197,6 +210,7 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = env_int(
     minimum=16_384,
     maximum=5_242_880,
 )
+FILE_UPLOAD_MAX_MEMORY_SIZE = DATA_UPLOAD_MAX_MEMORY_SIZE
 GITHUB_WEBHOOK_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET", "")
 GITHUB_APP_CREDENTIAL_REFERENCE = os.getenv(
     "GITHUB_APP_CREDENTIAL_REFERENCE",

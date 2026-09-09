@@ -1,4 +1,4 @@
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04; M13 verified 2026-09-07
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04; M13 verified 2026-09-07; M14 verified 2026-09-08
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -212,6 +212,22 @@ Model registry code uses ReleaseProof's explicit candidate/staging/active/retire
 immutable transition evidence. MLflow's deprecated model stages are not used; aliases/tags may be
 added only as mirrors of authoritative ReleaseProof state. No model weight or customer data is
 downloaded or uploaded by dependency installation or normal tests.
+
+## M14 observability pins — verified and locked 2026-09-08
+
+| Package/service | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| OpenTelemetry Python API/SDK + OTLP HTTP exporter | `1.44.0` | The official [OpenTelemetry Python release](https://github.com/open-telemetry/opentelemetry-python/releases/tag/v1.44.0) publishes stable SDK/API 1.44.0 with instrumentation 0.65b0. The official [SDK package](https://pypi.org/project/opentelemetry-sdk/1.44.0/) requires Python 3.10+ and lists Python 3.13. |
+| Django/Celery instrumentation | `0.65b0` | The official [Django package](https://pypi.org/project/opentelemetry-instrumentation-django/0.65b0/) and [Celery package](https://pypi.org/project/opentelemetry-instrumentation-celery/0.65b0/) require Python 3.9+ and declare their beta lifecycle explicitly. Their exact semantic-conventions line resolves with SDK 1.44.0. |
+| OpenTelemetry Collector Contrib | `0.159.0` + digest | The official [Collector Contrib release](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.159.0) supplies the OTLP receiver, safety processors, health extension, debug and Prometheus exporters used locally. |
+| Prometheus | `3.14.0` + digest | The official [Prometheus 3.14.0 release](https://github.com/prometheus/prometheus/releases/tag/v3.14.0) is the stable release selected for the bounded local metrics store. |
+| Grafana | `13.2.1` + digest | The official [Grafana 13.2.1 release](https://github.com/grafana/grafana/releases/tag/v13.2.1) is the current stable patch used for the loopback-only local dashboard. |
+
+The Python packages live only in the `observability` dependency group and resolve with CPython
+3.13.15. Instrumentation's beta numbering is accepted explicitly; provider/domain contracts do
+not depend on it. Collector, Prometheus and Grafana images are manifest-digest pinned and publish
+only to loopback. They are not a production monitoring topology. No separate log backend, alert
+manager or hosted telemetry service is introduced in M14.
 
 ## Dependency and image management
 

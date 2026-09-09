@@ -29,6 +29,7 @@ from apps.web.verification.services import (
     transition_test_proposal,
 )
 from packages.ai_core import ProposalSchemaError, parse_test_proposal_json
+from packages.observability import current_correlation_id
 
 
 def _invalid(code: str, *, status: int = 400) -> Response:
@@ -37,7 +38,7 @@ def _invalid(code: str, *, status: int = 400) -> Response:
             "error": {
                 "code": code,
                 "message": "The generated-test proposal action is not allowed.",
-                "correlation_id": str(uuid.uuid4()),
+                "correlation_id": str(current_correlation_id()),
                 "details": {},
             }
         },

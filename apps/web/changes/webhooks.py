@@ -19,6 +19,7 @@ from apps.web.analysis.models import AnalysisJob, JobType
 from apps.web.analysis.services import create_job_with_outbox
 from apps.web.audit.services import record_audit
 from apps.web.changes.models import PullRequestSnapshot, WebhookReceipt
+from apps.web.organizations.operational_services import reserve_quota
 from apps.web.repositories.models import (
     GitHubInstallation,
     InstallationLifecycle,
@@ -28,6 +29,7 @@ from apps.web.repositories.models import (
 from apps.web.repositories.services import bind_repository, get_installation_by_github_id
 from packages.github_contracts import GitHubProvider
 from packages.github_contracts import PullRequestSnapshot as ProviderSnapshot
+from packages.observability import QuotaKind
 
 MAX_WEBHOOK_BYTES = 1_048_576
 MAX_JSON_DEPTH = 20
@@ -469,6 +471,12 @@ def ingest_webhook(
         installation = get_installation_by_github_id(webhook.installation_id)
     except Http404 as error:
         raise WebhookTenantNotFoundError("installation binding not found") from error
+    reserve_quota(
+        organization=installation.organization,
+        kind=QuotaKind.WEBHOOK_REQUESTS_PER_MINUTE,
+        quantity=1,
+        idempotency_key=f"github:{webhook.delivery_id}",
+    )
     try:
         if webhook.event_name == "pull_request":
             if installation.lifecycle != InstallationLifecycle.ACTIVE:

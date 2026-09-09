@@ -163,3 +163,19 @@ append-only with database tenant constraints. Delayed outcomes are org-local opt
 experiment, but cannot invoke training, promotion, deployment, source access, provider calls or a
 sandbox. Production MLflow authentication/workspaces, retention and authorization remain M14/M15
 work; the local profile must not be exposed beyond loopback.
+
+## M14 consolidated controls
+
+The ranked review is docs/51. All four initial High findings—missing cross-service quota authority,
+fragmented correlation, absent governed deletion and unconsolidated failure semantics—are remediated
+with no Critical/High item left open. Residual deployment risks are explicit and gate M15.
+
+Operational policies and reservations contain only limits, opaque subjects, hashes and timestamps.
+Safe JSON logging ignores raw messages/extras, and metric labels are closed enums. Retention is an
+Admin/Owner two-step plan/execute flow with dry-run default, exact candidates, policy/hash recheck,
+short-lived tenant-scoped database permission and checksum-gated S3 deletion. It cannot name a
+table, endpoint, tenant or selector from request data.
+
+The observability stack is loopback-only and not a production security boundary. External repository
+execution remains disabled under ADR-018; neither telemetry nor operational APIs can widen runner,
+provider, repository-write, model-promotion or merge/deploy authority.

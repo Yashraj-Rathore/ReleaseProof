@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-import uuid
 from typing import Any
 
 from rest_framework.response import Response
 from rest_framework.views import exception_handler
+
+from packages.observability.context import current_correlation_id
 
 
 def safe_exception_handler(exc: Exception, context: dict[str, Any]) -> Response | None:
@@ -34,7 +35,7 @@ def safe_exception_handler(exc: Exception, context: dict[str, Any]) -> Response 
         "error": {
             "code": code,
             "message": message,
-            "correlation_id": str(uuid.uuid4()),
+            "correlation_id": str(current_correlation_id()),
             "details": {},
         }
     }

@@ -18,8 +18,10 @@ from apps.web.analysis.models import (
 )
 from apps.web.changes.models import PullRequestSnapshot
 from apps.web.organizations.models import Organization
+from apps.web.organizations.operational_services import reserve_quota
 from packages.change_intel import SourceTreeProvider
 from packages.domain import TaskMessage, TaskPublisher, TaskPublisherError
+from packages.observability import QuotaKind
 
 
 @dataclass(frozen=True, slots=True)
@@ -38,6 +40,13 @@ def create_job_with_outbox(
 ) -> tuple[AnalysisJob, bool]:
     """Create both authoritative rows; caller owns the surrounding transaction."""
 
+    reserve_quota(
+        organization=organization,
+        kind=QuotaKind.ANALYSIS_REQUESTS_PER_HOUR,
+        quantity=1,
+        idempotency_key=idempotency_key,
+        correlation_id=correlation_id,
+    )
     now = timezone.now()
     job, created = AnalysisJob.objects.for_organization(organization).get_or_create(
         idempotency_key=idempotency_key,

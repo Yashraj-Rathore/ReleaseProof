@@ -36,6 +36,7 @@ from packages.execution_contracts import (
     verify_payload_signature,
 )
 from packages.ml_core import RiskBand
+from packages.observability import current_correlation_id
 from packages.recommendation_core import (
     ComponentStatus,
     RecommendationInputsV1,
@@ -149,7 +150,7 @@ def create_differential_plan(
     existing = DifferentialPlan.objects.filter(
         organization=organization, plan_hash=contract.plan_sha256
     ).first()
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     if existing is not None:
         return DifferentialPlanCreation(existing, contract, execution_input, False, correlation_id)
     plan = DifferentialPlan(
@@ -207,7 +208,7 @@ def record_differential_result(
     ).first()
     if existing is None:
         existing = DifferentialRun.objects.filter(plan=plan, attempt=result.attempt).first()
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     if existing is not None:
         if existing.result_hash != result.result_sha256:
             raise DifferentialWorkflowError("differential_result_idempotency_conflict")
@@ -357,7 +358,7 @@ def record_recommendation_decision(
         differential_run=run,
         policy_version=fused.policy_version,
     ).first()
-    correlation_id = uuid.uuid4()
+    correlation_id = current_correlation_id()
     if existing is not None:
         if existing.decision_hash != fused.decision_sha256:
             raise DifferentialWorkflowError("recommendation_policy_idempotency_conflict")

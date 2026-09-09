@@ -16,3 +16,16 @@
 - **MLflow down:** pinned approved inference may continue if designed; promotion/training metadata pauses.
 - **Budget exceeded:** stop further LLM/agent calls and preserve gathered evidence.
 - **Retention delete:** dry-run first, tenant-scoped, idempotent, backup/recovery considerations documented.
+
+## M14 drill result
+
+The seven required component failures are consolidated in `expected_failure_drills()` and docs/51.
+Every case has a fail-closed disposition and `false_ship_possible=false`. PostgreSQL failure rejects
+durability/readiness claims; Redis failure retains the authoritative outbox; LLM/model/retrieval
+failures preserve or fall back to available deterministic evidence; invalid worker work fails
+boundedly; and runner failure is UNKNOWN. The canonical validator checks the frozen matrix.
+
+Retention execution is separate from a dry-run. It requires a current immutable plan, unchanged
+policy hash and short-lived in-transaction database grant; protected lineage and unsupported
+artifact stores are reported blocked rather than forced. Recovery never changes UNKNOWN into SHIP
+merely because a dependency recovered later.

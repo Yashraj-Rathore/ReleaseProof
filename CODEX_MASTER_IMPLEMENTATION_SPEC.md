@@ -86,7 +86,7 @@ The first working system is a **Django modular monolith + Celery workers + Postg
 - Testcontainers
 - Playwright
 - Ruff + mypy/django-stubs
-- OpenTelemetry + Prometheus/Grafana in later milestones
+- OpenTelemetry + local Prometheus/Grafana with bounded, redacted M14 telemetry
 - GitHub Actions
 - Docker Compose first; optional Kubernetes later
 
@@ -763,9 +763,9 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 - [x] Deterministic fake GitHub/LLM + fictional fixture exist.
 
 ## Product core
-- [ ] Tenant/RBAC/CSRF/IDOR protection.
-- [ ] Signed idempotent GitHub ingestion.
-- [ ] Immutable PR snapshots.
+- [x] Tenant/RBAC/CSRF/IDOR protection.
+- [x] Signed idempotent GitHub ingestion.
+- [x] Immutable PR snapshots.
 - [x] Reproducible change features/blast radius.
 - [x] Deterministic risk baseline precedes learned models.
 
@@ -773,27 +773,27 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 - [x] Dataset manifests/provenance/labels.
 - [x] Time/repository leakage controls.
 - [x] Logistic + XGBoost evaluated and versioned; synthetic candidates remain unpromoted.
-- [ ] Hybrid RAG with tenant isolation/citations.
-- [ ] PyTorch/HF semantic model + model card.
-- [ ] MLflow lineage/evaluation.
+- [x] Hybrid RAG with tenant isolation/citations.
+- [x] PyTorch/HF semantic model + model card; synthetic candidate remains unpromoted.
+- [x] MLflow lineage/evaluation.
 
 ## LLM/agents
-- [ ] Strict provider abstraction + fake.
-- [ ] Grounded structured outputs.
-- [ ] LangGraph bounded/advisory.
-- [ ] Critic cannot widen privileges.
-- [ ] Token/cost/time budgets.
+- [x] Strict provider abstraction + fake.
+- [x] Grounded structured outputs.
+- [x] LangGraph bounded/advisory.
+- [x] Critic cannot widen privileges.
+- [x] Token/cost/time budgets.
 
 ## Execution
-- [ ] Generated tests are proposals.
-- [ ] No untrusted host execution.
-- [ ] Sentinel/network/resource isolation tests.
-- [ ] Base/candidate fixture comparison.
-- [ ] Mutation/differential evidence integrated safely.
+- [x] Generated tests are proposals.
+- [x] No untrusted host execution.
+- [x] Sentinel/network/resource isolation tests for the controlled fixture boundary.
+- [x] Base/candidate fixture comparison.
+- [x] Mutation/differential evidence integrated safely.
 
 ## Engineering/business
-- [ ] OTEL/log redaction/failure drills.
-- [ ] Compose before optional Kubernetes.
+- [x] OTEL/log redaction/failure drills.
+- [x] Compose before optional Kubernetes.
 - [ ] Supply-chain release gates.
 - [ ] One-command fictional demo + real screenshots/video.
 - [ ] README/resume claims match evidence.
@@ -806,18 +806,48 @@ Use **one prompt at a time**. Do not ask Codex to build the whole platform in on
 
 # Project Status
 
-**Current state: M13 MLflow/model governance is complete and CI-validated on 2026-09-07.**
+**Current state: M14 security, reliability and observability is complete locally on 2026-09-08; remote CI validation is pending.**
 
-The repository now has exact formal-experiment and evaluation-registry lineage, a pinned local
-MLflow configuration, immutable human-gated model lifecycle/rollback evidence, delayed
-organization-local outcomes, and sample-gated drift review. The deterministic heuristic remains
-active because no learned candidate passed its published promotion gate.
+The repository now has a remediated ranked security review, immutable operational policies,
+PostgreSQL-authoritative tenant/user quotas, server-owned correlation and OpenTelemetry boundaries,
+redacted structured logs, audited retention/deletion, a seven-component failure matrix and honest
+synthetic performance/cost evidence. External repository execution remains disabled and the
+deterministic heuristic remains active.
 
 ## Next action
 
-Begin M14 (`RP-1301..RP-1306`) consolidated security, quota, observability, reliability, retention
-and cost hardening. Do not promote a learned model, enable automatic retraining/promotion, expose
-the local MLflow service, or begin M15.
+Begin M15 with RP-1401 production-shaped images/Compose. Evaluate RP-1402 only against its
+predeclared measurement gate before adding FastAPI. Do not expose local dashboards/MLflow, enable
+external repository execution, promote an unqualified learned model, or begin Kubernetes work.
+
+## M14 evidence
+
+- The consolidated review covers GitHub trust, tenant/admin isolation, RAG/LLM poisoning, model and
+  object artifacts, SSRF/uploads and the fixture-only runner. Four initial High findings were
+  remediated; zero Critical or High findings remain open. Residual Low and deployment-dependent
+  risks are explicit in docs/51.
+- `operational-policy-v1` defines exact safe quota/retention maps. PostgreSQL-backed fixed-window
+  counters and append-only idempotent reservations independently enforce tenant and user bounds for
+  webhook, analysis, retrieval, embeddings, LLM request/token/cost, runner job/CPU and upload
+  requests; upload size is checked separately before persistence.
+- Server-generated request correlation is reused by errors, audits, jobs, model/proposal/execution
+  workflows and Celery. Optional Django/Celery OpenTelemetry exports bounded traces/metrics;
+  allowlisted JSON logs discard raw messages, source, prompts, secrets and exception text.
+- Owner/Admin retention workflows freeze exact dry-run/executable plans for snapshots, embeddings,
+  artifacts and analysis. Execution rechecks tenant/policy/hash, uses a transaction-local expiring
+  database grant, preserves protected lineage and records immutable count/hash audit evidence.
+- The seven-case Postgres/Redis/provider/model/retrieval/worker/runner matrix requires rejection,
+  retained work, deterministic/lexical fallback, explicit failure or UNKNOWN, never false SHIP.
+- The synthetic artifact records 20 sequential in-process samples (median 76.5176 ms, nearest-rank
+  p95 87.8585 ms) and a 1,000-message fake publisher burst. It explicitly excludes databases,
+  broker scheduling, network, hosted providers and live sandbox execution. Production capacity,
+  customer latency and non-local cost remain not yet measured.
+- Local validation passed **193 tests**, with one PostgreSQL physical-index assertion skipped and
+  three live infrastructure/sandbox tests deselected. Ruff and strict mypy over 231 source files,
+  targeted M14/workflow tests, Django checks, migration drift and the M14 artifact check passed.
+  Docker Compose configuration passed; live services await GitHub Actions because no local Docker
+  daemon was available. Artifact root SHA-256 is
+  `b5b92c524ad8b9a3ededff447487c64fe6e0cc00ccc5b0be2ba241368532dbc9`.
 
 ## M13 evidence
 
@@ -1206,7 +1236,7 @@ and its remote M2 result is tracked in GitHub Actions.
 | M11 PyTorch/HF | Complete - RP-1001..RP-1006; candidate not promoted; CI validated |
 | M12 LangGraph | Complete - RP-1101..RP-1106; optional and disabled by default; CI validated |
 | M13 MLflow/governance | Complete - RP-1201..RP-1206; CI run 34168800664 passed |
-| M14 security/ops | Not started |
+| M14 security/ops | Complete locally - RP-1301..RP-1306; remote CI pending |
 | M15 containers/CI/model serving | Not started |
 | M16 demo/pilot | Not started |
 | M17 final review | Not started |
@@ -1343,6 +1373,17 @@ and its remote M2 result is tracked in GitHub Actions.
 - Versioned schema/missingness/PSI/performance drift assessment with sample gates, append-only human
   reviews and database-enforced prohibition of automatic retraining/promotion.
 - An authenticated safe latest-evaluation API, M13 evaluation report and Owner Learning Note.
+- M14 immutable operational policies with PostgreSQL-authoritative fixed-window tenant/user quotas
+  for webhook, analysis, retrieval, embeddings, LLM request/token/cost, runner job/CPU and uploads.
+- Server-owned request correlation, Django/Celery OpenTelemetry instrumentation, allowlisted JSON
+  logs and low-cardinality metrics that exclude source, prompts, credentials and tenant IDs.
+- Digest-pinned loopback OpenTelemetry Collector, Prometheus and Grafana services plus a CI
+  trace/metric transport smoke and bounded local metrics retention.
+- Owner/Admin retention dry-run and execution workflows for snapshots, embeddings, artifacts and
+  analysis, with exact immutable plans, short-lived database grants, checksum-aware S3 deletion,
+  referential blocking and append-only audit evidence.
+- A ranked M14 security review, seven-component failure matrix and reproducible synthetic
+  performance/cost artifact with explicit non-production limitations.
 
 ### Changed
 - Recorded the verified Python 3.13.15/uv/Django/data-service/tooling pins and milestone-gated later dependency snapshots.
@@ -1402,6 +1443,8 @@ and its remote M2 result is tracked in GitHub Actions.
   ensemble added no F1 or average-precision value over XGBoost.
 - Excluded ignored private model caches and raw private-dataset paths from the generated source-file
   inventory so explicit local model provisioning remains checkout-independent and private by design.
+- Propagated the server-owned correlation context through repository, proposal, model-governance,
+  execution and differential workflows instead of creating unrelated per-layer identifiers.
 
 ### Evidence status
 - M1 implementation evidence is recorded in `PROJECT_STATUS.md`; no product performance, ML quality,
@@ -1431,6 +1474,9 @@ and its remote M2 result is tracked in GitHub Actions.
   harness measurements; no customer data, shared training, serving integration, probability or
   production-quality claim is made. GitHub Actions run `33767255599` passed the exact M11
   implementation/fix commit `0565206` and all canonical/infrastructure gates.
+- M14 evidence is recorded in `PROJECT_STATUS.md`, docs/51 and the raw operations artifact. Its
+  timings are synthetic local regression evidence; production capacity, hosted-provider cost,
+  external-runner cost and customer latency remain not yet measured.
 
 
 ---
@@ -1564,6 +1610,7 @@ and repositories until a later assigned issue justifies a separate module.
 | `48_M12_OWNER_LEARNING_NOTE.md` | owner-defensible M12 state, tools, guards, critic and rerun path |
 | `49_M13_GOVERNANCE_EVALUATION.md` | MLflow lineage, evaluation registry, lifecycle/rollback, feedback and drift evidence |
 | `50_M13_OWNER_LEARNING_NOTE.md` | owner-defensible M13 lineage, promotion, rollback, feedback and drift rerun path |
+| `51_M14_SECURITY_RELIABILITY_REVIEW.md` | ranked security review, quotas, telemetry, failure drills, retention and measured operational evidence |
 
 ADRs under `docs/decisions/` explain choices that must not be casually reversed.
 
@@ -1984,6 +2031,23 @@ Separate policies for metadata, raw diff/source index, execution logs, LLM trace
 - LangGraph native checkpoints are disabled in M12. Later durable resume support requires a
   retention/privacy design and migration; it may not silently serialize full graph state.
 
+## M14 operational-control implementation
+
+- `OperationalPolicy` is immutable and versioned per organization. It binds exact independent
+  quota limits, retention durations, approving Admin/Owner, schema version and content hash.
+- `UsageCounter` is the mutable PostgreSQL fixed-window authority. `UsageReservation` is append-only
+  and idempotent per tenant/scope/kind/operation. Tenant and authenticated-user counters are locked
+  and reserved atomically; Redis is not authoritative.
+- `RetentionDeletionPlan` freezes a dry-run flag, policy, cutoffs, at most 1,000 exact candidate
+  public IDs, actor, correlation ID and hash. `RetentionDeletionExecution` records deleted/blocked
+  counts and result hash. Both are tenant-bound and append-only.
+- A `RetentionDeletionGrant` can be active only inside the execution transaction. Database triggers
+  consult that uncommitted, expiring tenant grant before permitting deletion from exactly snapshot,
+  embedding, governed-artifact or analysis-evidence tables. Composite foreign keys bind policy/
+  plan/grant/execution and counter/reservation relationships within a tenant.
+- Deletion respects referential protection. Active or referenced lineage is reported blocked;
+  constraints are never globally disabled. S3 bytes require checksum match before deletion.
+
 
 ---
 
@@ -2165,6 +2229,23 @@ Implemented authenticated M9 routes are `GET /api/v1/execution-plans/{public_id}
 `POST /api/v1/execution-plans/{public_id}/approve`, plus equivalent HTML detail/approval routes.
 They are tenant scoped and session mutations require CSRF. Plan creation/result ingestion remain
 trusted application-service boundaries; no public endpoint accepts Docker options or runner output.
+
+## M14 operational routes
+
+Authenticated active-organization routes are:
+
+- `GET|POST /api/v1/operations/policy` — read the effective policy or append a new exact policy;
+- `POST /api/v1/operations/retention-plans` — create a dry-run-by-default candidate plan;
+- `POST /api/v1/operations/retention-plans/{public_id}/execute` — execute only a non-dry-run,
+  unexpired plan under the unchanged policy hash.
+
+Mutations use session authentication/CSRF and require Admin or Owner. Tenant identity is derived
+from session context. Requests accept only declared keys and never accept a database grant, table
+name, storage endpoint, tenant ID or arbitrary deletion selector. Results expose counts, opaque IDs
+and hashes, not deleted source. Unsupported or foreign-key-protected artifacts are blocked.
+
+M14 adds `X-Correlation-ID` to web responses and `X-Trace-ID` when tracing is active. Both are
+server generated; inbound values are not authorization or trusted identity.
 
 ## Idempotency/staleness
 GitHub delivery + snapshot identity dedupe. Manual reanalysis may use idempotency key. Old-head analysis cannot publish current-head conclusion.
@@ -3149,6 +3230,22 @@ experiment, but cannot invoke training, promotion, deployment, source access, pr
 sandbox. Production MLflow authentication/workspaces, retention and authorization remain M14/M15
 work; the local profile must not be exposed beyond loopback.
 
+## M14 consolidated controls
+
+The ranked review is docs/51. All four initial High findings—missing cross-service quota authority,
+fragmented correlation, absent governed deletion and unconsolidated failure semantics—are remediated
+with no Critical/High item left open. Residual deployment risks are explicit and gate M15.
+
+Operational policies and reservations contain only limits, opaque subjects, hashes and timestamps.
+Safe JSON logging ignores raw messages/extras, and metric labels are closed enums. Retention is an
+Admin/Owner two-step plan/execute flow with dry-run default, exact candidates, policy/hash recheck,
+short-lived tenant-scoped database permission and checksum-gated S3 deletion. It cannot name a
+table, endpoint, tenant or selector from request data.
+
+The observability stack is loopback-only and not a production security boundary. External repository
+execution remains disabled under ADR-018; neither telemetry nor operational APIs can widen runner,
+provider, repository-write, model-promotion or merge/deploy authority.
+
 
 ---
 
@@ -3469,6 +3566,26 @@ Global/org analysis pause, hosted LLM kill switch, sandbox kill switch, model ro
 ## Alerts
 Actionable symptoms only: webhook rejection surge, queue age, error ratio, model load failure, runner isolation failure, persistent provider outage, DB saturation.
 
+## Implemented M14 boundary
+
+M14 adds a server-owned correlation context and uses it for response/error envelopes, persisted
+ingestion jobs, Celery handling, audits and operational records. Django and Celery are instrumented
+with the optional pinned OpenTelemetry SDK. Product metrics accept only fixed component/outcome
+enums; IDs, paths, prompts, source and tenant values are prohibited as labels.
+
+The application JSON formatter deliberately ignores raw messages and arbitrary extras. It emits
+only bounded event metadata and exception type, never exception text. The local digest-pinned
+Collector/Prometheus/Grafana stack is loopback-only. It receives OTLP/HTTP traces and metrics,
+deletes sensitive HTTP/process trace attributes, limits/batches memory, retains Prometheus data for
+seven days/512 MB and disables Grafana anonymous access/sign-up/analytics. Application metric
+attributes are already closed enums. CI proves a bounded metric and span reach the collector and
+that Prometheus can query the series.
+
+PostgreSQL is the quota authority. The versioned operational policy independently accounts for
+tenant/user requests plus LLM token/cost and runner CPU budgets. Seven failure drills require safe
+reject/retain/fallback/failed/UNKNOWN dispositions. Exact configuration, limitations and remaining
+deployment work are in docs/51.
+
 
 ---
 
@@ -3494,6 +3611,13 @@ explicit sandbox marker on the disposable GitHub Linux host. This ephemeral root
 evidence only; ADR-018 requires rootless Docker on a dedicated disposable host for the durable
 fixture runner. The runner is not added to the application Compose stack and no application
 container receives its Docker socket.
+
+M14 adds digest-pinned OpenTelemetry Collector, Prometheus and Grafana services to the local
+Compose dependency graph. Every published port is loopback-only; the services are capability-
+dropped and read-only where feasible, Prometheus has bounded local retention, and Grafana disables
+anonymous access and self-registration. CI enables OTLP for one bounded smoke, emits a trace and
+metric, checks collector health and requires the metric to be queryable from Prometheus. This is
+transport evidence, not production alerting, capacity or authenticated-dashboard evidence.
 
 From M4, the same validator also rebuilds the committed synthetic dataset/baseline evidence from
 its recorded extraction-code commit and fails when the manifest, feature rows, split assignments,
@@ -3544,6 +3668,19 @@ Fixed fixtures, warm/cold distinction, repetitions, percentile only when sample 
 Before profiling, RP-1402 records the representative workload/environment and numeric budget for worker resident memory, cold start, steady-state latency/throughput and queue delay. FastAPI extraction is permitted only when evidence shows at least one of: duplicated worker model memory violates the recorded budget; startup or inference violates its recorded budget and an independent process addresses it; GPU scheduling/batching requires a distinct runtime; incompatible model/application dependencies cannot coexist in the locked worker environment; or independently scaling inference has a measured capacity/cost benefit. The decision record compares the in-worker baseline, includes operational/security cost and selects one outcome: `KEEP_IN_WORKER`, `EXTRACT_FASTAPI`, or `DEFER_INSUFFICIENT_EVIDENCE`.
 
 Ollama/vLLM use the same predeclared-budget method and additionally require compatible hardware and model-license/privacy review. Measurements are evidence for the recorded environment, not universal capacity claims.
+
+## M14 measurement evidence
+
+`m14-operations-evaluation-v1` records the raw local environment, 20 repetitions, minimum/median/
+nearest-rank-p95 for a sequential synthetic control-plane work sample, and a 1,000-message in-memory
+publisher burst. It checksum-links prior model/RAG/LLM/runner/agent evaluation artifacts rather
+than silently combining figures measured under different methods.
+
+The measured pipeline excludes PostgreSQL, Redis/Celery, network, a paid provider, and live sandbox
+execution. The queue measure excludes broker scheduling and worker saturation. These figures are
+development regression evidence only. Local fake external billed cost is $0; hosted LLM, external
+runner and production infrastructure cost are not yet measured. No capacity, customer-latency,
+hosted-provider-latency or production-runner-latency claim is made. See the raw artifact and docs/51.
 
 
 ---
@@ -4113,12 +4250,25 @@ Immutable evidence lineage + deterministic/learned risk + repo-specific RAG + ge
 - **Budget exceeded:** stop further LLM/agent calls and preserve gathered evidence.
 - **Retention delete:** dry-run first, tenant-scoped, idempotent, backup/recovery considerations documented.
 
+## M14 drill result
+
+The seven required component failures are consolidated in `expected_failure_drills()` and docs/51.
+Every case has a fail-closed disposition and `false_ship_possible=false`. PostgreSQL failure rejects
+durability/readiness claims; Redis failure retains the authoritative outbox; LLM/model/retrieval
+failures preserve or fall back to available deterministic evidence; invalid worker work fails
+boundedly; and runner failure is UNKNOWN. The canonical validator checks the frozen matrix.
+
+Retention execution is separate from a dry-run. It requires a current immutable plan, unchanged
+policy hash and short-lived in-transaction database grant; protected lineage and unsupported
+artifact stores are reported blocked rather than forced. Recovery never changes UNKNOWN into SHIP
+merely because a dependency recovered later.
+
 
 ---
 
 # SOURCE FILE: `docs/26_TECHNOLOGY_BASELINE.md`
 
-# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04; M13 verified 2026-09-07
+# 26 — Technology Baseline — foundation verified 2026-08-27; M5 verified 2026-08-30; M6 verified 2026-08-31; M7/M8 verified 2026-09-01; M11 verified 2026-09-03; M12 verified 2026-09-04; M13 verified 2026-09-07; M14 verified 2026-09-08
 
 This is the dated Prompt 0 decision. Prompt 1 uses the exact foundation pins below. Later ML/AI/serving packages are compatibility snapshots, not permission to install them early; their exact pins are reverified and locked only when the owning milestone begins.
 
@@ -4332,6 +4482,22 @@ Model registry code uses ReleaseProof's explicit candidate/staging/active/retire
 immutable transition evidence. MLflow's deprecated model stages are not used; aliases/tags may be
 added only as mirrors of authoritative ReleaseProof state. No model weight or customer data is
 downloaded or uploaded by dependency installation or normal tests.
+
+## M14 observability pins — verified and locked 2026-09-08
+
+| Package/service | Exact pin | Official compatibility/release evidence |
+|---|---:|---|
+| OpenTelemetry Python API/SDK + OTLP HTTP exporter | `1.44.0` | The official [OpenTelemetry Python release](https://github.com/open-telemetry/opentelemetry-python/releases/tag/v1.44.0) publishes stable SDK/API 1.44.0 with instrumentation 0.65b0. The official [SDK package](https://pypi.org/project/opentelemetry-sdk/1.44.0/) requires Python 3.10+ and lists Python 3.13. |
+| Django/Celery instrumentation | `0.65b0` | The official [Django package](https://pypi.org/project/opentelemetry-instrumentation-django/0.65b0/) and [Celery package](https://pypi.org/project/opentelemetry-instrumentation-celery/0.65b0/) require Python 3.9+ and declare their beta lifecycle explicitly. Their exact semantic-conventions line resolves with SDK 1.44.0. |
+| OpenTelemetry Collector Contrib | `0.159.0` + digest | The official [Collector Contrib release](https://github.com/open-telemetry/opentelemetry-collector-releases/releases/tag/v0.159.0) supplies the OTLP receiver, safety processors, health extension, debug and Prometheus exporters used locally. |
+| Prometheus | `3.14.0` + digest | The official [Prometheus 3.14.0 release](https://github.com/prometheus/prometheus/releases/tag/v3.14.0) is the stable release selected for the bounded local metrics store. |
+| Grafana | `13.2.1` + digest | The official [Grafana 13.2.1 release](https://github.com/grafana/grafana/releases/tag/v13.2.1) is the current stable patch used for the loopback-only local dashboard. |
+
+The Python packages live only in the `observability` dependency group and resolve with CPython
+3.13.15. Instrumentation's beta numbering is accepted explicitly; provider/domain contracts do
+not depend on it. Collector, Prometheus and Grafana images are manifest-digest pinned and publish
+only to loopback. They are not a production monitoring topology. No separate log backend, alert
+manager or hosted telemetry service is introduced in M14.
 
 ## Dependency and image management
 
@@ -5972,6 +6138,157 @@ Approval is evidence about a specific attempted transition: reviewer, reason, ev
 and compatibility report. Treating it as a state loses whether approval authorized staging,
 activation, retirement or rollback. ReleaseProof therefore keeps the operational states
 `candidate/staging/active/retired` and records approval on immutable transition events.
+
+
+---
+
+# SOURCE FILE: `docs/51_M14_SECURITY_RELIABILITY_REVIEW.md`
+
+# 51 — M14 Security, Reliability, Observability, and Cost Review
+
+## Scope and decision
+
+This is the `RP-1301..RP-1306` completion review dated 2026-09-08. It covers GitHub
+ingestion, tenant authorization and database relationships, hostile RAG/LLM input, artifact
+references and object deletion, request/upload boundaries, the fixture-only runner, administrative
+operations, quotas, telemetry, failure handling, retention, and measurement claims.
+
+**Decision:** M14 may complete with zero open Critical or High findings. M15 remains gated.
+External/customer repository execution remains disabled under ADR-018, the deterministic heuristic
+remains the active model, and no production capacity or security certification is claimed.
+
+## Ranked findings and remediation
+
+| ID | Initial rank | Boundary and attack | Resolution | Residual rank |
+|---|---:|---|---|---:|
+| M14-S01 | High | Cost/resource exhaustion had per-request bounds but no independent tenant/user accounting authority. | Added immutable `operational-policy-v1`, PostgreSQL fixed-window counters and idempotent append-only reservations for webhook, analysis, retrieval, embedding, LLM request/token/cost, runner job/CPU and uploads. Tenant and authenticated-user reservations are independent and atomic. | Low |
+| M14-S02 | High | Error sites generated unrelated correlation IDs, preventing reliable incident tracing across components. | A server-generated request context now reaches error envelopes/headers; persisted webhook/job correlation reaches Celery; OpenTelemetry instruments Django/Celery and exports bounded trace/metric data. | Low |
+| M14-S03 | High | Retention metadata existed, but no tenant-operated audited deletion workflow covered the four required content classes. | Owner/Admin endpoints create exact immutable dry-run or executable plans. Execution rechecks policy/hash, uses a five-minute transaction-local database grant, deletes only planned tenant/public IDs, verifies S3 checksums, reports blocked references, and writes an immutable result/audit. | Low |
+| M14-S04 | High | Operational failures were tested piecemeal but not consolidated into a false-SHIP review. | A seven-component failure matrix and regression checks require reject/retain/fallback/failed/UNKNOWN dispositions. Provider, model, retrieval, broker, worker and runner failures cannot synthesize positive evidence. | Low |
+| M14-S05 | Medium | Logs could interpolate arbitrary source, prompts, headers, cookies, or exception text. | The production formatter ignores raw messages/extras and emits an allowlist: timestamp, level, bounded logger/event, server correlation/trace, fixed outcome, bounded duration and exception type. Collector processors delete sensitive HTTP/process fields. | Low |
+| M14-S06 | Medium | Unbounded metric attributes could expose tenant/source identity and cause cardinality abuse. | Product metrics accept enum component/outcome attributes only. Organization, repository, user, path, prompt, source and artifact identifiers are not labels. | Low |
+| M14-S07 | Medium | Artifact deletion could remove the wrong object or leave active lineage inconsistent. | Only the configured S3 bucket is supported; metadata checksum must match object metadata before deletion. Protected/active lineage is reported blocked rather than bypassed. Unsupported artifact schemes remain blocked. | Low |
+| M14-S08 | Medium | Uploaded bodies or URL-like values could become memory/SSRF primitives. | Django upload bounds and versioned per-request/upload-count policy fail before persistence. There is no general upload endpoint. GitHub hosts/S3 endpoints remain operator configuration; artifact URIs reject credentials/query/fragment; no user URL fetcher is introduced. | Low |
+| M14-S09 | Medium | Local observability/MLflow UIs could be exposed with weak defaults. | Collector, Prometheus, Grafana and MLflow publish on loopback; telemetry images are digest-pinned, capability-dropped, read-only where feasible, and Grafana disables anonymous access/sign-up/analytics. MLflow remains unauthenticated local-only. | Low |
+
+## Boundary review
+
+### GitHub App and webhook trust
+
+- HMAC and size validation still happen before trusted JSON interpretation. Only allowlisted events
+  and actions are accepted, delivery IDs are immutable/idempotent, and tenant identity is derived
+  from the server-side installation binding.
+- The tenant webhook quota is reserved only after signature/installation resolution. Invalid or
+  unknown-tenant floods require an ingress/WAF IP/global limit in a production topology; this is an
+  M15 deployment control, not a reason to trust an unverified tenant identifier.
+- Installation tokens remain short-lived memory-only values. No token, raw payload, patch, source,
+  authorization header, or cookie enters quota, telemetry, or audit records.
+
+### Tenant and administrative isolation
+
+- Operational APIs derive the active organization from the authenticated session and require
+  Admin or Owner. The client never supplies an authoritative tenant key.
+- Quota, policy, retention-plan, grant, and execution records carry an organization foreign key;
+  composite database constraints/triggers prevent cross-tenant parent binding.
+- Retention grants are never accepted through an API. They are activated and deactivated inside
+  the deletion transaction, expire after five minutes, and allow deletion only from the four
+  declared content tables. Other append-only triggers remain rejecting.
+
+### Hostile retrieval and LLM input
+
+- Repository documents remain inert bounded data; code is neither imported nor executed by
+  ingestion/chunking. Every query remains organization/repository scoped.
+- Prompt text and retrieved content cannot alter routing, evidence allowlists, citations, tool
+  permissions, cost limits, recommendation precedence, or runner policy. Invalid structured output
+  remains unavailable evidence.
+- Hosted transmission still requires an exact tenant policy and reviewed provider/model/content/
+  region/training/retention settings. The deterministic fake remains the test/demo default.
+
+### Runner and artifact boundary
+
+- ADR-018 still permits only the source-controlled fictional fixture on the separate rootless
+  runner. M14 neither mounts a Docker socket into the app nor enables external repositories.
+- Approval consumes tenant and reviewer runner-job/CPU budgets bound to the immutable plan hash.
+  Timeout/unavailable/invalid results remain UNKNOWN and never pass.
+- Artifact URIs are metadata, not general fetch URLs. Only checksum-matched objects in the configured
+  S3 bucket can be erased automatically; referential protection blocks active model lineage.
+
+## Quota defaults and semantics
+
+Exact defaults live in `packages/observability/policy.py` and are policy-versioned. They are safe
+starting ceilings, not measured capacity. PostgreSQL is authoritative; Redis may only cache. A
+fixed window retains the policy/hash that opened it. An idempotency key consumes once per scope and
+quota kind. Multi-resource LLM and runner reservations are atomic.
+
+The application has no generic upload surface. `reserve_upload` atomically applies the size bound
+and independent tenant/user request quota and is the mandatory adapter boundary for any future
+upload issue; Django additionally refuses bodies above the configured memory limit.
+
+## Retention and deletion semantics
+
+- Classes are `source_snapshot`, `embedding`, `artifact`, and `analysis`.
+- A dry-run plan is the default and cannot execute. An executable plan freezes exact candidates,
+  cutoffs, organization, policy hash, requester, correlation ID, and a plan checksum.
+- Execution expires after seven days and fails if the active retention policy changed. A repeat
+  execution returns the immutable prior result.
+- At most 1,000 records enter a plan; another plan provides pagination. Foreign-key-protected
+  lineage is counted as blocked. It is never force-deleted or mislabeled as erased.
+- S3 bytes are checksum-verified and deleted before metadata. Unsupported artifact backends are
+  blocked. Backup expiry and provider-side copies remain deployment/operator duties.
+- Audit records contain counts and hashes, not deleted content, and intentionally outlive product
+  content under a separate security-audit retention obligation.
+
+## Failure drills
+
+| Component | Injected state | Required safe result | Evidence |
+|---|---|---|---|
+| PostgreSQL | database query unavailable | readiness/request rejection; no durable-accept claim | `tests/web/test_health.py` |
+| Redis/outbox | publisher failure | PostgreSQL job/outbox retained for bounded retry | `tests/integration/test_github_webhook_ingestion.py` |
+| LLM provider | explicit unavailable error | missing LLM evidence; deterministic evidence preserved | `tests/integration/test_llm_evidence_persistence.py` |
+| Learned model | absent/checksum-invalid artifact | deterministic baseline or UNKNOWN | `tests/unit/test_classical_ml.py`, risk web tests |
+| Retrieval | semantic/reranker failure | lexical evidence or explicit unavailable status | `tests/integration/test_retrieval_persistence.py` |
+| Celery worker | missing/invalid job input | bounded failed/not-found state, never success | ingestion integration tests |
+| Runner | unavailable/timeout/invalid result | UNKNOWN, never SHIP | differential/recommendation tests |
+
+The frozen consolidated matrix and measured evidence are in
+`artifacts/evaluation/m14_operations_eval_v1.json`; `python -m eng.evaluate_m14_operations --check`
+rejects an incomplete matrix, false-SHIP allowance, unsupported validation claim, or invalid hash.
+
+## Observability deployment
+
+- Python pins: OpenTelemetry API/SDK/OTLP HTTP `1.44.0`; Django/Celery instrumentation `0.65b0`.
+- Local images: Collector Contrib `0.159.0`, Prometheus `3.14.0`, Grafana `13.2.1`, all by digest.
+- The collector accepts OTLP/HTTP, exports bounded application metrics to Prometheus, emits basic
+  trace diagnostics locally, deletes sensitive HTTP/process trace attributes, batches, and limits
+  memory. Application metric attributes are already a closed enum set.
+- Prometheus retains at most seven days/512 MB locally. Grafana has a non-editable Prometheus
+  datasource and no anonymous access. CI sends a bounded metric/span and queries the series.
+- Application logs remain structured stdout; M14 adds no log backend or raw messages to traces.
+
+## Performance and cost evidence
+
+The M14 artifact records 20 wall-clock repetitions of a sequential synthetic in-process control-
+plane work sample and a 1,000-message deterministic publisher burst, using nearest-rank p95. It
+also checksum-links M6–M13 component evidence. The raw environment, method, values, cost status,
+and limitations are in the artifact.
+
+This is not a customer, database, Celery/Redis, hosted-provider, or live-sandbox benchmark. The
+local deterministic path incurred zero external billed cost. Hosted LLM, external runner, and
+production infrastructure cost remain **not yet measured**. Capacity, customer latency, production
+runner latency, and hosted-provider latency remain **not validated**.
+
+## Residual risks accepted for M14
+
+- Production edge/global/IP controls, authenticated production dashboards, log aggregation,
+  alerts/SLO routing, backup lifecycle verification, and real queue/load tests depend on M15.
+- Provider-side copies/backups require provider-specific contracts; results report only confirmed
+  local actions.
+- Container controls and known fixture sentinels are not proof against every kernel/runtime escape.
+  External hostile code remains disabled.
+- The 1,000-candidate plan bound requires repeated plans for large tenants and intentionally favors
+  reviewability over bulk deletion speed.
+
+None permits a security, privacy, performance, capacity, cost, or customer-outcome claim.
 
 
 ---

@@ -1,0 +1,196 @@
+{
+  "claims": {
+    "capacity_validated": false,
+    "customer_latency_validated": false,
+    "hosted_provider_latency_validated": false,
+    "production_runner_latency_validated": false
+  },
+  "cost": {
+    "deterministic_fixture_external_cost_usd": 0.0,
+    "external_runner_billed_cost": null,
+    "hosted_llm_billed_cost": null,
+    "production_infrastructure_cost": null,
+    "status": "not_yet_measured_outside_local_fixture"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.22631-SP0",
+    "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+    "python": "3.13.15"
+  },
+  "failure_drills": [
+    {
+      "component": "postgresql",
+      "expected_disposition": "reject_request",
+      "false_ship_possible": false,
+      "injected_failure": "authoritative database unavailable"
+    },
+    {
+      "component": "redis",
+      "expected_disposition": "retain_authoritative_work",
+      "false_ship_possible": false,
+      "injected_failure": "outbox publisher unavailable"
+    },
+    {
+      "component": "llm_provider",
+      "expected_disposition": "preserve_deterministic_evidence",
+      "false_ship_possible": false,
+      "injected_failure": "hosted or local provider unavailable"
+    },
+    {
+      "component": "model_artifact",
+      "expected_disposition": "fall_back_to_baseline",
+      "false_ship_possible": false,
+      "injected_failure": "learned artifact missing or checksum-invalid"
+    },
+    {
+      "component": "retrieval",
+      "expected_disposition": "fall_back_to_lexical",
+      "false_ship_possible": false,
+      "injected_failure": "semantic provider or reranker unavailable"
+    },
+    {
+      "component": "celery_worker",
+      "expected_disposition": "mark_job_failed",
+      "false_ship_possible": false,
+      "injected_failure": "job input missing or permanently invalid"
+    },
+    {
+      "component": "runner",
+      "expected_disposition": "unknown",
+      "false_ship_possible": false,
+      "injected_failure": "runner unavailable, timeout, or invalid result"
+    }
+  ],
+  "limitations": [
+    "The end-to-end figure is a sequential in-process synthetic control-plane work sample; it excludes PostgreSQL, Redis/Celery, network, hosted providers and a live sandbox.",
+    "The queue figure measures the deterministic publisher contract, not Redis or Celery throughput, scheduling delay or worker saturation.",
+    "Prior component latencies were measured on their recorded local environments and must not be added together as a production latency estimate.",
+    "No customer workload, paid LLM call, external repository execution, load test or capacity extrapolation was performed.",
+    "All monetary values other than the zero-cost local fake remain not yet measured."
+  ],
+  "measured_at": "2026-09-08T13:42:52.052578+00:00",
+  "performance": {
+    "percentile_method": "nearest-rank p95 over wall-clock perf_counter_ns samples",
+    "prior_stage_evidence": {
+      "agent": {
+        "latency_evidence": {
+          "agent": {
+            "median_ms": 25.8216,
+            "minimum_ms": 24.9142,
+            "p95_ms": 30.6005
+          },
+          "environment": {
+            "platform": "Windows-11-10.0.22631-SP0",
+            "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+            "python": "3.13.15"
+          },
+          "limitations": "In-process deterministic fake latency excludes provider, database, queue, network, and sandbox time.",
+          "measurement": "single-process four-case synthetic local-only comparison",
+          "non_agent_m7": {
+            "median_ms": 0.6696,
+            "minimum_ms": 0.6346,
+            "p95_ms": 0.7948
+          },
+          "repetitions": 25
+        },
+        "path": "artifacts/evaluation/m12_agent_eval_v1.json",
+        "sha256": "d758365c6c4e079e343eb4b36c2abf8e15d3119c777bededdc80598c84f52612"
+      },
+      "differential": {
+        "latency_evidence": null,
+        "path": "artifacts/evaluation/m10_differential_eval_v1.json",
+        "sha256": "d7acdfb6fa825a2f7834a122a6d930a5746698ad546f370e9cdb2e21ece83747"
+      },
+      "governance": {
+        "latency_evidence": null,
+        "path": "artifacts/evaluation/m13_governance_eval_v1.json",
+        "sha256": "c967600a3c0325162b959a7047d37a6e28452fd197dc220bb3e5936c9abe1e03"
+      },
+      "llm": {
+        "latency_evidence": {
+          "environment": {
+            "platform": "Windows-11-10.0.22631-SP0",
+            "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+            "python": "3.13.15"
+          },
+          "limitations": "This is deterministic in-process fake-provider latency. It excludes provider, database, queue, and network time.",
+          "measurement": "single-process full synthetic fake-provider suite",
+          "median_ms": 1.8031,
+          "minimum_ms": 1.4835,
+          "p95_ms": 3.2425,
+          "repetitions": 100
+        },
+        "path": "artifacts/evaluation/m7_llm_eval_v1.json",
+        "sha256": "e645da79707889d557ddcd6ecf1abac9996cc80133dde27630963d9b299b3c26"
+      },
+      "proposal": {
+        "latency_evidence": {
+          "environment": {
+            "platform": "Windows-11-10.0.22631-SP0",
+            "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+            "python": "3.13.15"
+          },
+          "limitations": "This measures static validation only; no proposed test was executed.",
+          "measurement": "single-process static parse/format/type-shape/safety suite",
+          "median_ms": 8.3893,
+          "minimum_ms": 7.5647,
+          "p95_ms": 13.3381,
+          "repetitions": 100
+        },
+        "path": "artifacts/evaluation/m8_test_proposal_eval_v1.json",
+        "sha256": "b6d837f51f1981cf89a4e0bf04e485dfc1a182d28e811bc2963185c1a98f1349"
+      },
+      "retrieval": {
+        "latency_evidence": {
+          "environment": {
+            "platform": "Windows-11-10.0.22631-SP0",
+            "processor": "Intel64 Family 6 Model 167 Stepping 1, GenuineIntel",
+            "python": "3.13.15"
+          },
+          "limitations": "This excludes PostgreSQL network/query time and real transformer inference; it is a local deterministic harness measurement only.",
+          "measurement": "single-process in-memory full five-query ablation suite",
+          "median_ms": 6.93045,
+          "minimum_ms": 6.6201,
+          "p95_ms": 7.6809,
+          "repetitions": 100
+        },
+        "path": "artifacts/evaluation/m6_retrieval_eval_v1.json",
+        "sha256": "86717eda33b70889a0256b6b334f5318dd32b46620ed9011b6b6ca5fe66c8a92"
+      },
+      "runner": {
+        "latency_evidence": null,
+        "path": "artifacts/evaluation/m9_runner_eval_v1.json",
+        "sha256": "c1130790da1fc70aa423a5204c6ca5c70b16bcf2b32dcfa5e171d05181d5c759"
+      },
+      "semantic": {
+        "latency_evidence": null,
+        "path": "artifacts/evaluation/m11_semantic_eval_v1.json",
+        "sha256": "fca8f5426a2c50bc6624482b71f3c331158fd6fa4f7468d2840adb3a4f019693"
+      }
+    },
+    "queue": {
+      "elapsed_ms": 1.3198,
+      "measurement": "deterministic in-process publisher burst",
+      "messages": 1000,
+      "peak_in_memory_depth": 1000,
+      "redis_or_celery_latency_measured": false
+    },
+    "representative_control_plane": {
+      "measurement": "single-process sequential synthetic PR control-plane fixture: deterministic baseline, retrieval, fake LLM, static proposal validation, runner contract, differential policy and bounded agent",
+      "median_ms": 76.5176,
+      "minimum_ms": 75.539,
+      "p95_ms": 87.8585,
+      "repetitions": 20,
+      "stable_result_sha256": "b4fc99add5a1635c9ebc27dfd81fd64c06201023190fdf916532e00f2fc84b26"
+    }
+  },
+  "root_sha256": "b5b92c524ad8b9a3ededff447487c64fe6e0cc00ccc5b0be2ba241368532dbc9",
+  "schema_version": "m14-operations-evaluation-v1",
+  "security_review": {
+    "critical_open": 0,
+    "external_repository_execution_enabled": false,
+    "high_open": 0,
+    "report": "docs/51_M14_SECURITY_RELIABILITY_REVIEW.md"
+  },
+  "synthetic": true
+}
